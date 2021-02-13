@@ -19,7 +19,7 @@ def main(receiver_email, filename):
     """
 
     # Get sender password
-    sender_password = input("Enter your password and press enter: ")
+    sender_password = input("Enter your password: ")
 
     # Create a secure ssl context
     context = ssl.create_default_context()
@@ -64,9 +64,26 @@ def main(receiver_email, filename):
     part2 = MIMEText(html, "html")
 
     # Adds the html and text parts to the MIMEMultipart message
-    # Email client renders the last part first so part2 (the html) is attached last
+    # Email client renders the last part that was added first, so part2 (the html) is attached last
     message.attach(part1)
     message.attach(part2)
+
+    # Opens the PDF file containing the ticket in binary mode
+    with open(filename, "rb") as attachment:
+        # Adds the file as an application/octet-stream
+        # Email client can usually download this automatically as attachment
+        part = MIMEBase("application", "octet-stream")
+        part.set_payload(attachment.read())
+
+    # Encode the file in ASCII characters to send by email    
+    encoders.encode_base64(part)
+
+    # Adds header as key/value pair to attachment part
+    part.add_header("Content-Disposition",f"attachment; filename= {filename}",)
+
+    # Adds the attachment to the message object and converts the message into a string
+    message.attach(part)
+    text = message.as_string()
 
     text = message.as_string()
 
