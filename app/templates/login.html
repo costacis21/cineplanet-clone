@@ -1,0 +1,56 @@
+  {% extends "base.html" %}
+ {% block content %}
+<br><br><br>
+<h1 class="row justify-content-md-center">Log in</h1>
+<br>
+<form action="" method="post" name="signin">
+    {{ signinForm.csrf_token() }}
+    {{ signinForm.hidden_tag() }}
+  
+    <div class="row justify-content-md-center">
+      <div class="col col-lg-2">
+        <div class="form-group" >
+  
+        <label style="padding-right: 10%;">Email</label>
+            {{ signinForm.email }}
+            {% for error in signinForm.email.errors %}
+            [{{ error }}]
+            {% endfor %} 
+        </div>
+      </div>
+    </div>
+    <div class="row justify-content-md-center">
+      <div class="col col-lg-2">
+        <div class="form-group">
+          <label >Password</label>
+          {{ signinForm.password }}
+          {% for error in signinForm.password.errors %}
+          [{{ error }}]
+          {% endfor %} 
+  
+        </div>
+      </div>
+    </div>
+    <div class="row justify-content-md-center">
+      <div class="col col-lg-2">
+          <input type="submit" class="btn btn-primary" value="Log in">
+        </div>
+      </div>
+  </form>     
+  
+  <br><br><br>
+<h1 class="row justify-content-md-center">Don't have an account?</h1>
+<h4 class="row justify-content-md-center"><a href="/signup">Register here!</a></h4>
+
+
+{% endblock %}
+
+
+
+        
+
+
+
+
+
+        
