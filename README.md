@@ -32,5 +32,5 @@ To Do:
 - Setup application framework - Giorgos
 - Code database - Jack/Tom
 - Setup Login System (Flask Login) - Jonah
-- Start Design Documentation (UML Diagrams) - Adam
+- Start Design Documentation (UML Diagrams), Setup pdf ticket creation and ticket emailing - Adam
 
