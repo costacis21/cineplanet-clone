@@ -55,6 +55,12 @@ class MovieScreening(db.Model):
     Bookings = db.relationship('Booking', backref='movieScreening', lazy='dynamic')
     # Just added - necessary to take into account adverts/trailers
 
+    # POTENTIAL METHOD ......
+
+    # def is_sold_out(self):
+    #   return True if 200 seats are sold
+    #   otherwise return False
+
 class Movie(db.Model):
     MovieID = db.Column(db.String(30), primary_key=True)
     Name = db.Column(db.String(50))
