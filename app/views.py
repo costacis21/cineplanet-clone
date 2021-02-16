@@ -40,7 +40,7 @@ def login():
                 return redirect(url_for('index'))
 
 
-    
+
         return render_template('login.html',
                             title='Login',
                             signinForm=signinForm
@@ -48,7 +48,7 @@ def login():
     else:
         return redirect(url_for('index'))
 
-    
+
     return render_template('index.html')
 
 @app.route('/signup', methods=['GET','POST'])
@@ -58,14 +58,14 @@ def signup():
 
 
     if signupForm.validate_on_submit():
-        
+
         now = datetime.now()
 
         timestamp = datetime.timestamp(now)
         logging.info(str(timestamp) + ":: New user added with email " + signupForm.email.data)
 
         flash("Excelent! Now you can login with your new account")
-        return redirect(url_for('login')) 
+        return redirect(url_for('login'))
 
     return render_template('signup.html',
                            title='Signup',
@@ -84,8 +84,8 @@ def logout():
     timestamp = datetime.timestamp(now)
     logging.info(str(timestamp) + ":: user with userID " + str(session['key_userID']) + " logged out")
 
-    session.pop('key_userID',None) 
-    session.pop('key_name',None) 
+    session.pop('key_userID',None)
+    session.pop('key_name',None)
     return render_template('logout.html',
                            title='Loging out',
                            )
@@ -96,3 +96,8 @@ def logout():
 
 
 
+@app.route('/addMovieScreening')
+def addMovieScreening():
+    return render_template('add-movie-screening.html',
+                           title='Add Movie Screening',
+                           )

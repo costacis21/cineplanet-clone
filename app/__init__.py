@@ -11,7 +11,7 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 app.config.from_pyfile('config.py')
 db = SQLAlchemy(app)
 
-migrate = Migrate(app, db)
+migrate = Migrate(app, db, render_as_batch=True)
 admin = Admin(app,template_mode='bootstrap3')
 
 #login = LoginManager()  #Initialise login manager   <-- Uncomment when login option built
