@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import TextField,PasswordField,HiddenField,IntegerField
+from wtforms import TextField,PasswordField,HiddenField,IntegerField,RadioField,DateTimeField
 from wtforms.validators import DataRequired, Email, email_validator
 from wtforms.fields.html5 import EmailField
 
@@ -16,4 +16,8 @@ class Signup(Form):
     name = TextField('name',validators=[DataRequired()])
     address = TextField('address',validators=[DataRequired()])
 
-
+class addMovieScreening(Form):
+    # movieid =
+    startTime = DateTimeField('start', format='%Y-%m-%d %H:%M:%S', validators=[DataRequired()])
+    # endTime =
+    screen = RadioField('screen', choices=['Screen 1', 'Screen 2', 'Screen 3', 'Screen 4'], validators=[DataRequired()])

@@ -98,6 +98,8 @@ def logout():
 
 @app.route('/addMovieScreening')
 def addMovieScreening():
+    addScreeningForm = forms.addMovieScreening()
     return render_template('add-movie-screening.html',
                            title='Add Movie Screening',
+                           addScreeningForm = addScreeningForm
                            )
