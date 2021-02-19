@@ -1,48 +1,33 @@
   {% extends "base.html" %}
  {% block content %}
-<br><br><br>
-<h1 class="row justify-content-md-center">Log in</h1>
-<br>
-<form action="" method="post" name="signin">
-    {{ signinForm.csrf_token() }}
-    {{ signinForm.hidden_tag() }}
+ <div class="container-fluid">
+  <br><br>
+  <div class="row justify-content-center">
+      <form action="" method="post" name="Add_item">
+        {{ signinForm.csrf_token() }}
+        {{ signinForm.hidden_tag() }}
+          <div class="form-group">
+              <label for="usernameInput">{{signinForm.email.label}}</label><br>
+              {{signinForm.email}}
+              {% for error in signinForm.email.errors %}
+              </br><span style="color: red;">{{error}}</span>
+              {% endfor %}<br>
+          </div>
+          <div class="form-group">
+              <label for="passwordInput">{{signinForm.password.label}}</label><br>
+              {{ signinForm.password }}
+              {% for error in signinForm.password.errors %}
+              </br><span style="color: red;">{{error}}</span>
+              {% endfor %}<br>
+              <small>Don't have an account? <a href='/signup'>Sign Up</a></small>
+          </div>
+          <div class="row justify-content-center">
   
-    <div class="row justify-content-md-center">
-      <div class="col col-lg-2">
-        <div class="form-group" >
-  
-        <label style="padding-right: 10%;">Email</label>
-            {{ signinForm.email }}
-            {% for error in signinForm.email.errors %}
-            [{{ error }}]
-            {% endfor %} 
-        </div>
+          <button type="submit" class="btn btn-outline-primary btn-sm">Submit</button>
+          </div>
+      </form>
       </div>
-    </div>
-    <div class="row justify-content-md-center">
-      <div class="col col-lg-2">
-        <div class="form-group">
-          <label >Password</label>
-          {{ signinForm.password }}
-          {% for error in signinForm.password.errors %}
-          [{{ error }}]
-          {% endfor %} 
-  
-        </div>
-      </div>
-    </div>
-    <div class="row justify-content-md-center">
-      <div class="col col-lg-2">
-          <input type="submit" class="btn btn-primary" value="Log in">
-        </div>
-      </div>
-  </form>     
-  
-  <br><br><br>
-<h1 class="row justify-content-md-center">Don't have an account?</h1>
-<h4 class="row justify-content-md-center"><a href="/signup">Register here!</a></h4>
-
-
+  </div>
 {% endblock %}
 
 

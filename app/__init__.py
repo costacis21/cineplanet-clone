@@ -14,8 +14,8 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db, render_as_batch=True)
 admin = Admin(app,template_mode='bootstrap3')
 
-#login = LoginManager()  #Initialise login manager   <-- Uncomment when login option built
-#login.init_app(app)
+login = LoginManager()  #Initialise login manager
+login.init_app(app)
 
 logging.basicConfig(level=logging.DEBUG)
 

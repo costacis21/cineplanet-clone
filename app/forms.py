@@ -1,20 +1,19 @@
 from flask_wtf import Form
-from wtforms import TextField,PasswordField,HiddenField,IntegerField,RadioField,DateTimeField
+from wtforms import TextField,PasswordField,HiddenField,IntegerField,RadioField,DateTimeField, validators
 from wtforms.validators import DataRequired, Email, email_validator
 from wtforms.fields.html5 import EmailField
 
 
 
 class Login(Form):
-    email = EmailField('email', [DataRequired(), Email()])
-    password = PasswordField('password',validators=[DataRequired()])
+    email = EmailField('Email', [DataRequired(), Email()])
+    password = PasswordField('Password',validators=[DataRequired()])
 
 
 class Signup(Form):
-    email = EmailField('username',validators=[DataRequired(),Email()])
-    password = PasswordField('password',validators=[DataRequired()])
-    name = TextField('name',validators=[DataRequired()])
-    address = TextField('address',validators=[DataRequired()])
+    email = EmailField('Email',validators=[DataRequired(),Email()])
+    password = PasswordField('Password',validators=[DataRequired()])
+    passwordCheck = PasswordField('Confirm Password', [validators.EqualTo('password', message='Passwords must match')])
 
 class addMovieScreening(Form):
     # movieid =
