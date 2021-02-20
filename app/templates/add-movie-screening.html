@@ -1,9 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
-
+<br /><br />
 <h1 class="row justify-content-md-center">Add movie screening</h1>
-<h5 class="row justify-content-md-center">NOTE: Should be hidden from users and only
-avaliable for staff with the correct privellige level.</h5>
 
 <form action="" method="post" name="addScreeningForm">
     {{ addScreeningForm.csrf_token() }}
@@ -13,8 +11,8 @@ avaliable for staff with the correct privellige level.</h5>
       <div class="col col-lg-2">
         <div class="form-group">
 
-          <label style="padding-right: 10%">Screen: </label>
-          {{ addScreeningForm.screen }}
+          <label style="padding-right: 10%;">Screen: </label><br />
+          {{addScreeningForm.screen}}
           {% for error in addScreeningForm.screen.errors %}
           [{{ error }}]
           {% endfor %}
@@ -26,20 +24,41 @@ avaliable for staff with the correct privellige level.</h5>
       <div class="col col-lg-2">
         <div class="form-group">
 
-          <label style="padding-right: 10%">Start: </label>
-          {{ addScreeningForm.startTime }}
-          {% for error in addScreeningForm.startTime.errors %}
+          <label style="padding-right: 10%;">Start Time: </label><br />
+          {{addScreeningForm.starthours}}
+          {{addScreeningForm.startminutes}}
+          {% for error in addScreeningForm.starthours.errors %}
+          [{{ error }}]
+          {% endfor %}
+          {% for error in addScreeningForm.startminutes.errors %}
           [{{ error }}]
           {% endfor %}
         </div>
       </div>
-    </div>
+    </div
+
+    <div class="row justify-content-md-center">
+      <div class="col col-lg-2">
+        <div class="form-group">
+
+          <label style="padding-right: 10%;">End Time: </label><br />
+          {{addScreeningForm.endhours}}
+          {{addScreeningForm.endminutes}}
+          {% for error in addScreeningForm.endhours.errors %}
+          [{{ error }}]
+          {% endfor %}
+          {% for error in addScreeningForm.endminutes.errors %}
+          [{{ error }}]
+          {% endfor %}
+        </div>
+      </div>
+    </div
 
     <div class="row justify-content-md-center">
       <div class="col col-lg-2">
           <input type="submit" class="btn btn-primary" value="Add Screening">
-        </div>
       </div>
+    </div>
   </form>
 
 {% endblock %}
