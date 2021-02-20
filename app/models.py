@@ -1,4 +1,8 @@
-from app import db
+from app import db, login
+
+@login.user_loader
+def user_loader(UserID):
+    return User.query.get(UserID)
 
 class User(db.Model):
     UserID = db.Column(db.Integer, primary_key=True)
@@ -6,20 +10,34 @@ class User(db.Model):
     Username = db.Column(db.String(20))
     Password = db.Column(db.String(20))
     Email = db.Column(db.String(50))
-    # 0 for admin and 1 for normal user?
+    # 0 for admin, 1 for staff and 2 for normal user
     Privilage = db.Column(db.Integer)
     Bookings = db.relationship('Booking', backref='user', lazy='dynamic')
 
     def is_active(self):
         return True
 
+    def get_id(self):
+        return self.UserID
+
     def is_authenticated(self):
         return self.authenticated
+
+    def is_anonymous(self):
+        return False
+
+class Screening(db.Model):
+    ScreeningID = db.Column(db.Integer, primary_key=True)
+    MovieID = db.Column(db.Integer, db.ForeignKey('movie.MovieID'))
+    ScreenID = db.Column(db.Integer, db.ForeignKey('screen.ScreenID'))
+    StartTimestamp = db.Column(db.DateTime)
+    EndTimestamp = db.Column(db.DateTime)
+    Bookings = db.relationship('Booking', backref='screening', lazy='dynamic')
 
 class Booking(db.Model):
     BookingID = db.Column(db.Integer, primary_key=True)
     UserID = db.Column(db.Integer, db.ForeignKey('user.UserID'))
-    MovieScreeningID = db.Column(db.Integer, db.ForeignKey('movieScreening.MovieScreeningID'))
+    ScreeningID = db.Column(db.Integer, db.ForeignKey('screening.ScreeningID'))
     Timestamp = db.Column(db.DateTime)
     TotalPrice = db.Column(db.Float)
     Tickets = db.relationship('Ticket', backref='booking', lazy='dynamic')
@@ -36,7 +54,7 @@ class Screen(db.Model):
     ScreenID = db.Column(db.Integer, primary_key=True)
     SeatQuantity = db.Column(db.Integer)
     Seats = db.relationship('Seat', backref='screen', lazy='dynamic')
-    MovieScreenings = db.relationship('MovieScreening', backref='screen', lazy='dynamic')
+    Screenings = db.relationship('Screening', backref='screen', lazy='dynamic')
 
 class Seat(db.Model):
     SeatID = db.Column(db.Integer, primary_key=True)
@@ -46,13 +64,6 @@ class Seat(db.Model):
     Type = db.Column(db.Integer)
     Tickets = db.relationship('Ticket', backref='seat', lazy='dynamic')
 
-class MovieScreening(db.Model):
-    MovieScreeningID = db.Column(db.Integer, primary_key=True)
-    MovieID = db.Column(db.Integer, db.ForeignKey('movie.MovieID'))
-    ScreenID = db.Column(db.Integer, db.ForeignKey('screen.ScreenID'))
-    StartTimestamp = db.Column(db.DateTime)
-    EndTimestamp = db.Column(db.DateTime)
-    Bookings = db.relationship('Booking', backref='movieScreening', lazy='dynamic')
     # Just added - necessary to take into account adverts/trailers
 
     # POTENTIAL METHOD ......
@@ -68,4 +79,4 @@ class Movie(db.Model):
     Description = db.Column(db.String(500))
     # Added this for extra detail
     RunningTime = db.Column(db.Integer)
-    MovieScreenings = db.relationship('MovieScreening', backref='movie', lazy='dynamic')
+    Screenings = db.relationship('Screening', backref='movie', lazy='dynamic')

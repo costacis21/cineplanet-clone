@@ -1,67 +1,39 @@
 {% extends "base.html" %}
  {% block content %}
-<h1 class="row justify-content-md-center">Fill in your details and press sign up!</h1>
-<br><br><br><br>
-<form action="" method="post" name="signup">
-    {{ signupForm.csrf_token() }}
-    {{ signupForm.hidden_tag() }}
-  
-    <div class="row justify-content-md-center">
-      <div class="col col-lg-2">
-        <div class="form-group" >
-  
-          <label style="padding-right: 10%;">Email</label>
-          {{ signupForm.email }}
-          {% for error in signupForm.email.errors %}
-          [{{ error }}]
-          {% endfor %} 
-        </div>
-      </div>
-    </div>
-
-    <div class="row justify-content-md-center">
-      <div class="col col-lg-2">
-        <div class="form-group">
-          <label >Password</label>
-          {{ signupForm.password }}
-          {% for error in signupForm.password.errors %}
-          [{{ error }}]
-          {% endfor %} 
-  
-        </div>
-      </div>
-    </div>
-
-    <div class="row justify-content-md-center">
-        <div class="col col-lg-2">
-          <div class="form-group">
-            <label >Full Name</label>
-            {{ signupForm.name }}
-            {% for error in signupForm.name.errors %}
-            [{{ error }}]
-            {% endfor %} 
+  <div class="container-fluid">
+    <br>
+    <div class="row justify-content-center">
+        <form action="" method="post" name="Add_item">
+          {{ signupForm.csrf_token() }}
+          {{ signupForm.hidden_tag() }}
+            <div class="form-group">
+                <label for="taskNameInput">{{signupForm.email.label}}</label><br>
+            {{signupForm.email}}
+            {% for error in signupForm.email.errors %}
+                </br><span style="color: red;">{{error}}</span>
+            {% endfor %}<br>
+            </div>
+            <div class="form-group">
+                <label for="taskDescriptionInput">{{signupForm.password.label}}</label><br>
+                {{ signupForm.password }}
+                {% for error in signupForm.password.errors %}
+                </br><span style="color: red;">{{error}}</span>
+                {% endfor %}<br>
+            </div>
+            <div class="form-group">
+                <label for="taskDateInput">{{signupForm.passwordCheck.label}}</label><br>
+                {{ signupForm.passwordCheck }}
+                {% for error in signupForm.passwordCheck.errors %}
+                </br><span style="color: red;">{{error}}</span>
+                {% endfor %}<br>
+                <small>Already have an account? <a href='/login'>Sign In</a></small>
+            </div>
+            
+            <div class="row justify-content-center">
     
-          </div>
+            <button type="submit" class="btn btn-outline-primary btn-sm">Submit</button>
+            </div>
+        </form>
         </div>
     </div>
-
-    <div class="row justify-content-md-center">
-        <div class="col col-lg-2">
-          <div class="form-group">
-            <label >Address</label>
-            {{ signupForm.address }}
-            {% for error in signupForm.address.errors %}
-            [{{ error }}]
-            {% endfor %} 
-    
-          </div>
-        </div>
-    </div>
-
-    <div class="row justify-content-md-center">
-      <div class="col col-lg-2">
-          <input type="submit" class="btn btn-primary" value="Sign up">
-        </div>
-      </div>
-  </form>
 {% endblock %}
