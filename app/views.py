@@ -86,3 +86,22 @@ def addMovieScreening():
             return redirect(url_for('index'))
     else:
         return redirect(url_for('login'))
+
+@app.route('/bookTickets', methods=['GET','POST'])
+def bookTickets():
+    if current_user.is_authenticated:
+        enterMovieForm = forms.enterMovie()
+        if models.Movie.query.filter_by(Name=enterMovieForm.movietitle.data).first(): # if the given movie title is valid (the movie is in the database)
+            print("Movie:", enterMovieForm.movietitle.data, "found")
+        else:
+            #enterMovieForm.movietitle.errors.append('Movie not available')
+            #tuple(list(enterMovieForm.movietitle.errors).append('Movie not available'))
+            print("Movie:", enterMovieForm.movietitle.data, "not found")
+        
+        return render_template('book-tickets.html', 
+                            title='Book Tickets',
+                            enterMovieForm = enterMovieForm
+                            )
+    else:
+        flash("You must be signed in to book tickets")
+        return redirect(url_for('login'))

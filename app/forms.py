@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import TextField,PasswordField,HiddenField,IntegerField,RadioField,SelectField,DateTimeField, validators
+from wtforms import TextField,PasswordField,HiddenField,IntegerField,RadioField,SelectField,DateTimeField,StringField, validators
 from wtforms.validators import DataRequired, Email, email_validator
 from wtforms.fields.html5 import EmailField
 
@@ -42,3 +42,14 @@ class addMovieScreening(Form):
                                                     '46', '47', '48', '49', '50', '51', '52', '53', '54',
                                                     '55', '56', '57', '58', '59'],
                                     validators=[DataRequired()])
+
+class enterMovie(Form):
+    movietitle = StringField('Movie Name', validators=[DataRequired()])
+
+class addSeats(Form):
+    seatnumber = IntegerField('Seat Number', validators=[DataRequired()])
+    seatcategory = SelectField('Seat Category', choices=['Adult','Child','Senior'])
+
+class enterPaymentDetails(Form):
+    cardnumber = IntegerField('Card Number', validators=[DataRequired()])
+    securitynumber = IntegerField('Security Number', validators=[DataRequired()])
