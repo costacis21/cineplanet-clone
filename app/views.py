@@ -9,6 +9,7 @@ import logging
 
 @app.route('/', methods=['GET','POST'])
 def index():
+    session['bookingProgress'] = 0
     if current_user.is_authenticated:
         return render_template('index.html',
                             title='Homepage', user=current_user.Email
@@ -70,6 +71,7 @@ def logout():
         logging.info('User: %s signed out', current_user.UserID)
         logout_user()   #signs user out
         db.session.commit()
+        session['bookingProgress'] = 0
     return redirect(url_for('login'))
 
 @app.route('/addMovieScreening')
@@ -90,18 +92,109 @@ def addMovieScreening():
 @app.route('/bookTickets', methods=['GET','POST'])
 def bookTickets():
     if current_user.is_authenticated:
+        session['bookingProgress'] = 1
         enterMovieForm = forms.enterMovie()
-        if models.Movie.query.filter_by(Name=enterMovieForm.movietitle.data).first(): # if the given movie title is valid (the movie is in the database)
-            print("Movie:", enterMovieForm.movietitle.data, "found")
-        else:
-            #enterMovieForm.movietitle.errors.append('Movie not available')
-            #tuple(list(enterMovieForm.movietitle.errors).append('Movie not available'))
-            print("Movie:", enterMovieForm.movietitle.data, "not found")
-        
-        return render_template('book-tickets.html', 
+        if enterMovieForm.validate_on_submit():
+            if not models.Movie.query.filter_by(Name=enterMovieForm.movietitle.data).first(): # if the given movie title is valid (the movie is in the database)
+                #changed to 'not' here for testing purposes
+                session['movie'] = enterMovieForm.movietitle.data
+                session['bookingProgress'] = 2
+                return redirect(url_for('selectScreening'))
+            else:
+                enterMovieForm.movietitle.errors.append('Movie not found')
+            
+        return render_template('book-tickets.html',
                             title='Book Tickets',
-                            enterMovieForm = enterMovieForm
+                            enterMovieForm = enterMovieForm,
+                            page=1
                             )
     else:
         flash("You must be signed in to book tickets")
+        return redirect(url_for('login'))
+
+@app.route('/bookTickets/2', methods=['GET','POST'])
+def selectScreening():
+    if current_user.is_authenticated:
+        if session['bookingProgress'] >= 2:#if the user has selected a movie (i.e. has completed stage 1 of the booking process)
+            selectScreeningForm = forms.selectScreening()
+            if selectScreeningForm.validate_on_submit():
+                session['screening'] = selectScreeningForm.screeningnumber.data
+                session['seats'] = []
+                session['total'] = 0
+                session['bookingProgress'] = 3
+                return redirect(url_for('addSeats'))
+
+            return render_template('book-tickets.html',
+                                title='Select Screening',
+                                selectScreeningForm = selectScreeningForm,
+                                page=2)
+        else:
+            flash('You must select a movie first')
+            return redirect(url_for('bookTickets'))
+    else:
+        flash('You must be signed in to book tickets')
+        return redirect(url_for('login'))
+
+@app.route('/bookTickets/3', methods=['GET','POST'])
+def addSeats():
+    if current_user.is_authenticated:
+        if session['bookingProgress'] >= 3:#if the user has selected a movie (i.e. has completed stage 1 of the booking process)
+            addSeatsForm = forms.addSeats()
+            if addSeatsForm.validate_on_submit():
+                validSeatNumber = True
+                for seat in session['seats']:
+                    if seat[0] == addSeatsForm.seatnumber.data: #prevents the user booking the same seat multiple times
+                        flash('That seat is not available')
+                        validSeatNumber = False
+                if validSeatNumber:
+                    flash('Seat added')
+                    price = 1 # Placeholder - change to calculate actual price
+                    session['total'] += price
+                    session['seats'].append([addSeatsForm.seatnumber.data, 'Standard', addSeatsForm.seatcategory.data, price])
+                    session['bookingProgress'] = 4
+
+            return render_template('book-tickets.html',
+                                title='Add seats',
+                                addSeatsForm = addSeatsForm,
+                                seats=session['seats'],
+                                total=session['total'],
+                                page=3)
+        else:
+            flash('You must select a movie and screening first')
+            return redirect(url_for('bookTickets'))
+    else:
+        flash('You must be signed in to book tickets')
+        return redirect(url_for('login'))
+
+@app.route('/bookTickets/4', methods=['GET','POST'])
+def enterPaymentDetails():
+    if current_user.is_authenticated:
+        if session['bookingProgress'] >= 4:#if the user has selected a movie (i.e. has completed stage 1 of the booking process)
+            enterPaymentDetailsForm = forms.enterPaymentDetails()
+            if enterPaymentDetailsForm.validate_on_submit():
+                flash('Tickets sent to ',current_user.Email)
+                newBooking = models.Booking(UserID=current_user.UserID, ScreeningID=session['screening'], Timestamp=datetime.now(), TotalPrice=session['total'])
+                db.session.add(newBooking)
+                db.session.commit()
+                for seat in session['seats']:
+                    if seat[2] == 'Adult':
+                        Category = 1
+                    elif seat[2] == 'Child':
+                        Category = 0
+                    elif seat[2] == 'Senior':
+                        Category = 2
+                    newTicket = models.Ticket(BookingID=newBooking.BookingID, SeatID=seat[0], Category=Category, QR='qr') #seat[0] and 'qr' are placeholders
+                    db.session.add(newTicket)
+                db.session.commit()
+                return redirect(url_for('index'))
+
+            return render_template('book-tickets.html',
+                                title='Checkout',
+                                enterPaymentDetailsForm = enterPaymentDetailsForm,
+                                page=4)
+        else:
+            flash('You must complete the booking process first')
+            return redirect(url_for('addSeats'))
+    else:
+        flash('You must be signed in to book tickets')
         return redirect(url_for('login'))
