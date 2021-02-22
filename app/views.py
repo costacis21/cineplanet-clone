@@ -172,7 +172,6 @@ def enterPaymentDetails():
         if session['bookingProgress'] >= 4:#if the user has selected a movie (i.e. has completed stage 1 of the booking process)
             enterPaymentDetailsForm = forms.enterPaymentDetails()
             if enterPaymentDetailsForm.validate_on_submit():
-                flash('Tickets sent to ',current_user.Email)
                 newBooking = models.Booking(UserID=current_user.UserID, ScreeningID=session['screening'], Timestamp=datetime.now(), TotalPrice=session['total'])
                 db.session.add(newBooking)
                 db.session.commit()

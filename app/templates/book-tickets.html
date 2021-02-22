@@ -77,9 +77,14 @@
                         </tr>
                         {% endfor %}
                     </tbody>
+                </table>
                 </div>
                 <div class="row justify-content-center">
+                    <br>
                     <span style="color: black;">Total: £{{total}}</span>
+                </div>
+                <div class="row justify-content-center">
+                    <a href="http://127.0.0.1:5000/bookTickets/4" class="btn btn-outline-primary btn-sm" role="button" aria-pressed="true">Proceed to Payment</a>
                 </div>
             </form>
         {% endif %}
