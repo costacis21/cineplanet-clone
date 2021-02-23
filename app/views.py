@@ -6,6 +6,20 @@ from passlib.hash import sha256_crypt
 import logging
 
 
+# FLASK ADMIN setup 
+# remove before deployment
+from flask_admin.contrib.sqla import ModelView
+admin.add_view(ModelView(models.User, db.session))
+admin.add_view(ModelView(models.Screening, db.session))
+admin.add_view(ModelView(models.Booking, db.session))
+admin.add_view(ModelView(models.Ticket, db.session))
+admin.add_view(ModelView(models.Seat, db.session))
+admin.add_view(ModelView(models.Movie, db.session))
+
+
+
+
+
 
 @app.route('/', methods=['GET','POST'])
 def index():
