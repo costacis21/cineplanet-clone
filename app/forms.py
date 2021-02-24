@@ -4,7 +4,6 @@ from wtforms.validators import DataRequired, Email, email_validator
 from wtforms.fields.html5 import EmailField
 
 
-
 class Login(Form):
     email = EmailField('Email', [DataRequired(), Email()])
     password = PasswordField('Password',validators=[DataRequired()])
@@ -16,7 +15,7 @@ class Signup(Form):
     passwordCheck = PasswordField('Confirm Password', [validators.EqualTo('password', message='Passwords must match')])
 
 class addMovieScreening(Form):
-    # movieid =
+    movie = screen = SelectField('movie', choices=['James Bond: Casino Royale', 'movie2', 'movie3'], validators=[DataRequired()])
     screen = SelectField('screen', choices=['Screen 1', 'Screen 2', 'Screen 3', 'Screen 4'], validators=[DataRequired()])
     starthours = SelectField('starthours', choices=['00', '01', '02', '03', '04', '05', '06', '07', '08', '09',
                                                     '10', '11', '12', '13', '14', '15', '16', '17', '18',

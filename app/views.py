@@ -6,7 +6,7 @@ from passlib.hash import sha256_crypt
 import logging
 
 
-# FLASK ADMIN setup 
+# FLASK ADMIN setup
 # remove before deployment
 from flask_admin.contrib.sqla import ModelView
 admin.add_view(ModelView(models.User, db.session))
@@ -93,15 +93,34 @@ def addMovieScreening():
     if current_user.is_authenticated:   #checks user is signed in
         if (current_user.Privilage <= 1):   #checks user has required permission
             addScreeningForm = forms.addMovieScreening()
+            allMovies = models.Movie.query.all()
+            print(allMovies)
             return render_template('add-movie-screening.html',
                                 title='Add Movie Screening',
-                                addScreeningForm = addScreeningForm
+                                addScreeningForm = addScreeningForm, allMovies = allMovies
                                 )
         else:
             flash("You lack the required permission")
             return redirect(url_for('index'))
     else:
         return redirect(url_for('login'))
+
+@app.route('/addNewMovie')
+def addNewMovie():
+    if current_user.is_authenticated:   #checks user is signed in
+        if (current_user.Privilage <= 1):   #checks user has required permission
+            enterMovie = forms.enterMovie()
+            return render_template('add-new-movie.html',
+                                title='Add New Movie',
+                                enterMovie = enterMovie
+                                )
+        else:
+            flash("You lack the required permission")
+            return redirect(url_for('index'))
+    else:
+        return redirect(url_for('login'))
+
+
 
 @app.route('/bookTickets', methods=['GET','POST'])
 def bookTickets():
@@ -116,7 +135,7 @@ def bookTickets():
                 return redirect(url_for('selectScreening'))
             else:
                 enterMovieForm.movietitle.errors.append('Movie not found')
-            
+
         return render_template('book-tickets.html',
                             title='Book Tickets',
                             enterMovieForm = enterMovieForm,

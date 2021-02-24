@@ -1,0 +1,23 @@
+  {% extends "base.html" %}
+ {% block content %}
+<div class="container-fluid">
+  <br><br>
+  <h1 class="row justify-content-md-center">Add a new movie</h1>
+  <div class="row justify-content-center">
+    <form action="" method="post" name="Add_item">
+    {{ enterMovie.csrf_token() }}
+    {{ enterMovie.hidden_tag() }}
+        <div class="form-group">
+            <label for="taskNameInput">{{enterMovie.movietitle.label}}</label><br>
+        {{enterMovie.movietitle}}
+        {% for error in enterMovie.movietitle.errors %}
+            </br><span style="color: red;">{{error}}</span>
+        {% endfor %}<br>
+        </div>
+        <div class="row justify-content-center">
+        <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
