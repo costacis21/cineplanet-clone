@@ -48,7 +48,13 @@ class addMovieScreening(Form):
                                                     '55', '56', '57', '58', '59'],
                                     validators=[DataRequired()])
 
-
+    @classmethod
+    def new(cls):
+        # Instantiate the form
+        form = cls()
+        # Update the choices for the agency field
+        form.movie.choices = fetchAllMovieTitles()
+        return form
 
 class enterMovie(Form):
     movietitle = StringField('Movie Name', validators=[DataRequired()])

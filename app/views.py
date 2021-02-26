@@ -92,7 +92,7 @@ def logout():
 def addMovieScreening():
     if current_user.is_authenticated:   #checks user is signed in
         if (current_user.Privilage <= 1):   #checks user has required permission
-            addScreeningForm = forms.addMovieScreening()
+            addScreeningForm = forms.addMovieScreening.new()
             allMovies = models.Movie.query.all()
             # print(allMovies)
             return render_template('add-movie-screening.html',
