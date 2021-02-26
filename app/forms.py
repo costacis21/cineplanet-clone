@@ -16,7 +16,7 @@ class Signup(Form):
 
 class addMovieScreening(Form):
     movie = screen = SelectField('movie', choices=['James Bond: Casino Royale', 'movie2', 'movie3'], validators=[DataRequired()])
-    screen = SelectField('screen', choices=['Screen 1', 'Screen 2', 'Screen 3', 'Screen 4'], validators=[DataRequired()])
+    screen = SelectField('screen', choices=['Screen 1', 'Screen 2', 'Screen 3', 'Screen 4', 'Screen 5', 'Screen 6'], validators=[DataRequired()])
     starthours = SelectField('starthours', choices=['00', '01', '02', '03', '04', '05', '06', '07', '08', '09',
                                                     '10', '11', '12', '13', '14', '15', '16', '17', '18',
                                                     '19', '20', '21', '22', '23'],
@@ -47,7 +47,7 @@ class enterMovie(Form):
 
 class selectScreening(Form):
     screeningnumber = IntegerField('Screening Number', validators=[DataRequired()])
-    
+
 class addSeats(Form):
     seatnumber = IntegerField('Seat Number', validators=[DataRequired()])
     seatcategory = SelectField('Seat Category', choices=['Adult','Child','Senior'])

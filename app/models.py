@@ -79,4 +79,5 @@ class Movie(db.Model):
     Description = db.Column(db.String(500))
     # Added this for extra detail
     RunningTime = db.Column(db.Integer)
+    PosterURL = db.Column(db.String(100))
     Screenings = db.relationship('Screening', backref='movie', lazy='dynamic')
