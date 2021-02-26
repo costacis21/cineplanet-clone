@@ -94,7 +94,7 @@ def addMovieScreening():
         if (current_user.Privilage <= 1):   #checks user has required permission
             addScreeningForm = forms.addMovieScreening()
             allMovies = models.Movie.query.all()
-            print(allMovies)
+            # print(allMovies)
             return render_template('add-movie-screening.html',
                                 title='Add Movie Screening',
                                 addScreeningForm = addScreeningForm, allMovies = allMovies
@@ -112,12 +112,21 @@ def addNewMovie():
             enterMovie = forms.enterMovie()
             fetchedMovie = {} #Blank dictionary
             fetchedMovieCheck = -1 #Flag variable to ensure an actual movie is fetched
-            if enterMovie.validate_on_submit():
-                fetchedMovie = getMovieInfo(enterMovie.movietitle.data)
-                if fetchedMovie != None: #If a movie was found
-                    fetchedMovieCheck = 1
-                else: #If no movie was found
-                    fetchedMovieCheck = 0
+            if request.method == 'POST':
+                if request.form.get("Search"):
+                    fetchedMovie = getMovieInfo(enterMovie.movietitle.data)
+                    if fetchedMovie != None: #If a movie was found
+                        fetchedMovieCheck = 1
+                        session['fetchedMovie'] = fetchedMovie
+                    else: #If no movie was found
+                        fetchedMovieCheck = 0
+                elif request.form.get("Confirm"):
+                    print(session['fetchedMovie'])
+                    newMovie = models.Movie(Name = session['fetchedMovie']['Title'], Age = session['fetchedMovie']['Age_Rating'], Description = session['fetchedMovie']['Description'],
+                                            RunningTime = session['fetchedMovie']['Duration'], PosterURL = session['fetchedMovie']['PosterURL'])
+                    db.session.add(newMovie)
+                    db.session.commit()
+                    return redirect(url_for('addMovieScreening'))
 
             return render_template('add-new-movie.html',
                                 title='Add New Movie',

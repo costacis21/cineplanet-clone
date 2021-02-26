@@ -73,7 +73,7 @@ class Seat(db.Model):
     #   otherwise return False
 
 class Movie(db.Model):
-    MovieID = db.Column(db.String(30), primary_key=True)
+    MovieID = db.Column(db.Integer, primary_key=True)
     Name = db.Column(db.String(50))
     Age = db.Column(db.Integer)
     Description = db.Column(db.String(500))
