@@ -121,11 +121,12 @@ def addNewMovie():
                     else: #If no movie was found
                         fetchedMovieCheck = 0
                 elif request.form.get("Confirm"):
-                    print(session['fetchedMovie'])
                     newMovie = models.Movie(Name = session['fetchedMovie']['Title'], Age = session['fetchedMovie']['Age_Rating'], Description = session['fetchedMovie']['Description'],
                                             RunningTime = session['fetchedMovie']['Duration'], PosterURL = session['fetchedMovie']['PosterURL'])
                     db.session.add(newMovie)
                     db.session.commit()
+                    nodes = models.Movie.query.all()
+                    print([node.Name for node in nodes])
                     return redirect(url_for('addMovieScreening'))
 
             return render_template('add-new-movie.html',

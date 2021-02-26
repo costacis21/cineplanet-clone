@@ -3,6 +3,12 @@ from wtforms import TextField,PasswordField,HiddenField,IntegerField,RadioField,
 from wtforms.validators import DataRequired, Email, email_validator
 from wtforms.fields.html5 import EmailField
 
+from app import app,models
+
+def fetchAllMovieTitles():
+    allMovies = models.Movie.query.all()
+    fetchAllMovieTitles = [movie.Name for movie in allMovies]
+    return fetchAllMovieTitles
 
 class Login(Form):
     email = EmailField('Email', [DataRequired(), Email()])
@@ -15,7 +21,7 @@ class Signup(Form):
     passwordCheck = PasswordField('Confirm Password', [validators.EqualTo('password', message='Passwords must match')])
 
 class addMovieScreening(Form):
-    movie = screen = SelectField('movie', choices=['James Bond: Casino Royale', 'movie2', 'movie3'], validators=[DataRequired()])
+    movie = SelectField('movie', choices=fetchAllMovieTitles(), validators=[DataRequired()])
     screen = SelectField('screen', choices=['Screen 1', 'Screen 2', 'Screen 3', 'Screen 4', 'Screen 5', 'Screen 6'], validators=[DataRequired()])
     starthours = SelectField('starthours', choices=['00', '01', '02', '03', '04', '05', '06', '07', '08', '09',
                                                     '10', '11', '12', '13', '14', '15', '16', '17', '18',
@@ -41,6 +47,8 @@ class addMovieScreening(Form):
                                                     '46', '47', '48', '49', '50', '51', '52', '53', '54',
                                                     '55', '56', '57', '58', '59'],
                                     validators=[DataRequired()])
+
+
 
 class enterMovie(Form):
     movietitle = StringField('Movie Name', validators=[DataRequired()])
