@@ -1,4 +1,4 @@
-from flask import flash, render_template, redirect, url_for, session
+from flask import flash, render_template, redirect, url_for, session, request
 from flask_login import current_user, login_user, logout_user
 from app import app,models,forms,db,admin
 from datetime import datetime
@@ -16,7 +16,7 @@ admin.add_view(ModelView(models.Ticket, db.session))
 admin.add_view(ModelView(models.Seat, db.session))
 admin.add_view(ModelView(models.Movie, db.session))
 
-
+from imdbSearch import getMovieInfo
 
 
 
@@ -105,14 +105,25 @@ def addMovieScreening():
     else:
         return redirect(url_for('login'))
 
-@app.route('/addNewMovie')
+@app.route('/addNewMovie', methods=['GET','POST'])
 def addNewMovie():
     if current_user.is_authenticated:   #checks user is signed in
         if (current_user.Privilage <= 1):   #checks user has required permission
             enterMovie = forms.enterMovie()
+            fetchedMovie = {} #Blank dictionary
+            fetchedMovieCheck = -1 #Flag variable to ensure an actual movie is fetched
+            if enterMovie.validate_on_submit():
+                fetchedMovie = getMovieInfo(enterMovie.movietitle.data)
+                if fetchedMovie != None: #If a movie was found
+                    fetchedMovieCheck = 1
+                else: #If no movie was found
+                    fetchedMovieCheck = 0
+
             return render_template('add-new-movie.html',
                                 title='Add New Movie',
-                                enterMovie = enterMovie
+                                enterMovie = enterMovie,
+                                fetchedMovie = fetchedMovie,
+                                fetchedMovieCheck = fetchedMovieCheck
                                 )
         else:
             flash("You lack the required permission")

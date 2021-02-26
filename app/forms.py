@@ -47,6 +47,7 @@ class enterMovie(Form):
 
 class selectScreening(Form):
     screeningnumber = IntegerField('Screening Number', validators=[DataRequired()])
+    
 class addSeats(Form):
     seatnumber = IntegerField('Seat Number', validators=[DataRequired()])
     seatcategory = SelectField('Seat Category', choices=['Adult','Child','Senior'])
