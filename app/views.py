@@ -88,16 +88,17 @@ def logout():
         session['bookingProgress'] = 0
     return redirect(url_for('login'))
 
-@app.route('/addMovieScreening')
+@app.route('/addMovieScreening', methods=['GET','POST'])
 def addMovieScreening():
     if current_user.is_authenticated:   #checks user is signed in
         if (current_user.Privilage <= 1):   #checks user has required permission
             addScreeningForm = forms.addMovieScreening.new()
-            allMovies = models.Movie.query.all()
-            # print(allMovies)
+            if request.method == 'POST':
+                if request.form.get("Add Screening"):
+                    print("hi")
             return render_template('add-movie-screening.html',
                                 title='Add Movie Screening',
-                                addScreeningForm = addScreeningForm, allMovies = allMovies
+                                addScreeningForm = addScreeningForm,
                                 )
         else:
             flash("You lack the required permission")
@@ -121,12 +122,14 @@ def addNewMovie():
                     else: #If no movie was found
                         fetchedMovieCheck = 0
                 elif request.form.get("Confirm"):
-                    newMovie = models.Movie(Name = session['fetchedMovie']['Title'], Age = session['fetchedMovie']['Age_Rating'], Description = session['fetchedMovie']['Description'],
-                                            RunningTime = session['fetchedMovie']['Duration'], PosterURL = session['fetchedMovie']['PosterURL'])
-                    db.session.add(newMovie)
-                    db.session.commit()
-                    nodes = models.Movie.query.all()
-                    print([node.Name for node in nodes])
+                    currentMovies = models.Movie.query.filter_by(Description=session['fetchedMovie']['Description']).all() # Find current movies
+                    if len(currentMovies) > 0: # If a movie with a matching description was found, don't add the movie
+                        flash("Movie already added and available.")
+                    else: # ELse, add as new movie
+                        newMovie = models.Movie(Name = session['fetchedMovie']['Title'], Age = session['fetchedMovie']['Age_Rating'], Description = session['fetchedMovie']['Description'],
+                                                RunningTime = session['fetchedMovie']['Duration'], PosterURL = session['fetchedMovie']['PosterURL'])
+                        db.session.add(newMovie)
+                        db.session.commit()
                     return redirect(url_for('addMovieScreening'))
 
             return render_template('add-new-movie.html',
