@@ -18,12 +18,19 @@ admin.add_view(ModelView(models.Movie, db.session))
 
 from imdbSearch import getMovieInfo
 
-
-
+def resetBookingSessionData():
+    #Used to reset the session data stored about a booking
+    #Prevents previous complete or incomplete bookings from interfering with any new ones
+    #Called when the homepage is loaded
+    session['bookingProgress'] = 0
+    session['movie'] = ''
+    session['screening'] = 0
+    session['seats'] = []
+    session['total'] = 0
 
 @app.route('/', methods=['GET','POST'])
 def index():
-    session['bookingProgress'] = 0
+    resetBookingSessionData()
     if current_user.is_authenticated:
         return render_template('index.html',
                             title='Homepage', user=current_user.Email
@@ -85,7 +92,6 @@ def logout():
         logging.info('User: %s signed out', current_user.UserID)
         logout_user()   #signs user out
         db.session.commit()
-        session['bookingProgress'] = 0
     return redirect(url_for('login'))
 
 @app.route('/addMovieScreening', methods=['GET','POST'])
@@ -149,13 +155,12 @@ def addNewMovie():
 @app.route('/bookTickets', methods=['GET','POST'])
 def bookTickets():
     if current_user.is_authenticated:
-        session['bookingProgress'] = 1
+        session['bookingProgress'] = 1 #Keeps track of where the user is in the booking process, 1 means that they have not selected a movie yet
         enterMovieForm = forms.enterMovie()
         if enterMovieForm.validate_on_submit():
-            if not models.Movie.query.filter_by(Name=enterMovieForm.movietitle.data).first(): # if the given movie title is valid (the movie is in the database)
-                #changed to 'not' here for testing purposes
+            if models.Movie.query.filter_by(Name=enterMovieForm.movietitle.data).first(): # if the given movie title is valid (the movie is in the database)
                 session['movie'] = enterMovieForm.movietitle.data
-                session['bookingProgress'] = 2
+                session['bookingProgress'] = 2 #2 means that they have selected a movie, allows them to access bookTickets/2 without being redirected back to here
                 return redirect(url_for('selectScreening'))
             else:
                 enterMovieForm.movietitle.errors.append('Movie not found')
@@ -172,13 +177,14 @@ def bookTickets():
 @app.route('/bookTickets/2', methods=['GET','POST'])
 def selectScreening():
     if current_user.is_authenticated:
-        if session['bookingProgress'] >= 2:#if the user has selected a movie (i.e. has completed stage 1 of the booking process)
+        if session['bookingProgress'] >= 2:#if the user has selected a movie (i.e. has completed stage 1 of the booking process and have reached stage 2)
             selectScreeningForm = forms.selectScreening()
             if selectScreeningForm.validate_on_submit():
-                session['screening'] = selectScreeningForm.screeningnumber.data
+                session['screening'] = selectScreeningForm.screeningnumber.data #Record the given screening number in the session
+                #Reset the seats and total ticket price session variables in case they were already set, since they may select a different screening with different seats and prices
                 session['seats'] = []
                 session['total'] = 0
-                session['bookingProgress'] = 3
+                session['bookingProgress'] = 3 #Allows the user to access bookTickets/3 without being redirected back to the start of the process
                 return redirect(url_for('addSeats'))
 
             return render_template('book-tickets.html',
@@ -226,7 +232,7 @@ def addSeats():
 @app.route('/bookTickets/4', methods=['GET','POST'])
 def enterPaymentDetails():
     if current_user.is_authenticated:
-        if session['bookingProgress'] >= 4:#if the user has selected a movie (i.e. has completed stage 1 of the booking process)
+        if session['bookingProgress'] >= 4:
             enterPaymentDetailsForm = forms.enterPaymentDetails()
             if enterPaymentDetailsForm.validate_on_submit():
                 newBooking = models.Booking(UserID=current_user.UserID, ScreeningID=session['screening'], Timestamp=datetime.now(), TotalPrice=session['total'])
