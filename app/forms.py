@@ -23,30 +23,8 @@ class Signup(Form):
 class addMovieScreening(Form):
     movie = SelectField('movie', choices=fetchAllMovieTitles(), validators=[DataRequired()])
     screen = SelectField('screen', choices=['Screen 1', 'Screen 2', 'Screen 3', 'Screen 4', 'Screen 5', 'Screen 6'], validators=[DataRequired()])
-    starthours = SelectField('starthours', choices=['00', '01', '02', '03', '04', '05', '06', '07', '08', '09',
-                                                    '10', '11', '12', '13', '14', '15', '16', '17', '18',
-                                                    '19', '20', '21', '22', '23'],
-                                    validators=[DataRequired()])
-    startminutes = SelectField('startminutes', choices=['00', '01', '02', '03', '04', '05', '06', '07', '08', '09',
-                                                    '10', '11', '12', '13', '14', '15', '16', '17', '18',
-                                                    '19', '20', '21', '22', '23', '24', '25', '26', '27',
-                                                    '28', '29', '30', '31', '32', '33', '34', '35', '36',
-                                                    '37', '38', '39', '40', '41', '42', '43', '44', '45',
-                                                    '46', '47', '48', '49', '50', '51', '52', '53', '54',
-                                                    '55', '56', '57', '58', '59'],
-                                    validators=[DataRequired()])
-    endhours = SelectField('endhours', choices=['00', '01', '02', '03', '04', '05', '06', '07', '08', '09',
-                                                    '10', '11', '12', '13', '14', '15', '16', '17', '18',
-                                                    '19', '20', '21', '22', '23'],
-                                    validators=[DataRequired()])
-    endminutes = SelectField('endminutes', choices=['00', '01', '02', '03', '04', '05', '06', '07', '08', '09',
-                                                    '10', '11', '12', '13', '14', '15', '16', '17', '18',
-                                                    '19', '20', '21', '22', '23', '24', '25', '26', '27',
-                                                    '28', '29', '30', '31', '32', '33', '34', '35', '36',
-                                                    '37', '38', '39', '40', '41', '42', '43', '44', '45',
-                                                    '46', '47', '48', '49', '50', '51', '52', '53', '54',
-                                                    '55', '56', '57', '58', '59'],
-                                    validators=[DataRequired()])
+    start = DateTimeField('start', validators=[DataRequired()], format='%d-%m-%Y %H:%M')
+    end = DateTimeField('end', validators=[DataRequired()], format='%d-%m-%Y %H:%M')
 
     @classmethod
     def new(cls):

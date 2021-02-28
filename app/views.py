@@ -25,8 +25,17 @@ from imdbSearch import getMovieInfo
 def index():
     session['bookingProgress'] = 0
     if current_user.is_authenticated:
+        allScreenings = models.Screening.query.all()
+        numScreenings = len(allScreenings)
+        theMovies = []
+        for screening in allScreenings:
+            movie = models.Movie.query.filter_by(MovieID=screening.MovieID).all()
+            theMovies.append(movie[0])
         return render_template('index.html',
-                            title='Homepage', user=current_user.Email
+                            title='Homepage', user=current_user.Email,
+                            allScreenings = allScreenings,
+                            theMovies = theMovies,
+                            numScreenings = numScreenings
                             )
     else:
         return redirect(url_for('login'))
@@ -95,7 +104,16 @@ def addMovieScreening():
             addScreeningForm = forms.addMovieScreening.new()
             if request.method == 'POST':
                 if request.form.get("Add Screening"):
-                    print("hi")
+                    if addScreeningForm.start.data == None or addScreeningForm.end.data == None: #If not correctly formatted.
+                        flash("Not completed, please ensure both the start and end time are in the correct format")
+                    else:
+                        findMovie = models.Movie.query.filter_by(Name=addScreeningForm.movie.data).first()
+                        newScreening = models.Screening(MovieID=findMovie.MovieID, ScreenID = int(addScreeningForm.screen.data[7]),
+                                                        StartTimestamp = addScreeningForm.start.data, EndTimestamp = addScreeningForm.end.data)
+                        db.session.add(newScreening)
+                        db.session.commit()
+                        flash("Screening successfully added")
+                        return redirect(url_for('index'))
             return render_template('add-movie-screening.html',
                                 title='Add Movie Screening',
                                 addScreeningForm = addScreeningForm,
