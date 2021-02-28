@@ -47,6 +47,7 @@ class BasicTests(unittest.TestCase):
             response = c.post('/login', data={'email':'sc19ap@leeds.ac.uk', 'password' : 'pass'}, follow_redirects=True)
             self.assertEqual(response.status_code, 200)
             self.assertEqual(request.path, '/') 
+            response = c.post('/logout', follow_redirects=True)
 
     #Tests that if you are not logged in and you try to access any part of the booking process, you are redirected to the login page
     def testRedirectionIfNotLoggedIn(self):

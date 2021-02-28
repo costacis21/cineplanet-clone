@@ -28,25 +28,17 @@
         </div>
         <div class="form-group">
 
-          <label style="padding-right: 10%;">Start Time: </label><br />
-          {{addScreeningForm.starthours}}
-          {{addScreeningForm.startminutes}}
-          {% for error in addScreeningForm.starthours.errors %}
-          [{{ error }}]
-          {% endfor %}
-          {% for error in addScreeningForm.startminutes.errors %}
+          <label style="padding-right: 10%;">Start Time (format: %d-%m-%Y %H:%M): </label><br />
+          {{addScreeningForm.start}}
+          {% for error in addScreeningForm.start.errors %}
           [{{ error }}]
           {% endfor %}
         </div>
         <div class="form-group">
 
-          <label style="padding-right: 10%;">End Time: </label><br />
-          {{addScreeningForm.endhours}}
-          {{addScreeningForm.endminutes}}
-          {% for error in addScreeningForm.endhours.errors %}
-          [{{ error }}]
-          {% endfor %}
-          {% for error in addScreeningForm.endminutes.errors %}
+          <label style="padding-right: 10%;">End Time (format: %d-%m-%Y %H:%M): </label><br />
+          {{addScreeningForm.end}}
+          {% for error in addScreeningForm.end.errors %}
           [{{ error }}]
           {% endfor %}
         </div>

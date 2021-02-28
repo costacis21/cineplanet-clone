@@ -2,4 +2,39 @@
 {% block content %}
 <br>
 <p class="row justify-content-md-center">Logged in as: {{user}}</p>
+<div class ="container">
+  <table class="table">
+    <thead class="thead-dark">
+      <!-- Headings -->
+      <tr>
+        <th scope="col">Movie</th>
+        <th scope="col">Time</th>
+        <th> </th>
+      </tr>
+    </thead>
+  <!-- for loop through all the activities and create a new table row for each -->
+  {% for i in range(0, numScreenings) %}
+  <tbody>
+    <tr>
+      <td>
+        <!-- <p><u><b>{{theMovies[i].Name}}</b></u></p> -->
+        <!-- <br /> -->
+        <div class="row">
+          <div class="col-sm" style="padding-right: 0px;">
+            <img width = "130px" src="{{theMovies[i].PosterURL}}" />
+          </div>
+          <div class="col-sm" style="padding-left: 0px;"">
+            <p><b>Name: </b>{{theMovies[i].Name}}</p>
+            <p><b>Age Rating: </b>{{theMovies[i].Age}}</p>
+            <p><b>Running Time: </b>{{theMovies[i].RunningTime}} mins</p>
+          </div>
+        </div>
+      </td>
+      <td>{{allScreenings[i].StartTimestamp}}</td>
+      <td><a href="bookTickets">Buy tickets here.</a></td>
+    </tr>
+  {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}
