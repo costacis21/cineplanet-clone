@@ -1,8 +1,21 @@
 import unittest, os
 from app import app,models,forms,db,admin
-from flask import request, session, logging
+from flask import request, session, logging, g
 from passlib.hash import sha256_crypt
 from flask_login import current_user, login_user, logout_user
+from werkzeug.local import LocalProxy
+
+def get_db():
+    if 'db' not in g:
+        g.db = connect_to_database()
+    return g.db
+
+@app.teardown_appcontext
+def teardown_db(exception):
+    db = g.pop('db', None)
+
+    if db is not None:
+        db.close()
 
 class BasicTests(unittest.TestCase):
     # executed prior to each test
@@ -14,20 +27,26 @@ class BasicTests(unittest.TestCase):
         basedir = os.path.abspath(os.path.dirname(__file__))
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'app/app.db')
         self.app = app.test_client()
-        db.drop_all()
-        db.create_all()
+        db = LocalProxy(get_db)
  
     # executed after each test
     def tearDown(self):
         pass
 
-    def testsignUpLogIn(self):
-        newUser = models.User(Email='sc19ap@leeds.ac.uk', Password=sha256_crypt.encrypt('pass'), Privilage=2)
-        db.session.add(newUser)
-        login_user(newUser)
-        db.session.commit()
-        self.assertEqual(models.User.query.order_by(desc('UserID')).first().Email, 'sc19ap@leeds.ac.uk')
-        self.assertEqual(current_user.Email, 'sc19ap@leeds.ac.uk')
+    def testsignUpLogIn(self): #tests that users can be adde dto db and logged in
+        with app.test_request_context():
+            newUser = models.User(Email='sc19ap@leeds.ac.uk', Password=sha256_crypt.encrypt('pass'), Privilage=2)
+            db.session.add(newUser)
+            login_user(newUser)
+            db.session.commit()
+            self.assertEqual(models.User.query.order_by(models.User.UserID.desc()).first().Email, 'sc19ap@leeds.ac.uk')
+            self.assertEqual(current_user.Email, 'sc19ap@leeds.ac.uk')
+    
+    def testLogIn(self): #test that login wbepage functions correctly
+        with app.test_client() as c:
+            response = c.post('/login', data={'email':'sc19ap@leeds.ac.uk', 'password' : 'pass'}, follow_redirects=True)
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(request.path, '/') 
 
     #Tests that if you are not logged in and you try to access any part of the booking process, you are redirected to the login page
     def testRedirectionIfNotLoggedIn(self):
