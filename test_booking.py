@@ -21,12 +21,13 @@ class BasicTests(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def signUpLogin(self):
+    def testsignUpLogIn(self):
         newUser = models.User(Email='sc19ap@leeds.ac.uk', Password=sha256_crypt.encrypt('pass'), Privilage=2)
         db.session.add(newUser)
         login_user(newUser)
         db.session.commit()
         self.assertEqual(models.User.query.order_by(desc('UserID')).first().Email, 'sc19ap@leeds.ac.uk')
+        self.assertEqual(current_user.Email, 'sc19ap@leeds.ac.uk')
 
     #Tests that if you are not logged in and you try to access any part of the booking process, you are redirected to the login page
     def testRedirectionIfNotLoggedIn(self):
@@ -90,7 +91,7 @@ class BasicTests(unittest.TestCase):
             response = c.post('/test', data={'movietitle':'up'}, follow_redirects=True)
             self.assertEqual(response.status_code, 200)
             self.assertEqual(session['movie'], 'up')
-            #self.assertEqual(request.path, '/') 
+            self.assertEqual(request.path, '/login') 
 """   
     #Tests the /bookTickets page
     def testBookTickets1(self):
