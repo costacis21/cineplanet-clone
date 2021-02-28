@@ -230,3 +230,16 @@ def enterPaymentDetails():
     else:
         flash('You must be signed in to book tickets')
         return redirect(url_for('login'))
+
+@app.route('/test', methods=['GET','POST'])
+def t():
+    enterMovieForm = forms.enterMovie()
+    if enterMovieForm.validate_on_submit():
+                session['movie'] = enterMovieForm.movietitle.data
+                return redirect(url_for('index'))
+
+    return render_template('book-tickets.html',
+                            title='Book Tickets',
+                            enterMovieForm = enterMovieForm,
+                            page=1
+                            )
