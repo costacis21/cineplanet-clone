@@ -4,7 +4,6 @@
     <br>
     <div class="row justify-content-center">
         <form action="" method="post" name="Add_item">
-          {{ signupForm.csrf_token() }}
           {{ signupForm.hidden_tag() }}
             <div class="form-group">
                 <label for="taskNameInput">{{signupForm.email.label}}</label><br>

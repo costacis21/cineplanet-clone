@@ -5,7 +5,6 @@
     <div class="row justify-content-center">
         {% if page==1 %}
             <form action="" method="post" name="Add_item">
-            {{ enterMovieForm.csrf_token() }}
             {{ enterMovieForm.hidden_tag() }}
                 <div class="form-group">
                     <label for="taskNameInput">{{enterMovieForm.movietitle.label}}</label><br>
@@ -21,7 +20,6 @@
         {% endif %}
         {% if page==2%}
         <form action="" method="post" name="Add_item">
-            {{ selectScreeningForm.csrf_token() }}
             {{ selectScreeningForm.hidden_tag() }}
                 <div class="form-group">
                     <label for="taskNameInput">{{selectScreeningForm.screeningnumber.label}}</label><br>
@@ -37,7 +35,6 @@
         {% endif %}
         {% if page==3%}
         <form action="" method="post" name="Add_item">
-            {{ addSeatsForm.csrf_token() }}
             {{ addSeatsForm.hidden_tag() }}
                 <div class="form-group">
                     <label for="taskNameInput">{{addSeatsForm.seatnumber.label}}</label><br>
@@ -90,7 +87,6 @@
         {% endif %}
         {% if page==4 %}
         <form action="" method="post" name="Add_item">
-            {{ enterPaymentDetailsForm.csrf_token() }}
             {{ enterPaymentDetailsForm.hidden_tag() }}
                 <div class="form-group">
                     <label for="taskNameInput">{{enterPaymentDetailsForm.cardnumber.label}}</label><br>

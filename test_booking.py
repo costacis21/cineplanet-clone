@@ -1,6 +1,6 @@
 import unittest, os
 from app import app,models,forms,db,admin
-from flask import request, session
+from flask import request, session, logging
 from passlib.hash import sha256_crypt
 from flask_login import current_user, login_user, logout_user
 
@@ -9,7 +9,7 @@ class BasicTests(unittest.TestCase):
     def setUp(self):
         #PRESERVE_CONTEXT_ON_EXCEPTION = False
         app.config['TESTING'] = True
-        app.config['WTF_CSRF_ENABLED'] = True#If this is false you get lots of errors, idk if it needs to be false though
+        app.config['WTF_CSRF_ENABLED'] = False#If this is false you get lots of errors, idk if it needs to be false though
         app.config['DEBUG'] = False
         basedir = os.path.abspath(os.path.dirname(__file__))
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'app/app.db')
@@ -26,6 +26,7 @@ class BasicTests(unittest.TestCase):
         db.session.add(newUser)
         login_user(newUser)
         db.session.commit()
+        self.assertEqual(models.User.query.order_by(desc('UserID')).first().Email, 'sc19ap@leeds.ac.uk')
 
     #Tests that if you are not logged in and you try to access any part of the booking process, you are redirected to the login page
     def testRedirectionIfNotLoggedIn(self):
@@ -88,16 +89,14 @@ class BasicTests(unittest.TestCase):
         with app.test_client() as c:
             response = c.post('/test', data={'movietitle':'up'}, follow_redirects=True)
             self.assertEqual(response.status_code, 200)
-            self.assertEqual(forms.enterMovie().is_submitted(),True)
-            self.assertEqual(session, 'up')
-            self.assertEqual(request.path, '/')
-    """
+            self.assertEqual(session['movie'], 'up')
+            #self.assertEqual(request.path, '/') 
+"""   
     #Tests the /bookTickets page
     def testBookTickets1(self):
         with app.test_client() as c:
             self.signUpLogin()
-    """
-    """
+
     def testSignupLogin(self):
         with app.test_client() as c:
             signup_response = c.post('/signup',
