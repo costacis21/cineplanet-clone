@@ -4,7 +4,7 @@
   <br><br>
   <h1 class="row justify-content-md-center">Add a new movie</h1>
   <div class="row justify-content-center">
-    <form action="" method="post" name="Add_item">
+    <form action="" method="post" name="Add_item" value="Add_item">
     {{ enterMovie.csrf_token() }}
     {{ enterMovie.hidden_tag() }}
         <div class="form-group">
@@ -15,9 +15,32 @@
         {% endfor %}<br>
         </div>
         <div class="row justify-content-center">
-        <button type="submit" class="btn btn-primary">Search</button>
+        <button type="submit" class="btn btn-primary" name="Search" value="Search">Search</button>
         </div>
     </form>
   </div>
+  <br />
+  <div class="row justify-content-center">
+  {% if fetchedMovieCheck == 1 %}
+    <div class="row">
+      <div class="col-sm">
+        <img width = "200px" src="{{fetchedMovie['PosterURL']}}" />
+      </div>
+      <div class="col-sm">
+        <p><b>Title:</b> {{fetchedMovie['Title']}}</p>
+        <p><b>IMDB Rating:</b> {{fetchedMovie['Rating']}}</p>
+        <!-- <p>{{fetchedMovie['Description']}}</p> -->
+        <p><b>Age:</b> {{fetchedMovie['Age_Rating']}}</p>
+        <p><b>Duration:</b> {{fetchedMovie['Duration']}} minutes</p>
+        <form action="" method="post">
+          <button type="submit" class="btn btn-primary" name="Confirm" value="Confirm">Confirm</button>
+        </form>
+      </div>
+    </div>
+  {% elif fetchedMovieCheck == 0 %}
+    <h4>Movie not found</h4>
+  {% endif %}
+  </div>
+  <br />
 </div>
 {% endblock %}

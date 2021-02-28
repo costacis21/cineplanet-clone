@@ -1,4 +1,4 @@
-from flask import flash, render_template, redirect, url_for, session
+from flask import flash, render_template, redirect, url_for, session, request
 from flask_login import current_user, login_user, logout_user
 from app import app,models,forms,db,admin
 from datetime import datetime
@@ -16,7 +16,7 @@ admin.add_view(ModelView(models.Ticket, db.session))
 admin.add_view(ModelView(models.Seat, db.session))
 admin.add_view(ModelView(models.Movie, db.session))
 
-
+from imdbSearch import getMovieInfo
 
 
 
@@ -88,16 +88,17 @@ def logout():
         session['bookingProgress'] = 0
     return redirect(url_for('login'))
 
-@app.route('/addMovieScreening')
+@app.route('/addMovieScreening', methods=['GET','POST'])
 def addMovieScreening():
     if current_user.is_authenticated:   #checks user is signed in
         if (current_user.Privilage <= 1):   #checks user has required permission
-            addScreeningForm = forms.addMovieScreening()
-            allMovies = models.Movie.query.all()
-            print(allMovies)
+            addScreeningForm = forms.addMovieScreening.new()
+            if request.method == 'POST':
+                if request.form.get("Add Screening"):
+                    print("hi")
             return render_template('add-movie-screening.html',
                                 title='Add Movie Screening',
-                                addScreeningForm = addScreeningForm, allMovies = allMovies
+                                addScreeningForm = addScreeningForm,
                                 )
         else:
             flash("You lack the required permission")
@@ -105,14 +106,37 @@ def addMovieScreening():
     else:
         return redirect(url_for('login'))
 
-@app.route('/addNewMovie')
+@app.route('/addNewMovie', methods=['GET','POST'])
 def addNewMovie():
     if current_user.is_authenticated:   #checks user is signed in
         if (current_user.Privilage <= 1):   #checks user has required permission
             enterMovie = forms.enterMovie()
+            fetchedMovie = {} #Blank dictionary
+            fetchedMovieCheck = -1 #Flag variable to ensure an actual movie is fetched
+            if request.method == 'POST':
+                if request.form.get("Search"):
+                    fetchedMovie = getMovieInfo(enterMovie.movietitle.data)
+                    if fetchedMovie != None: #If a movie was found
+                        fetchedMovieCheck = 1
+                        session['fetchedMovie'] = fetchedMovie
+                    else: #If no movie was found
+                        fetchedMovieCheck = 0
+                elif request.form.get("Confirm"):
+                    currentMovies = models.Movie.query.filter_by(Description=session['fetchedMovie']['Description']).all() # Find current movies
+                    if len(currentMovies) > 0: # If a movie with a matching description was found, don't add the movie
+                        flash("Movie already added and available.")
+                    else: # ELse, add as new movie
+                        newMovie = models.Movie(Name = session['fetchedMovie']['Title'], Age = session['fetchedMovie']['Age_Rating'], Description = session['fetchedMovie']['Description'],
+                                                RunningTime = session['fetchedMovie']['Duration'], PosterURL = session['fetchedMovie']['PosterURL'])
+                        db.session.add(newMovie)
+                        db.session.commit()
+                    return redirect(url_for('addMovieScreening'))
+
             return render_template('add-new-movie.html',
                                 title='Add New Movie',
-                                enterMovie = enterMovie
+                                enterMovie = enterMovie,
+                                fetchedMovie = fetchedMovie,
+                                fetchedMovieCheck = fetchedMovieCheck
                                 )
         else:
             flash("You lack the required permission")

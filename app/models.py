@@ -73,10 +73,11 @@ class Seat(db.Model):
     #   otherwise return False
 
 class Movie(db.Model):
-    MovieID = db.Column(db.String(30), primary_key=True)
+    MovieID = db.Column(db.Integer, primary_key=True)
     Name = db.Column(db.String(50))
     Age = db.Column(db.Integer)
     Description = db.Column(db.String(500))
     # Added this for extra detail
     RunningTime = db.Column(db.Integer)
+    PosterURL = db.Column(db.String(100))
     Screenings = db.relationship('Screening', backref='movie', lazy='dynamic')
