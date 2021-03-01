@@ -36,7 +36,7 @@ def index():
             if request.form.get("Search"):
                 filteredMovies = []
                 for movie in theMovies:
-                    if searchForScreening.searchMovie.data in movie.Name:
+                    if searchForScreening.searchMovie.data.lower() in movie.Name.lower():
                         filteredMovies.append(movie)
                 theMovies = filteredMovies
                 numScreenings = len(theMovies)
