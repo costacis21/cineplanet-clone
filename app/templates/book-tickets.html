@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+ {% block content %}
+  <div class="container-fluid">
+    <br>
+    <div class="row justify-content-center">
+        {% if page==1 %}
+            <form action="" method="post" name="Add_item">
+            {{ enterMovieForm.hidden_tag() }}
+                <div class="form-group">
+                    <label for="taskNameInput">{{enterMovieForm.movietitle.label}}</label><br>
+                {{enterMovieForm.movietitle}}
+                {% for error in enterMovieForm.movietitle.errors %}
+                    </br><span style="color: red;">{{error}}</span>
+                {% endfor %}<br>
+                </div>
+                <div class="row justify-content-center">
+                <button type="submit" class="btn btn-outline-primary btn-sm">Submit</button>
+                </div>
+            </form>
+        {% endif %}
+        {% if page==2%}
+        <form action="" method="post" name="Add_item">
+            {{ selectScreeningForm.hidden_tag() }}
+                <div class="form-group">
+                    <label for="taskNameInput">{{selectScreeningForm.screeningnumber.label}}</label><br>
+                {{selectScreeningForm.screeningnumber}}
+                {% for error in selectScreeningForm.screeningnumber.errors %}
+                    </br><span style="color: red;">{{error}}</span>
+                {% endfor %}<br>
+                </div>
+                <div class="row justify-content-center">
+                <button type="submit" class="btn btn-outline-primary btn-sm">Submit</button>
+                </div>
+            </form>
+        {% endif %}
+        {% if page==3%}
+        <form action="" method="post" name="Add_item">
+            {{ addSeatsForm.hidden_tag() }}
+                <div class="form-group">
+                    <label for="taskNameInput">{{addSeatsForm.seatnumber.label}}</label><br>
+                {{addSeatsForm.seatnumber}}
+                {% for error in addSeatsForm.seatnumber.errors %}
+                    </br><span style="color: red;">{{error}}</span>
+                {% endfor %}<br>
+                <div class="form-group">
+                    <label for="taskNameInput">{{addSeatsForm.seatcategory.label}}</label><br>
+                {{addSeatsForm.seatcategory}}
+                {% for error in addSeatsForm.seatcategory.errors %}
+                    </br><span style="color: red;">{{error}}</span>
+                {% endfor %}<br>
+                </div>
+                <div class="row justify-content-center">
+                <button type="submit" class="btn btn-outline-primary btn-sm">Add Seat</button>
+                </div>
+                </div>
+                <div class="row justify-content-center">
+                <span style="color: black;">Seats:</span>
+                </div>
+                <div class="row justify-content-center">
+                <table style="width:150%">
+                    <thead>
+                        <th>Seat Number</th>
+                        <th>Seat Type</th>
+                        <th>Seat Category</th>
+                        <th>Price<th>
+                    </thead>
+                    <tbody>
+                        {% for seat in seats %}
+                        <tr>
+                            <td>{{seat[0]}}</td>
+                            <td>{{seat[1]}}</td>
+                            <td>{{seat[2]}}</td>
+                            <td>£{{seat[3]}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+                <div class="row justify-content-center">
+                    <br>
+                    <span style="color: black;">Total: £{{total}}</span>
+                </div>
+                <div class="row justify-content-center">
+                    <a href="http://127.0.0.1:5000/bookTickets/4" class="btn btn-outline-primary btn-sm" role="button" aria-pressed="true">Proceed to Payment</a>
+                </div>
+            </form>
+        {% endif %}
+        {% if page==4 %}
+        <form action="" method="post" name="Add_item">
+            {{ enterPaymentDetailsForm.hidden_tag() }}
+                <div class="form-group">
+                    <label for="taskNameInput">{{enterPaymentDetailsForm.cardnumber.label}}</label><br>
+                {{enterPaymentDetailsForm.cardnumber}}
+                {% for error in enterPaymentDetailsForm.cardnumber.errors %}
+                    </br><span style="color: red;">{{error}}</span>
+                {% endfor %}<br>
+                <div class="form-group">
+                    <label for="taskNameInput">{{enterPaymentDetailsForm.securitynumber.label}}</label><br>
+                {{enterPaymentDetailsForm.securitynumber}}
+                {% for error in enterPaymentDetailsForm.securitynumber.errors %}
+                    </br><span style="color: red;">{{error}}</span>
+                {% endfor %}<br>
+                </div>
+                <div class="row justify-content-center">
+                <button type="submit" class="btn btn-outline-primary btn-sm">Submit</button>
+                </div>
+            </form>    
+        {% endif %}
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,30 @@
+  {% extends "base.html" %}
+ {% block content %}
+ <div class="container-fluid">
+  <br><br>
+  <div class="row justify-content-center">
+      <form action="" method="post" name="Add_item">
+        {{ signinForm.hidden_tag() }}
+          <div class="form-group">
+              <label for="usernameInput">{{signinForm.email.label}}</label><br>
+              {{signinForm.email}}
+              {% for error in signinForm.email.errors %}
+              </br><span style="color: red;">{{error}}</span>
+              {% endfor %}<br>
+          </div>
+          <div class="form-group">
+              <label for="passwordInput">{{signinForm.password.label}}</label><br>
+              {{ signinForm.password }}
+              {% for error in signinForm.password.errors %}
+              </br><span style="color: red;">{{error}}</span>
+              {% endfor %}<br>
+              <small>Don't have an account? <a href='/signup'>Sign Up</a></small>
+          </div>
+          <div class="row justify-content-center">
+
+          <button type="submit" class="btn btn-outline-primary btn-sm">Submit</button>
+          </div>
+      </form>
+      </div>
+  </div>
+{% endblock %}

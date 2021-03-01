@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+<br>
+<p class="row justify-content-md-center">Logged in as: {{user}}</p>
+<div class="row justify-content-center">
+  <div class="row">
+    <div class="col-sm">
+      <form action="" method="post" name="Add_item" value="Add_item">
+      {{ searchForScreening.csrf_token() }}
+      {{ searchForScreening.hidden_tag() }}
+          <div class="form-group">
+          {{searchForScreening.searchMovie}}
+          {% for error in searchForScreening.searchMovie.errors %}
+              </br><span style="color: red;">{{error}}</span>
+          {% endfor %}<br>
+          </div>
+    </div>
+    <div class="col-sm">
+      <div class="row justify-content-center">
+      <button type="submit" class="btn btn-primary" name="Search" value="Search">Search</button>
+      </div>
+    </div>
+  </div>
+
+  </form>
+</div>
+<div class ="container">
+  <table class="table">
+    <thead class="thead-dark">
+      <!-- Headings -->
+      <tr>
+        <th scope="col">Movie</th>
+        <th scope="col">Time</th>
+        <th> </th>
+      </tr>
+    </thead>
+  <!-- for loop through all the activities and create a new table row for each -->
+  {% for i in range(0, numScreenings) %}
+  <tbody>
+    <tr>
+      <td>
+        <!-- <p><u><b>{{theMovies[i].Name}}</b></u></p> -->
+        <!-- <br /> -->
+        <div class="row">
+          <div class="col-sm" style="padding-right: 0px;">
+            <img width = "130px" src="{{theMovies[i].PosterURL}}" />
+          </div>
+          <div class="col-sm" style="padding-left: 0px;"">
+            <p><b>Name: </b>{{theMovies[i].Name}}</p>
+            <p><b>Age Rating: </b>{{theMovies[i].Age}}</p>
+            <p><b>Running Time: </b>{{theMovies[i].RunningTime}} mins</p>
+          </div>
+        </div>
+      </td>
+      <td>{{allScreenings[i].StartTimestamp}}</td>
+      <td><a href="bookTickets">Buy tickets here.</a></td>
+    </tr>
+  {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
