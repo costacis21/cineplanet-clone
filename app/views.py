@@ -86,7 +86,8 @@ def signup():
             else:
                 newUser = models.User(Email=signupForm.email.data, Password=sha256_crypt.encrypt(signupForm.password.data), Privilage=2)    #creates new user profile
                 db.session.add(newUser) #adds user model to db
-                login_user(newUser) #logs new user in
+                user = models.User.query.filter_by(Email=signupForm.email.data).first() #retrieves user profile
+                login_user(user) #logs new user in
                 db.session.commit()
                 logging.info('New User registered ID: %s', current_user.UserID)
                 flash("Signed in successfully")
