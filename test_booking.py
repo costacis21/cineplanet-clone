@@ -1,21 +1,33 @@
 import unittest, os
 from app import app,models,forms,db,admin
-from flask import request, session, logging
+from flask import request, session, logging, g
 from passlib.hash import sha256_crypt
 from flask_login import current_user, login_user, logout_user
+from werkzeug.local import LocalProxy
+
+def get_db():
+    if 'db' not in g:
+        g.db = connect_to_database()
+    return g.db
+
+@app.teardown_appcontext
+def teardown_db(exception):
+    db = g.pop('db', None)
+
+    if db is not None:
+        db.close()
 
 class BasicTests(unittest.TestCase):
     # executed prior to each test
     def setUp(self):
         #PRESERVE_CONTEXT_ON_EXCEPTION = False
         app.config['TESTING'] = True
-        app.config['WTF_CSRF_ENABLED'] = False#If this is false you get lots of errors, idk if it needs to be false though
+        app.config['WTF_CSRF_ENABLED'] = True#If this is false you get lots of errors, idk if it needs to be false though
         app.config['DEBUG'] = False
         basedir = os.path.abspath(os.path.dirname(__file__))
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'app/test.db')
         self.app = app.test_client()
-        db.drop_all()
-        db.create_all()
+        db = LocalProxy(get_db)
  
     # executed after each test
     def tearDown(self):
@@ -33,13 +45,21 @@ class BasicTests(unittest.TestCase):
         self.assertEqual(login_response.status_code, 200)
         self.assertEqual(request.path, '/')
 
-        """
-        newUser = models.User(Email='sc19ap@leeds.ac.uk', Password=sha256_crypt.encrypt('pass'), Privilage=2)
-        db.session.add(newUser)
-        login_user(newUser)
-        db.session.commit()
-        self.assertEqual(models.User.query.order_by(desc('UserID')).first().Email, 'sc19ap@leeds.ac.uk')
-        """
+    def testsignUpLogIn(self): #tests that users can be adde dto db and logged in
+        with app.test_request_context():
+            newUser = models.User(Email='sc19ap@leeds.ac.uk', Password=sha256_crypt.encrypt('pass'), Privilage=2)
+            db.session.add(newUser)
+            login_user(newUser)
+            db.session.commit()
+            self.assertEqual(models.User.query.order_by(models.User.UserID.desc()).first().Email, 'sc19ap@leeds.ac.uk')
+            self.assertEqual(current_user.Email, 'sc19ap@leeds.ac.uk')
+    
+    def testLogIn(self): #test that login wbepage functions correctly
+        with app.test_client() as c:
+            response = c.post('/login', data={'email':'sc19ap@leeds.ac.uk', 'password' : 'pass'}, follow_redirects=True)
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(request.path, '/') 
+            response = c.post('/logout', follow_redirects=True)
 
     #Tests that if you are not logged in and you try to access any part of the booking process, you are redirected to the login page
     def testRedirectionIfNotLoggedIn(self):
@@ -381,43 +401,8 @@ class BasicTests(unittest.TestCase):
             response = c.post('/bookTickets', data={'movietitle':'Up'}, follow_redirects=True)
             self.assertEqual(response.status_code, 200)
             self.assertEqual(request.path, '/bookTickets/2') 
-"""   
-    #Tests the /bookTickets page
-    def testBookTickets1(self):
-        with app.test_client() as c:
-            self.signUpLogin()
-
-    def testSignupLogin(self):
-        with app.test_client() as c:
-            signup_response = c.post('/signup',
-                                    data ={'email':'sc19ap@leeds.ac.uk', 'password':'pass', 'passwordCheck':'pass'},
-                                    follow_redirects=True)
-
-            #Checks that the request reached a webpage
-            self.assertEqual(signup_response.status_code, 200)
-
-            newUser = models.User(Email='sc19ap@leeds.ac.uk', Password=sha256_crypt.encrypt('pass'), Privilage=2)
-            db.session.add(newUser)
-            login_user(newUser)
-            db.session.commit()
-
-            user = models.User.query.filter_by(Email='sc19ap@leeds.ac.uk').first()
-            #self.assertEqual(user, True)
-            self.assertEqual(sha256_crypt.verify('pass', user.Password), True)
-
-            #self.assertEqual(request.path, '/login')
-
-            login_response = c.post('/login',
-                                    data ={'email':'sc19ap@leeds.ac.uk', 'password':'pass'},
-                                    follow_redirects=True)
-
-            #checks that the request reached a webpage
-            self.assertEqual(login_response.status_code, 200)
-
-            #checks that the user is redirected to the homepage (which only happens on a successful login)
-            self.assertEqual(request.path, '/')
-    """
-
+            self.assertEqual(session['movie'], 'up')
+            self.assertEqual(request.path, '/login') 
 
 if __name__ == "__main__":
     unittest.main()
