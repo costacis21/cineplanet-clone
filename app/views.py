@@ -31,11 +31,22 @@ def index():
         for screening in allScreenings:
             movie = models.Movie.query.filter_by(MovieID=screening.MovieID).all()
             theMovies.append(movie[0])
+        searchForScreening = forms.searchForScreening()
+        if request.method == 'POST':
+            if request.form.get("Search"):
+                filteredMovies = []
+                for movie in theMovies:
+                    if searchForScreening.searchMovie.data in movie.Name:
+                        filteredMovies.append(movie)
+                theMovies = filteredMovies
+                numScreenings = len(theMovies)
+
         return render_template('index.html',
                             title='Homepage', user=current_user.Email,
                             allScreenings = allScreenings,
                             theMovies = theMovies,
-                            numScreenings = numScreenings
+                            numScreenings = numScreenings,
+                            searchForScreening = searchForScreening
                             )
     else:
         return redirect(url_for('login'))
