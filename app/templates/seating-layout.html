@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html>
+<style>
+.seat {
+  position: relative;
+  display: inline-block;
+}
+
+.seat .seatinfo {
+  visibility: hidden;
+  width: 60px;
+  top: 100%;
+  left: 50%;
+  margin-left: -30px;
+  background-color: white;
+  text-align: center;
+  border-radius: 3px;
+  padding: 4px 4px;
+  font-family: Arial, sans-serif;
+  font-size: small;
+  position: absolute;
+  z-index: 1;
+}
+
+.seat:hover .seatinfo {
+  visibility: visible;
+}
+
+img {
+  width:30px;
+  height:30px;
+}
+</style>
+
+<div class="row">
+
+  <div class="column">
+    <img id="A" src="../static/icons/A.png"/>
+
+    <div class="seat">
+      <img id="A1" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: A1 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="A2" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: A2 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="A3" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: A3 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="A4" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: A4 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="A5" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: A5 Type: Standard</span>
+    </div>
+
+    <img src="../static/icons/empty_block.png"/>
+    <img src="../static/icons/empty_block.png"/>
+
+    <div class="seat">
+      <img id="A6" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: A6 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="A7" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: A7 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="A8" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: A8 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="A9" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: A9 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="A10" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: A10 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="A11" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: A11 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="A12" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: A12 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="A13" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: A13 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="A14" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: A14 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="A15" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: A15 Type: Standard</span>
+    </div>
+
+    <img src="../static/icons/empty_block.png"/>
+    <img src="../static/icons/empty_block.png"/>
+
+    <div class="seat">
+      <img id="A16" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: A16 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="A17" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: A17 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="A18" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: A18 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="A19" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: A19 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="A20" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: A20 Type: Standard</span>
+    </div>
+  </div>
+
+  <div class="column">
+    <img id="B" src="../static/icons/B.png"/>
+
+    <div class="seat">
+      <img id="B1" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: B1 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="B2" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: B2 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="B3" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: B3 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="B4" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: B4 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="B5" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: B5 Type: Standard</span>
+    </div>
+
+    <img src="../static/icons/empty_block.png"/>
+    <img src="../static/icons/empty_block.png"/>
+
+    <div class="seat">
+      <img id="B6" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: B6 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="B7" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: B7 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="B8" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: B8 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="B9" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: B9 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="B10" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: B10 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="B11" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: B11 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="B12" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: B12 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="B13" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: B13 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="B14" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: B14 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="B15" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: B15 Type: Standard</span>
+    </div>
+
+    <img src="../static/icons/empty_block.png"/>
+    <img src="../static/icons/empty_block.png"/>
+
+    <div class="seat">
+      <img id="B16" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: B16 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="B17" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: B17 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="B18" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: B18 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="B19" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: B19 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="B20" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: B20 Type: Standard</span>
+    </div>
+  </div>
+
+  <div class="column">
+    <img id="C" src="../static/icons/C.png"/>
+
+    <div class="seat">
+      <img id="C1" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: C1 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="C2" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: C2 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="C3" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: C3 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="C4" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: C4 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="C5" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: C5 Type: Standard</span>
+    </div>
+
+    <img src="../static/icons/empty_block.png"/>
+    <img src="../static/icons/empty_block.png"/>
+
+    <div class="seat">
+      <img id="C6" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: C6 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="C7" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: C7 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="C8" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: C8 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="C9" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: C9 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="C10" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: C10 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="C11" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: C11 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="C12" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: C12 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="C13" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: C13 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="C14" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: C14 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="C15" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: C15 Type: Standard</span>
+    </div>
+
+    <img src="../static/icons/empty_block.png"/>
+    <img src="../static/icons/empty_block.png"/>
+
+    <div class="seat">
+      <img id="C16" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: C16 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="C17" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: C17 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="C18" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: C18 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="C19" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: C19 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="C20" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: C20 Type: Standard</span>
+    </div>
+  </div>
+
+  <div class="column">
+    <img id="D" src="../static/icons/D.png"/>
+
+    <div class="seat">
+      <img id="D1" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: D1 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="D2" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: D2 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="D3" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: D3 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="D4" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: D4 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="D5" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: D5 Type: Standard</span>
+    </div>
+
+    <img src="../static/icons/empty_block.png"/>
+    <img src="../static/icons/empty_block.png"/>
+
+    <div class="seat">
+      <img id="D6" onclick="select(id)" src="../static/icons/empty_vip.png"/>
+      <span class="seatinfo">Seat: D6 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="D7" onclick="select(id)" src="../static/icons/reserved_vip.png"/>
+      <span class="seatinfo">Seat: D7 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="D8" onclick="select(id)" src="../static/icons/reserved_vip.png"/>
+      <span class="seatinfo">Seat: D8 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="D9" onclick="select(id)" src="../static/icons/reserved_vip.png"/>
+      <span class="seatinfo">Seat: D9 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="D10" onclick="select(id)" src="../static/icons/reserved_vip.png"/>
+      <span class="seatinfo">Seat: D10 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="D11" onclick="select(id)" src="../static/icons/empty_vip.png"/>
+      <span class="seatinfo">Seat: D11 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="D12" onclick="select(id)" src="../static/icons/reserved_vip.png"/>
+      <span class="seatinfo">Seat: D12 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="D13" onclick="select(id)" src="../static/icons/reserved_vip.png"/>
+      <span class="seatinfo">Seat: D13 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="D14" onclick="select(id)" src="../static/icons/empty_vip.png"/>
+      <span class="seatinfo">Seat: D14 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="D15" onclick="select(id)" src="../static/icons/reserved_vip.png"/>
+      <span class="seatinfo">Seat: D15 Type: Premium</span>
+    </div>
+
+    <img src="../static/icons/empty_block.png"/>
+    <img src="../static/icons/empty_block.png"/>
+
+    <div class="seat">
+      <img id="D16" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: D16 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="D17" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: D17 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="D18" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: D18 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="D19" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: D19 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="D20" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: D20 Type: Standard</span>
+    </div>
+  </div>
+
+  <div class="column">
+    <img id="E"src="../static/icons/E.png"/>
+
+    <div class="seat">
+      <img id="E1" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: E1 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="E2" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: E2 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="E3" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: E3 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="E4" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: E4 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="E5" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: E5 Type: Standard</span>
+    </div>
+
+    <img src="../static/icons/empty_block.png"/>
+    <img src="../static/icons/empty_block.png"/>
+
+    <div class="seat">
+      <img id="E6" onclick="select(id)" src="../static/icons/empty_vip.png"/>
+      <span class="seatinfo">Seat: E6 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="E7" onclick="select(id)" src="../static/icons/reserved_vip.png"/>
+      <span class="seatinfo">Seat: E7 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="E8" onclick="select(id)" src="../static/icons/reserved_vip.png"/>
+      <span class="seatinfo">Seat: E8 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="E9" onclick="select(id)" src="../static/icons/empty_vip.png"/>
+      <span class="seatinfo">Seat: E9 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="E10" onclick="select(id)" src="../static/icons/reserved_vip.png"/>
+      <span class="seatinfo">Seat: E10 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="E11" onclick="select(id)" src="../static/icons/reserved_vip.png"/>
+      <span class="seatinfo">Seat: E11 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="E12" onclick="select(id)" src="../static/icons/empty_vip.png"/>
+      <span class="seatinfo">Seat: E12 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="E13" onclick="select(id)" src="../static/icons/reserved_vip.png"/>
+      <span class="seatinfo">Seat: E13 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="E14" onclick="select(id)" src="../static/icons/reserved_vip.png"/>
+      <span class="seatinfo">Seat: E14 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="E15" onclick="select(id)" src="../static/icons/reserved_vip.png"/>
+      <span class="seatinfo">Seat: E15 Type: Premium</span>
+    </div>
+
+    <img src="../static/icons/empty_block.png"/>
+    <img src="../static/icons/empty_block.png"/>
+
+    <div class="seat">
+      <img id="E16" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: E16 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="E17" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: E17 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="E18" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: E18 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="E19" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: E19 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="E20" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: E20 Type: Standard</span>
+    </div>
+  </div>
+
+  <div class="column">
+    <img id="F"src="../static/icons/F.png"/>
+
+    <div class="seat">
+      <img id="F1" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: F1 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="F2" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: F2 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="F3" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: F3 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="F4" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: F4 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="F5" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: F5 Type: Standard</span>
+    </div>
+
+    <img src="../static/icons/empty_block.png"/>
+    <img src="../static/icons/empty_block.png"/>
+
+    <div class="seat">
+      <img id="F6" onclick="select(id)" src="../static/icons/reserved_vip.png"/>
+      <span class="seatinfo">Seat: F6 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="F7" onclick="select(id)" src="../static/icons/empty_vip.png"/>
+      <span class="seatinfo">Seat: F7 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="F8" onclick="select(id)" src="../static/icons/reserved_vip.png"/>
+      <span class="seatinfo">Seat: F8 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="F9" onclick="select(id)" src="../static/icons/reserved_vip.png"/>
+      <span class="seatinfo">Seat: F9 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="F10" onclick="select(id)" src="../static/icons/empty_vip.png"/>
+      <span class="seatinfo">Seat: F10 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="F11" onclick="select(id)" src="../static/icons/reserved_vip.png"/>
+      <span class="seatinfo">Seat: F11 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="F12" onclick="select(id)" src="../static/icons/reserved_vip.png"/>
+      <span class="seatinfo">Seat: F12 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="F13" onclick="select(id)" src="../static/icons/reserved_vip.png"/>
+      <span class="seatinfo">Seat: F13 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="F14" onclick="select(id)" src="../static/icons/empty_vip.png"/>
+      <span class="seatinfo">Seat: F14 Type: Premium</span>
+    </div>
+    <div class="seat">
+      <img id="F15" onclick="select(id)" src="../static/icons/empty_vip.png"/>
+      <span class="seatinfo">Seat: F15 Type: Premium</span>
+    </div>
+
+    <img src="../static/icons/empty_block.png"/>
+    <img src="../static/icons/empty_block.png"/>
+
+    <div class="seat">
+      <img id="F16" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: F16 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="F17" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: F17 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="F18" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: F18 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="F19" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: F19 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="F20" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: F20 Type: Standard</span>
+    </div>
+  </div>
+
+
+  <div class="column">
+    <div class="column">
+      <img id="G" src="../static/icons/G.png"/>
+
+      <div class="seat">
+        <img id="G1" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: G1 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="G2" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: G2 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="G3" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: G3 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="G4" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: G4 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="G5" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: G5 Type: Standard</span>
+      </div>
+
+      <img src="../static/icons/empty_block.png"/>
+      <img src="../static/icons/empty_block.png"/>
+
+      <div class="seat">
+        <img id="G6" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: G6 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="G7" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: G7 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="G8" onclick="select(id)" src="../static/icons/reserved.png"/>
+        <span class="seatinfo">Seat: G8 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="G9" onclick="select(id)" src="../static/icons/reserved.png"/>
+        <span class="seatinfo">Seat: G9 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="G10" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: G10 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="G11" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: G11 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="G12" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: G12 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="G13" onclick="select(id)" src="../static/icons/reserved.png"/>
+        <span class="seatinfo">Seat: G13 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="G14" onclick="select(id)" src="../static/icons/reserved.png"/>
+        <span class="seatinfo">Seat: G14 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="G15" onclick="select(id)" src="../static/icons/reserved.png"/>
+        <span class="seatinfo">Seat: G15 Type: Standard</span>
+      </div>
+
+      <img src="../static/icons/empty_block.png"/>
+      <img src="../static/icons/empty_block.png"/>
+
+      <div class="seat">
+        <img id="G16" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: G16 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="G17" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: G17 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="G18" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: G18 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="G19" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: G19 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="G20" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: G20 Type: Standard</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="column">
+    <div class="column">
+      <img id="H" src="../static/icons/H.png"/>
+
+      <div class="seat">
+        <img id="H1" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: H1 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="H2" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: H2 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="H3" onclick="select(id)" src="../static/icons/reserved.png"/>
+        <span class="seatinfo">Seat: H3 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="H4" onclick="select(id)" src="../static/icons/reserved.png"/>
+        <span class="seatinfo">Seat: H4 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="H5" onclick="select(id)" src="../static/icons/reserved.png"/>
+        <span class="seatinfo">Seat: H5 Type: Standard</span>
+      </div>
+
+      <img src="../static/icons/empty_block.png"/>
+      <img src="../static/icons/empty_block.png"/>
+
+      <div class="seat">
+        <img id="H6" onclick="select(id)" src="../static/icons/reserved.png"/>
+        <span class="seatinfo">Seat: H6 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="H7" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: H7 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="H8" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: H8 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="H9" onclick="select(id)" src="../static/icons/reserved.png"/>
+        <span class="seatinfo">Seat: H9 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="H10" onclick="select(id)" src="../static/icons/reserved.png"/>
+        <span class="seatinfo">Seat: H10 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="H11" onclick="select(id)" src="../static/icons/reserved.png"/>
+        <span class="seatinfo">Seat: H11 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="H12" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: H12 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="H13" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: H13 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="H14" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: H14 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="H15" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: H15 Type: Standard</span>
+      </div>
+
+      <img src="../static/icons/empty_block.png"/>
+      <img src="../static/icons/empty_block.png"/>
+
+      <div class="seat">
+        <img id="H16" onclick="select(id)" src="../static/icons/reserved.png"/>
+        <span class="seatinfo">Seat: H16 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="H17" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: H17 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="H18" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: H18 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="H19" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: H19 Type: Standard</span>
+      </div>
+      <div class="seat">
+        <img id="H20" onclick="select(id)" src="../static/icons/empty.png"/>
+        <span class="seatinfo">Seat: H20 Type: Standard</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="column">
+    <img id="I" src="../static/icons/I.png"/>
+
+    <div class="seat">
+      <img id="I1" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: I1 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="I2" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: I2 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="I3" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: I3 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="I4" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: I4 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="I5" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: I5 Type: Standard</span>
+    </div>
+
+    <img src="../static/icons/empty_block.png"/>
+    <img src="../static/icons/empty_block.png"/>
+
+    <div class="seat">
+      <img id="I6" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: I6 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="I7" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: I7 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="I8" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: I8 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="I9" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: I9 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="I10" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: I10 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="I11" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: I11 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="I12" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: I12 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="I13" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: I13 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="I14" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: I14 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="I15" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: I15 Type: Standard</span>
+    </div>
+
+    <img src="../static/icons/empty_block.png"/>
+    <img src="../static/icons/empty_block.png"/>
+
+    <div class="seat">
+      <img id="I16" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: I16 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="I17" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: I17 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="I18" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: I18 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="I19" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: I19 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="I20" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: I20 Type: Standard</span>
+    </div>
+  </div>
+</div>
+
+  <div class="column">
+    <img id="J" src="../static/icons/J.png"/>
+
+    <div class="seat">
+      <img id="J1" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: J1 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="J2" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: J2 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="J3" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: J3 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="J4" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: J4 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="J5" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: J5 Type: Standard</span>
+    </div>
+
+    <img src="../static/icons/empty_block.png"/>
+    <img src="../static/icons/empty_block.png"/>
+
+    <div class="seat">
+      <img id="J6" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: J6 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="J7" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: J7 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="J8" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: J8 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="J9" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: J9 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="J10" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: J10 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="J11" onclick="select(id)" src="../static/icons/reserved.png"/>
+      <span class="seatinfo">Seat: J11 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="J12" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: J12 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="J13" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: J13 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="J14" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: J14 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="J15" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: J15 Type: Standard</span>
+    </div>
+
+    <img src="../static/icons/empty_block.png"/>
+    <img src="../static/icons/empty_block.png"/>
+
+    <div class="seat">
+      <img id="J16" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: J16 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="J17" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: J17 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="J18" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: J18 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="J19" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: J19 Type: Standard</span>
+    </div>
+    <div class="seat">
+      <img id="J20" onclick="select(id)" src="../static/icons/empty.png"/>
+      <span class="seatinfo">Seat: J20 Type: Standard</span>
+    </div>
+  </div>
+</div>
+
+</div>
+<script>
+function select(id) {
+  var Image_Id = document.getElementById(id);
+  if (Image_Id.src.match("../static/icons/empty.png") || Image_Id.src.match("../static/icons/selected.png")) {
+    if (Image_Id.src.match("../static/icons/empty.png")) {
+      Image_Id.src = "../static/icons/selected.png";
+    }
+    else {
+      Image_Id.src = "../static/icons/empty.png";
+    }
+  }
+  else if (Image_Id.src.match("../static/icons/empty_vip.png") || Image_Id.src.match("../static/icons/selected_vip.png")) {
+    if (Image_Id.src.match("../static/icons/empty_vip.png")) {
+      Image_Id.src = "../static/icons/selected_vip.png";
+    }
+    else {
+      Image_Id.src = "../static/icons/empty_vip.png";
+    }
+  }
+
+}
+</script>
+</body>
+</html>
