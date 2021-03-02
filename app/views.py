@@ -1,7 +1,7 @@
 from flask import flash, render_template, redirect, url_for, session, request
 from flask_login import current_user, login_user, logout_user
 from app import app,models,forms,db,admin
-from datetime import datetime
+import datetime
 from passlib.hash import sha256_crypt
 import logging
 
@@ -44,12 +44,17 @@ def index():
                         filteredMovies.append(movie)
                 allMovies = filteredMovies
                 moviesLength = len(allMovies)
+            if request.form.get("Filter"):
+                data = request.form['screeningDateFilter']
+                print(data)
 
         return render_template('index.html',
                             title='Homepage', user=current_user.Email,
                             allMovies = allMovies,
                             moviesLength = moviesLength,
-                            searchForScreening = searchForScreening
+                            searchForScreening = searchForScreening,
+                            tomorrow = (datetime.date.today() + datetime.timedelta(days=1)).strftime('%d/%m/%y'),
+                            yesterday = (datetime.date.today() + datetime.timedelta(days=-1)).strftime('%d/%m/%y')
                             )
     else:
         return redirect(url_for('login'))

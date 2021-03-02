@@ -2,6 +2,8 @@
 {% block content %}
 <br>
 <p class="row justify-content-md-center">Logged in as: {{user}}</p>
+<h1 class="row justify-content-md-center">Todays Viewings</h1>
+<br />
 <div class="row justify-content-center">
   <div class="row">
     <div class="col-sm">
@@ -25,6 +27,15 @@
   </form>
 </div>
 <div class ="container">
+  <div class="float-right">
+    <form action="" method="post">
+      <label for="birthday">Date:</label>
+      <input type="date" id="birthday" name="screeningDateFilter">
+      <button type="submit" class="btn btn-primary" name="Filter" value="Filter">Filter</button>
+    </form>
+  </div>
+  <br />
+  <br />
   <table class="table">
     <thead class="thead-dark">
       <!-- Headings -->
