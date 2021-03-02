@@ -1,0 +1,29 @@
+.seat {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .seat .seatinfo {
+    visibility: hidden;
+    width: 60px;
+    top: 100%;
+    left: 50%;
+    margin-left: -30px;
+    background-color: white;
+    text-align: center;
+    border-radius: 3px;
+    padding: 4px 4px;
+    font-family: Arial, sans-serif;
+    font-size: small;
+    position: absolute;
+    z-index: 1;
+  }
+  
+  .seat:hover .seatinfo {
+    visibility: visible;
+  }
+  
+  img {
+    width:30px;
+    height:30px;
+  }

@@ -303,3 +303,11 @@ def t():
                             enterMovieForm = enterMovieForm,
                             page=1
                             )
+
+@app.route('/seats')
+def seats():
+
+    return render_template('seating-auto-layout.html',
+    rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'], 
+    vip=['D', 'E', 'F'], 
+    reserved = ['A1', 'C14', 'E10', 'E11']) # need to collect actual reserved seats
