@@ -32,27 +32,23 @@ def resetBookingSessionData():
 def index():
     resetBookingSessionData()
     if current_user.is_authenticated:
-        allScreenings = models.Screening.query.all()
-        numScreenings = len(allScreenings)
-        theMovies = []
-        for screening in allScreenings:
-            movie = models.Movie.query.filter_by(MovieID=screening.MovieID).all()
-            theMovies.append(movie[0])
+        allMovies = models.Movie.query.all()
+        moviesLength = len(allMovies)
+        # Search bar functionality --------------------------------------------------
         searchForScreening = forms.searchForScreening()
         if request.method == 'POST':
             if request.form.get("Search"):
                 filteredMovies = []
-                for movie in theMovies:
+                for movie in allMovies:
                     if searchForScreening.searchMovie.data.lower() in movie.Name.lower():
                         filteredMovies.append(movie)
-                theMovies = filteredMovies
-                numScreenings = len(theMovies)
+                allMovies = filteredMovies
+                moviesLength = len(allMovies)
 
         return render_template('index.html',
                             title='Homepage', user=current_user.Email,
-                            allScreenings = allScreenings,
-                            theMovies = theMovies,
-                            numScreenings = numScreenings,
+                            allMovies = allMovies,
+                            moviesLength = moviesLength,
                             searchForScreening = searchForScreening
                             )
     else:
