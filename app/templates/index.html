@@ -2,7 +2,7 @@
 {% block content %}
 <br>
 <p class="row justify-content-md-center">Logged in as: {{user}}</p>
-<h1 class="row justify-content-md-center">Viewings</h1>
+<h1 class="row justify-content-md-center">Screenings</h1>
 <h6 class="row justify-content-md-center">Date: {{date}}</h6>
 <br />
 <div class ="container">
@@ -53,7 +53,7 @@
       {% set screenings = allMovies[i].getScreenings(date) %}
       {% for screening in screenings %}
         <form action="" method="post">
-          <input type="submit" class="btn btn-success" value="{{screening.StartTimestamp}}">
+          <input type="submit" class="btn btn-success" value="{{(screening.StartTimestamp|string)[11:16]}}">
           <br /><br />
           <input type="hidden" value={{screening.ScreeningID}} name="buy">
         </form>
