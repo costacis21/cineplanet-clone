@@ -2,30 +2,9 @@
 {% block content %}
 <br>
 <p class="row justify-content-md-center">Logged in as: {{user}}</p>
-<h1 class="row justify-content-md-center">Todays Viewings</h1>
+<h1 class="row justify-content-md-center">Viewings</h1>
+<h5 class="row justify-content-md-center">Date: {{date}}</h5>
 <br />
-<div class="row justify-content-center">
-  <div class="row">
-    <div class="col-sm">
-      <form action="" method="post" name="Add_item" value="Add_item">
-      {{ searchForScreening.csrf_token() }}
-      {{ searchForScreening.hidden_tag() }}
-          <div class="form-group">
-          {{searchForScreening.searchMovie}}
-          {% for error in searchForScreening.searchMovie.errors %}
-              </br><span style="color: red;">{{error}}</span>
-          {% endfor %}<br>
-          </div>
-    </div>
-    <div class="col-sm">
-      <div class="row justify-content-center">
-      <button type="submit" class="btn btn-primary" name="Search" value="Search">Search</button>
-      </div>
-    </div>
-  </div>
-
-  </form>
-</div>
 <div class ="container">
   <div class="float-right">
     <form action="" method="post">
@@ -45,10 +24,17 @@
         <th> </th>
       </tr>
     </thead>
+  {% if dailyScreenings == 0 %}
+    <tbody>
+      <tr>
+          <td>No Movies on show today</td>
+      </tr>
+    </tbody>
+  {% else %}
   <!-- for loop through all the activities and create a new table row for each -->
-  {% for i in range(0, moviesLength) %}
+  {% for i in range(0, allMovies|length) %}
   <tbody>
-    {% set screenings = allMovies[i].getScreenings() %}
+    {% set screenings = allMovies[i].getScreenings(date) %}
     {% if screenings|length >= 1 %}
     <tr>
       <td>
@@ -64,7 +50,7 @@
         </div>
       </td>
       <td>
-      {% set screenings = allMovies[i].getScreenings() %}
+      {% set screenings = allMovies[i].getScreenings(date) %}
       {% for screening in screenings %}
         {{screening.StartTimestamp}}<br />
       {% endfor %}
@@ -77,6 +63,7 @@
     </tr>
     {% endif %}
   {% endfor %}
+  {% endif %}
     </tbody>
   </table>
 </div>

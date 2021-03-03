@@ -32,29 +32,27 @@ def resetBookingSessionData():
 def index():
     resetBookingSessionData()
     if current_user.is_authenticated:
+        date = datetime.date.today()
         allMovies = models.Movie.query.all()
+        dailyScreenings = 0
+        for i in allMovies:
+            if i.getScreenings(date):
+                dailyScreenings = dailyScreenings + 1
         moviesLength = len(allMovies)
-        # Search bar functionality --------------------------------------------------
-        searchForScreening = forms.searchForScreening()
         if request.method == 'POST':
-            if request.form.get("Search"):
-                filteredMovies = []
-                for movie in allMovies:
-                    if searchForScreening.searchMovie.data.lower() in movie.Name.lower():
-                        filteredMovies.append(movie)
-                allMovies = filteredMovies
-                moviesLength = len(allMovies)
             if request.form.get("Filter"):
-                data = request.form['screeningDateFilter']
-                print(data)
+                date = request.form['screeningDateFilter']
+                dailyScreenings = 0
+                for i in allMovies:
+                    if i.getScreenings(date):
+                        dailyScreenings = dailyScreenings + 1
 
         return render_template('index.html',
                             title='Homepage', user=current_user.Email,
                             allMovies = allMovies,
                             moviesLength = moviesLength,
-                            searchForScreening = searchForScreening,
-                            tomorrow = (datetime.date.today() + datetime.timedelta(days=1)).strftime('%d/%m/%y'),
-                            yesterday = (datetime.date.today() + datetime.timedelta(days=-1)).strftime('%d/%m/%y')
+                            date = date,
+                            dailyScreenings = dailyScreenings
                             )
     else:
         return redirect(url_for('login'))
