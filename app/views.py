@@ -49,8 +49,17 @@ def index():
             foundScreeningID = request.form.get("buy")
             # Needs here to be replaced with a redirect to the specific ticket booking of that screening
             flash("You are trying to book tickets for screening number: " + str(foundScreeningID))
-
-    return render_template('index.html',
+    if current_user.is_authenticated:
+        return render_template('index.html',
+                            title='Homepage',
+                            allMovies = allMovies,
+                            moviesLength = moviesLength,
+                            date = date,
+                            dailyScreenings = dailyScreenings,
+                            user=current_user.Email
+                            )
+    else:
+        return render_template('index.html',
                         title='Homepage',
                         allMovies = allMovies,
                         moviesLength = moviesLength,
