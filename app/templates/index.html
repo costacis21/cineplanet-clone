@@ -3,7 +3,7 @@
 <br>
 <p class="row justify-content-md-center">Logged in as: {{user}}</p>
 <h1 class="row justify-content-md-center">Viewings</h1>
-<h5 class="row justify-content-md-center">Date: {{date}}</h5>
+<h6 class="row justify-content-md-center">Date: {{date}}</h6>
 <br />
 <div class ="container">
   <div class="float-right">
@@ -52,12 +52,11 @@
       <td>
       {% set screenings = allMovies[i].getScreenings(date) %}
       {% for screening in screenings %}
-        {{screening.StartTimestamp}}<br />
-      {% endfor %}
-      </td>
-      <td>
-      {% for screening in screenings %}
-        <a href="bookTickets">Buy tickets here.</a><br />
+        <form action="" method="post">
+          <input type="submit" class="btn btn-success" value="{{screening.StartTimestamp}}">
+          <br /><br />
+          <input type="hidden" value={{screening.ScreeningID}} name="buy">
+        </form>
       {% endfor %}
       </td>
     </tr>

@@ -46,6 +46,10 @@ def index():
                 for i in allMovies:
                     if i.getScreenings(date):
                         dailyScreenings = dailyScreenings + 1
+            else: # Clicked to buy tickets
+                foundScreeningID = request.form.get("buy")
+                # Needs here to be replaced with a redirect to the specific ticket booking of that screening
+                flash("You are trying to book tickets for screening number: " + str(foundScreeningID))
 
         return render_template('index.html',
                             title='Homepage', user=current_user.Email,
