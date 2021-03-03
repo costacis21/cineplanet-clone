@@ -45,3 +45,4 @@ class addSeats(Form):
 class enterPaymentDetails(Form):
     cardnumber = IntegerField('Card Number', validators=[DataRequired()])
     securitynumber = IntegerField('Security Number', validators=[DataRequired()])
+
