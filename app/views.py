@@ -31,35 +31,32 @@ def resetBookingSessionData():
 @app.route('/', methods=['GET','POST'])
 def index():
     resetBookingSessionData()
-    if current_user.is_authenticated:
-        date = datetime.date.today()
-        allMovies = models.Movie.query.all()
-        dailyScreenings = 0
-        for i in allMovies:
-            if i.getScreenings(date):
-                dailyScreenings = dailyScreenings + 1
-        moviesLength = len(allMovies)
-        if request.method == 'POST':
-            if request.form.get("Filter"):
-                date = request.form['screeningDateFilter']
-                dailyScreenings = 0
-                for i in allMovies:
-                    if i.getScreenings(date):
-                        dailyScreenings = dailyScreenings + 1
-            else: # Clicked to buy tickets
-                foundScreeningID = request.form.get("buy")
-                # Needs here to be replaced with a redirect to the specific ticket booking of that screening
-                flash("You are trying to book tickets for screening number: " + str(foundScreeningID))
+    date = datetime.date.today()
+    allMovies = models.Movie.query.all()
+    dailyScreenings = 0
+    for i in allMovies:
+        if i.getScreenings(date):
+            dailyScreenings = dailyScreenings + 1
+    moviesLength = len(allMovies)
+    if request.method == 'POST':
+        if request.form.get("Filter"):
+            date = request.form['screeningDateFilter']
+            dailyScreenings = 0
+            for i in allMovies:
+                if i.getScreenings(date):
+                    dailyScreenings = dailyScreenings + 1
+        else: # Clicked to buy tickets
+            foundScreeningID = request.form.get("buy")
+            # Needs here to be replaced with a redirect to the specific ticket booking of that screening
+            flash("You are trying to book tickets for screening number: " + str(foundScreeningID))
 
-        return render_template('index.html',
-                            title='Homepage', user=current_user.Email,
-                            allMovies = allMovies,
-                            moviesLength = moviesLength,
-                            date = date,
-                            dailyScreenings = dailyScreenings
-                            )
-    else:
-        return redirect(url_for('login'))
+    return render_template('index.html',
+                        title='Homepage',
+                        allMovies = allMovies,
+                        moviesLength = moviesLength,
+                        date = date,
+                        dailyScreenings = dailyScreenings
+                        )
 
 @app.route('/login', methods=['GET','POST'])
 def login():
@@ -138,6 +135,7 @@ def addMovieScreening():
             return render_template('add-movie-screening.html',
                                 title='Add Movie Screening',
                                 addScreeningForm = addScreeningForm,
+                                user=current_user.Email
                                 )
         else:
             flash("You lack the required permission")
@@ -175,7 +173,8 @@ def addNewMovie():
                                 title='Add New Movie',
                                 enterMovie = enterMovie,
                                 fetchedMovie = fetchedMovie,
-                                fetchedMovieCheck = fetchedMovieCheck
+                                fetchedMovieCheck = fetchedMovieCheck,
+                                user=current_user.Email
                                 )
         else:
             flash("You lack the required permission")
@@ -201,7 +200,8 @@ def bookTickets():
         return render_template('book-tickets.html',
                             title='Book Tickets',
                             enterMovieForm = enterMovieForm,
-                            page=1
+                            page=1,
+                            user=current_user.Email
                             )
     else:
         flash("You must be signed in to book tickets")
@@ -223,7 +223,7 @@ def selectScreening():
             return render_template('book-tickets.html',
                                 title='Select Screening',
                                 selectScreeningForm = selectScreeningForm,
-                                page=2)
+                                page=2, user=current_user.Email)
         else:
             flash('You must select a movie first')
             return redirect(url_for('bookTickets'))
@@ -254,7 +254,7 @@ def addSeats():
                                 addSeatsForm = addSeatsForm,
                                 seats=session['seats'],
                                 total=session['total'],
-                                page=3)
+                                page=3, user=current_user.Email)
         else:
             flash('You must select a movie and screening first')
             return redirect(url_for('bookTickets'))
@@ -286,7 +286,7 @@ def enterPaymentDetails():
             return render_template('book-tickets.html',
                                 title='Checkout',
                                 enterPaymentDetailsForm = enterPaymentDetailsForm,
-                                page=4)
+                                page=4, user=current_user.Email)
         else:
             flash('You must complete the booking process first')
             return redirect(url_for('addSeats'))
@@ -304,13 +304,13 @@ def t():
     return render_template('book-tickets.html',
                             title='Book Tickets',
                             enterMovieForm = enterMovieForm,
-                            page=1
+                            page=1, user=current_user.Email
                             )
 
 @app.route('/seats')
 def seats():
 
     return render_template('seating-auto-layout.html',
-    rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'], 
-    vip=['D', 'E', 'F'], 
+    rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'],
+    vip=['D', 'E', 'F'],
     reserved = ['A1', 'C14', 'E10', 'E11']) # need to collect actual reserved seats
