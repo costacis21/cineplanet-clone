@@ -16,7 +16,7 @@ admin.add_view(ModelView(models.Ticket, db.session))
 admin.add_view(ModelView(models.Seat, db.session))
 admin.add_view(ModelView(models.Movie, db.session))
 
-from imdbSearch import getMovieInfo
+from imdbSearch import *
 
 premium = ['D6', 'D7', 'D8', 'D9', 'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'D16',
 'E6', 'E7', 'E8', 'E9', 'E10', 'E11', 'E12', 'E13', 'E14', 'E15', 'E16',
@@ -166,17 +166,15 @@ def addNewMovie():
     if current_user.is_authenticated:   #checks user is signed in
         if (current_user.Privilage <= 1):   #checks user has required permission
             enterMovie = forms.enterMovie()
-            fetchedMovie = {} #Blank dictionary
-            fetchedMovieCheck = -1 #Flag variable to ensure an actual movie is fetched
+            # fetchedMovies = []
+            selectMovie = forms.selectNewMovie()
             if request.method == 'POST':
-                if request.form.get("Search"):
-                    fetchedMovie = getMovieInfo(enterMovie.movietitle.data)
-                    if fetchedMovie != None: #If a movie was found
-                        fetchedMovieCheck = 1
-                        session['fetchedMovie'] = fetchedMovie
-                    else: #If no movie was found
-                        fetchedMovieCheck = 0
-                elif request.form.get("Confirm"):
+                if enterMovie.validate_on_submit():
+                    if(enterMovie.movietitle.data != ""):
+                        fetchedMovies = getMovieInfo(enterMovie.movietitle.data)
+                    else:
+                        fetchedMovies = getUpcomingMovies()
+                elif selectMovie.validate_on_submit():
                     currentMovies = models.Movie.query.filter_by(Description=session['fetchedMovie']['Description']).all() # Find current movies
                     if len(currentMovies) > 0: # If a movie with a matching description was found, don't add the movie
                         flash("Movie already added and available.")
@@ -186,13 +184,16 @@ def addNewMovie():
                         db.session.add(newMovie)
                         db.session.commit()
                     return redirect(url_for('addMovieScreening'))
+            else:
+                fetchedMovies = getUpcomingMovies()
+
 
             return render_template('add-new-movie.html',
                                 title='Add New Movie',
                                 enterMovie = enterMovie,
-                                fetchedMovie = fetchedMovie,
-                                fetchedMovieCheck = fetchedMovieCheck,
-                                user=current_user.Email
+                                user=current_user.Email,
+                                movies = fetchedMovies,
+                                selectMovie = selectMovie
                                 )
         else:
             flash("You lack the required permission")
