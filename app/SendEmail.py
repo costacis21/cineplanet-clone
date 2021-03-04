@@ -9,7 +9,7 @@ smtp_server = "smtp.gmail.com"
 port = 587
 sender_email = "leeds.cinemaplanet@gmail.com"
 
-def SendMail(receiver_email, filename):
+def SendMail(receiver_email, filenames):
     """
     Sends an email from the cinema's email address to the given receiver email
     
@@ -19,7 +19,7 @@ def SendMail(receiver_email, filename):
     """
 
     # Get sender password
-    sender_password = input("Enter your password: ")
+    sender_password = "yellowConcr3te_"
 
     # Create a secure ssl context
     context = ssl.create_default_context()
@@ -38,22 +38,26 @@ def SendMail(receiver_email, filename):
     # Set up the message object
     # "alternative" used here to ensure that if the receiver has disabled html emails then they will still receive it as plain text
     message = MIMEMultipart("alternative")
-    message["Subject"] = "Test Subject"
+    message["Subject"] = "CinePlanet Tickets"
     message["From"] = sender_email
     message["To"] = receiver_email
     message["Bcc"] = receiver_email
 
     # Create the plain text portion of message
     # Will probably be the same for all messages sent (which is why this is hardcoded for now)
-    text = """\
-    Test Message"""
+    text = """\ """
 
     # Create's the html portion of the message 
     html = """\
     <html>
     <body>
         <p>
-            Test Paragraph
+            Here are your Cineplanet tickets!<br>
+            <br>
+            If have any issues receiving your tickets or the tickets you have sent are incorrect then please don't hesitate to contact us at leeds.cineplanet@gmail.com<br>
+            <br>
+            All the best,<br>
+            CinePlanet Team. 
         </p>
     </body>
     </html>
@@ -68,24 +72,23 @@ def SendMail(receiver_email, filename):
     message.attach(part1)
     message.attach(part2)
 
-    # Opens the PDF file containing the ticket in binary mode
-    with open(filename, "rb") as attachment:
-        # Adds the file as an application/octet-stream
-        # Email client can usually download this automatically as attachment
-        part = MIMEBase("application", "octet-stream")
-        part.set_payload(attachment.read())
+    for i in range(0,len(filenames)):
+        print("filename:"+filenames[i])
+        # Opens the PDF file containing the ticket in binary mode
+        with open(filenames[i], "rb") as attachment:
+            # Adds the file as an application/octet-stream
+            # Email client can usually download this automatically as attachment
+            part = MIMEBase("application", "octet-stream")
+            part.set_payload(attachment.read())
 
-    # Encode the file in ASCII characters to send by email    
-    encoders.encode_base64(part)
+        # Encode the file in ASCII characters to send by email    
+        encoders.encode_base64(part)
 
-    # Adds header as key/value pair to attachment part
-    part.add_header("Content-Disposition",f"attachment; filename= {filename}",)
+        # Adds header as key/value pair to attachment part
+        part.add_header("Content-Disposition",f"attachment; filename= {filenames[i]}",)
 
-    # Adds the attachment to the message object and converts the message into a string
-    message.attach(part)
-    text = message.as_string()
-
-    text = message.as_string()
+        # Adds the attachment to the message object and converts the message into a string
+        message.attach(part)
 
     try:
         #Sends the email
@@ -97,5 +100,4 @@ def SendMail(receiver_email, filename):
     server.quit()
 
 if __name__ == "__main__":
-    pass
-    #main(sys.argv[1], sys.argv[2])
+    SendMail(sys.argv[0], sys.argv[1])
