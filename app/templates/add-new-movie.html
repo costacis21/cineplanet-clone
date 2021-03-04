@@ -31,12 +31,12 @@
       <th> </th>
     </tr>
   </thead>
-<!-- for loop through all the activities and create a new table row for each -->
+<!-- for loop through all the  movies and create a new table row for each  -->
 <tbody>
 {% for movie in movies%}
   <tr>
-    <form action="" method="post" name="movie">
     <td>
+      <form action="" method="post" name="selectMovie" value = "selectMovie">
       <div class="row">
         <div class="col-sm" style="padding-right: 0px;">
           <img width = "130px" src="{{movie.PosterURL}}" />
@@ -47,9 +47,12 @@
           <p><b>Running Time: </b>{{movie.Duration}} mins</p>
         </div>
         <div class="col-sm" style="padding-right: 0px;">
-          {{selectMovie.tmdbID(value=movie.ID)}}
-          <input type="submit" class="btn btn-primary" value="Add movie"></div>
+          
+            {{selectMovie.tmdbID(value=movie.ID)}}
+            <input type="submit" class="btn btn-primary" value="Add movie"></div>
+          
       </div>
+    </form>
     </td>
   </tr>
 {% endfor %}

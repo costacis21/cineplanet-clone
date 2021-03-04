@@ -221,4 +221,3 @@ def getMovieInfoFromID(tmdbID:str):
         return returnDictionary
 
 
-print(getMovieInfoFromID("458576"))

@@ -38,7 +38,7 @@ class enterMovie(Form):
     movietitle = StringField('Movie Name')
 
 class selectNewMovie(Form):
-    tmdbID = HiddenField('movieID', validators=[DataRequired()])
+    tmdbID = HiddenField('movieID')
 
 class selectScreening(Form):
     screeningnumber = IntegerField('Screening Number', validators=[DataRequired()])

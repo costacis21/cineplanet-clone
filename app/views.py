@@ -166,26 +166,25 @@ def addNewMovie():
     if current_user.is_authenticated:   #checks user is signed in
         if (current_user.Privilage <= 1):   #checks user has required permission
             enterMovie = forms.enterMovie()
-            # fetchedMovies = []
+            fetchedMovies = getUpcomingMovies()
             selectMovie = forms.selectNewMovie()
             if request.method == 'POST':
-                if enterMovie.validate_on_submit():
+                if enterMovie.validate_on_submit(): #if search is used and is not empty, search for movies by title
                     if(enterMovie.movietitle.data != ""):
                         fetchedMovies = getMovieInfo(enterMovie.movietitle.data)
-                    else:
-                        fetchedMovies = getUpcomingMovies()
-                elif selectMovie.validate_on_submit():
-                    currentMovies = models.Movie.query.filter_by(Description=session['fetchedMovie']['Description']).all() # Find current movies
+                elif selectMovie.is_submitted(): #if movie is selected, get its data and try to add it to db
+                    selectedMovie = getMovieInfoFromID(selectMovie.tmdbID.data)
+                    selectedMovieDescription = selectedMovie['Description']
+                    currentMovies = models.Movie.query.filter_by(Description=selectedMovie['Description']).all() # Find current movies
                     if len(currentMovies) > 0: # If a movie with a matching description was found, don't add the movie
                         flash("Movie already added and available.")
                     else: # ELse, add as new movie
-                        newMovie = models.Movie(Name = session['fetchedMovie']['Title'], Age = session['fetchedMovie']['Age_Rating'], Description = session['fetchedMovie']['Description'],
-                                                RunningTime = session['fetchedMovie']['Duration'], PosterURL = session['fetchedMovie']['PosterURL'])
+                        newMovie = models.Movie(Name = selectedMovie['Title'], Age = selectedMovie['Age_Rating'], Description = selectedMovie['Description'],
+                                                RunningTime = selectedMovie['Duration'], PosterURL = selectedMovie['PosterURL'])
                         db.session.add(newMovie)
                         db.session.commit()
-                    return redirect(url_for('addMovieScreening'))
-            else:
-                fetchedMovies = getUpcomingMovies()
+                        return redirect(url_for('addMovieScreening'))
+                
 
 
             return render_template('add-new-movie.html',
