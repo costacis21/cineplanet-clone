@@ -18,6 +18,15 @@ admin.add_view(ModelView(models.Movie, db.session))
 
 from imdbSearch import getMovieInfo
 
+premium = ['D6', 'D7', 'D8', 'D9', 'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'D16',
+'E6', 'E7', 'E8', 'E9', 'E10', 'E11', 'E12', 'E13', 'E14', 'E15', 'E16',
+'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12', 'F13', 'F14', 'F15', 'F16']
+
+StandardGeneralPrice = 4.99 #Standard geenral ticket price
+StandardConcessionPrice = 3.49  #Standard senior price
+PremiumGeneralPrice = 6.99  #Premium general ticket price
+PremiumConcessionPrice = 5.49   #Premium price
+
 def resetBookingSessionData():
     #Used to reset the session data stored about a booking
     #Prevents previous complete or incomplete bookings from interfering with any new ones
@@ -31,35 +40,41 @@ def resetBookingSessionData():
 @app.route('/', methods=['GET','POST'])
 def index():
     resetBookingSessionData()
+    date = datetime.date.today()
+    allMovies = models.Movie.query.all()
+    dailyScreenings = 0
+    for i in allMovies:
+        if i.getScreenings(date):
+            dailyScreenings = dailyScreenings + 1
+    moviesLength = len(allMovies)
+    if request.method == 'POST':
+        if request.form.get("Filter"):
+            date = request.form['screeningDateFilter']
+            dailyScreenings = 0
+            for i in allMovies:
+                if i.getScreenings(date):
+                    dailyScreenings = dailyScreenings + 1
+        else: # Clicked to buy tickets
+            foundScreeningID = request.form.get("buy")
+            # Needs here to be replaced with a redirect to the specific ticket booking of that screening
+            return redirect('seats/' + str(foundScreeningID))
     if current_user.is_authenticated:
-        date = datetime.date.today()
-        allMovies = models.Movie.query.all()
-        dailyScreenings = 0
-        for i in allMovies:
-            if i.getScreenings(date):
-                dailyScreenings = dailyScreenings + 1
-        moviesLength = len(allMovies)
-        if request.method == 'POST':
-            if request.form.get("Filter"):
-                date = request.form['screeningDateFilter']
-                dailyScreenings = 0
-                for i in allMovies:
-                    if i.getScreenings(date):
-                        dailyScreenings = dailyScreenings + 1
-            else: # Clicked to buy tickets
-                foundScreeningID = request.form.get("buy")
-                # Needs here to be replaced with a redirect to the specific ticket booking of that screening
-                flash("You are trying to book tickets for screening number: " + str(foundScreeningID))
-
         return render_template('index.html',
-                            title='Homepage', user=current_user.Email,
+                            title='Homepage',
                             allMovies = allMovies,
                             moviesLength = moviesLength,
                             date = date,
-                            dailyScreenings = dailyScreenings
+                            dailyScreenings = dailyScreenings,
+                            user=current_user.Email
                             )
     else:
-        return redirect(url_for('login'))
+        return render_template('index.html',
+                        title='Homepage',
+                        allMovies = allMovies,
+                        moviesLength = moviesLength,
+                        date = date,
+                        dailyScreenings = dailyScreenings
+                        )
 
 @app.route('/login', methods=['GET','POST'])
 def login():
@@ -138,6 +153,7 @@ def addMovieScreening():
             return render_template('add-movie-screening.html',
                                 title='Add Movie Screening',
                                 addScreeningForm = addScreeningForm,
+                                user=current_user.Email
                                 )
         else:
             flash("You lack the required permission")
@@ -175,7 +191,8 @@ def addNewMovie():
                                 title='Add New Movie',
                                 enterMovie = enterMovie,
                                 fetchedMovie = fetchedMovie,
-                                fetchedMovieCheck = fetchedMovieCheck
+                                fetchedMovieCheck = fetchedMovieCheck,
+                                user=current_user.Email
                                 )
         else:
             flash("You lack the required permission")
@@ -201,7 +218,8 @@ def bookTickets():
         return render_template('book-tickets.html',
                             title='Book Tickets',
                             enterMovieForm = enterMovieForm,
-                            page=1
+                            page=1,
+                            user=current_user.Email
                             )
     else:
         flash("You must be signed in to book tickets")
@@ -223,7 +241,7 @@ def selectScreening():
             return render_template('book-tickets.html',
                                 title='Select Screening',
                                 selectScreeningForm = selectScreeningForm,
-                                page=2)
+                                page=2, user=current_user.Email)
         else:
             flash('You must select a movie first')
             return redirect(url_for('bookTickets'))
@@ -254,7 +272,7 @@ def addSeats():
                                 addSeatsForm = addSeatsForm,
                                 seats=session['seats'],
                                 total=session['total'],
-                                page=3)
+                                page=3, user=current_user.Email)
         else:
             flash('You must select a movie and screening first')
             return redirect(url_for('bookTickets'))
@@ -286,7 +304,7 @@ def enterPaymentDetails():
             return render_template('book-tickets.html',
                                 title='Checkout',
                                 enterPaymentDetailsForm = enterPaymentDetailsForm,
-                                page=4)
+                                page=4, user=current_user.Email)
         else:
             flash('You must complete the booking process first')
             return redirect(url_for('addSeats'))
@@ -304,13 +322,110 @@ def t():
     return render_template('book-tickets.html',
                             title='Book Tickets',
                             enterMovieForm = enterMovieForm,
-                            page=1
+                            page=1, user=current_user.Email
                             )
 
-@app.route('/seats')
-def seats():
+@app.route('/seats/<screening>')
+def seats(screening):   #seat selection page
+    if current_user.is_authenticated:
+        screening = models.Screening.query.get(screening) #get screening
 
-    return render_template('seating-auto-layout.html',
-    rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'], 
-    vip=['D', 'E', 'F'], 
-    reserved = ['A1', 'C14', 'E10', 'E11']) # need to collect actual reserved seats
+        return render_template('seating-auto-layout.html',
+        rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'], 
+        vip=['D', 'E', 'F'], 
+        reserved = screening.reserved(),
+        screening=screening)
+    else:
+        flash('You must be signed in to book tickets')
+        return redirect(url_for('login'))
+
+@app.route('/confirmBooking/<screening>/<seats>')
+def confirmBooking(screening, seats):   # succeed seat selection page
+    if current_user.is_authenticated:
+        retrieved = seats.split("$") # retrieved seats
+        selected = [] # choosen and validated seats
+        
+        for seat in retrieved:  #validate each retireved seat exists and no repeats
+            if seat in models.Screening.query.get(screening).seats() and seat not in selected:
+                selected.append(seat)   
+
+        return  render_template('confirm-booking.html',
+        seats=selected,
+        premium=premium, 
+        StandardGeneralPrice=StandardGeneralPrice, 
+        StandardConcessionPrice=StandardConcessionPrice,
+        PremiumGeneralPrice=PremiumGeneralPrice,
+        PremiumConcessionPrice=PremiumConcessionPrice)
+
+    else:
+        flash('You must be signed in to book tickets')
+        return redirect(url_for('login'))
+
+
+@app.route('/payment/<screeningID>/<seats>/<types>', methods=['GET','POST'])
+def Payment(screeningID, seats, types): # succeed booking confirmation page
+    if current_user.is_authenticated:            
+        retrieved = seats.split("$") #choosen seats
+        concessions = types.split("$") #choosen ticket types
+        selected =[] #choosen and validated seats
+        screening = models.Screening.query.get(screeningID) #get screening
+
+        if not screening:   #validate screening does exist
+            flash("Something went wrong, please try again")
+            return redirect(url_for('index'))
+
+        if len(retrieved) != len(concessions):  #validate equal number of seats to tickets 
+            return redirect("/confirmBooking/"+screeningID+"/"+seats)
+
+        for seat in retrieved:  #validate seats exist, are not booked and are not repeated
+            if seat in screening.seats() and seat not in selected:
+                selected.append(seat)
+            if seat in screening.reserved():
+                return redirect(url_for('seats')+screeningID) 
+
+        enterPaymentDetailsForm = forms.enterPaymentDetails()
+        order = list(zip(selected, concessions))    #create order merging seats with tickets
+
+        if enterPaymentDetailsForm.validate_on_submit():
+            total = 0.0
+            for item in order:  #calculate total cost
+                seatType = models.Seat.query.filter(models.Seat.ScreenID==screening.ScreenID).filter(models.Seat.code==item[0]).first().Type
+                if seatType == 0:   #standard seat costing
+                    if int(item[1]) == 3:   #senior ticket
+                        total = total + StandardConcessionPrice
+                    elif int(item[1]) == 1 or int(item[1]) == 2:    #standard & child
+                        total = total + StandardGeneralPrice
+                    else:
+                        flash("Something went wrong, please try again")
+                        return redirect(url_for('index'))
+
+                elif seatType == 1: #Premium seat costing
+                    if int(item[1]) == 3:   #senior ticket
+                        total = total + PremiumConcessionPrice
+                    elif int(item[1]) == 1 or int(item[1]) == 2:    #standard & child
+                        total = total + PremiumGeneralPrice
+                    else:
+                        flash("Something went wrong, please try again")
+                        return redirect(url_for('index'))
+                else:
+                    flash("Something went wrong, please try again")
+                    return redirect(url_for('index'))
+
+            newBooking = models.Booking(UserID=current_user.UserID, ScreeningID=screeningID, Timestamp=datetime.datetime.now(), TotalPrice=total)
+            db.session.add(newBooking)  #create and add new booking
+            db.session.commit()
+
+            for item in order:  #create and add new tickets to booking
+                seatID = models.Seat.query.filter(models.Seat.ScreenID==screening.ScreenID).filter(models.Seat.code==item[0]).first().SeatID
+                newTicket = models.Ticket(BookingID=newBooking.BookingID, SeatID=seatID, Category=item[1]) 
+                db.session.add(newTicket)
+            db.session.commit()
+            return redirect(url_for('index'))
+
+        return render_template('book-tickets.html', title='Checkout',
+                            enterPaymentDetailsForm = enterPaymentDetailsForm,
+                            page=4)
+    else:
+        flash('You must be signed in to book tickets')
+        return redirect(url_for('login'))
+
