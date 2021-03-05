@@ -54,8 +54,16 @@ def datedScreenings(date):
         if i.getScreenings(date):
             dailyScreenings = dailyScreenings + 1
     moviesLength = len(allMovies)
+    searchForScreening = forms.searchForScreening()
     if request.method == 'POST':
-        if request.form.get("Filter"):
+        if request.form.get("Search"):
+                filteredMovies = []
+                for movie in allMovies:
+                    if searchForScreening.searchMovie.data.lower() in movie.Name.lower():
+                        filteredMovies.append(movie)
+                allMovies = filteredMovies
+                numScreenings = len(allMovies)
+        elif request.form.get("Filter"):
             date = request.form['screeningDateFilter']
             return redirect('/screenings/' + str(date))
         else: # Clicked to buy tickets
@@ -69,7 +77,8 @@ def datedScreenings(date):
                             moviesLength = moviesLength,
                             date = date,
                             dailyScreenings = dailyScreenings,
-                            user=current_user.Email
+                            user=current_user.Email,
+                            searchForScreening = searchForScreening
                             )
     else:
         return render_template('index.html',

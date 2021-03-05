@@ -1,6 +1,27 @@
 {% extends "base.html" %}
 {% block content %}
 <br>
+<div class="row justify-content-center">
+  <div class="row">
+    <div class="col-sm">
+      <form action="" method="post" name="Add_item" value="Add_item">
+      {{ searchForScreening.csrf_token() }}
+      {{ searchForScreening.hidden_tag() }}
+          <div class="form-group">
+          {{searchForScreening.searchMovie}}
+          {% for error in searchForScreening.searchMovie.errors %}
+              </br><span style="color: red;">{{error}}</span>
+          {% endfor %}<br>
+          </div>
+    </div>
+    <div class="col-sm">
+      <div class="row justify-content-center">
+      <button type="submit" class="btn btn-primary" name="Search" value="Search">Search</button>
+      </div>
+    </div>
+    </form>
+  </div>
+</div>
 <h1 class="row justify-content-md-center">Screenings</h1>
 <h6 class="row justify-content-md-center">Date: {{date}}</h6>
 <br />

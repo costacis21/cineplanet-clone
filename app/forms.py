@@ -51,3 +51,5 @@ class enterPaymentDetails(Form):
     cardnumber = IntegerField('Card Number', validators=[DataRequired()])
     securitynumber = IntegerField('Security Number', validators=[DataRequired()])
 
+class searchForScreening(Form):
+    searchMovie = StringField('Movie', validators=[DataRequired()])
