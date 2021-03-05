@@ -2,7 +2,7 @@
 
 **COMP2913 Software Engineering Project**
 
-_**Sprint one**_
+_**Sprint two**_
 
 **Team 22:**  
 Jack Howkins            _Sc19jwh_  

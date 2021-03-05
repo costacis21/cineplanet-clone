@@ -35,9 +35,14 @@ class addMovieScreening(Form):
         return form
 
 class enterMovie(Form):
-    movietitle = StringField('Movie Name', validators=[DataRequired()])
+    movietitle = StringField('Movie Name')
+
+class selectNewMovie(Form):
+    tmdbID = HiddenField('movieID')
+
 class selectScreening(Form):
     screeningnumber = IntegerField('Screening Number', validators=[DataRequired()])
+
 class addSeats(Form):
     seatnumber = IntegerField('Seat Number', validators=[DataRequired()])
     seatcategory = SelectField('Seat Category', choices=['Adult','Child','Senior'])
@@ -46,3 +51,5 @@ class enterPaymentDetails(Form):
     cardnumber = IntegerField('Card Number', validators=[DataRequired()])
     securitynumber = IntegerField('Security Number', validators=[DataRequired()])
 
+class searchForScreening(Form):
+    searchMovie = StringField('Movie', validators=[DataRequired()])

@@ -20,26 +20,45 @@
   </form>
 </div>
 <br />
-<div class="row justify-content-center">
-{% if fetchedMovieCheck == 1 %}
-  <div class="row">
-    <div class="col-sm">
-      <img width = "200px" src="{{fetchedMovie['PosterURL']}}" />
-    </div>
-    <div class="col-sm">
-      <p><b>Title:</b> {{fetchedMovie['Title']}}</p>
-      <p><b>IMDB Rating:</b> {{fetchedMovie['Rating']}}</p>
-      <!-- <p>{{fetchedMovie['Description']}}</p> -->
-      <p><b>Age:</b> {{fetchedMovie['Age_Rating']}}</p>
-      <p><b>Duration:</b> {{fetchedMovie['Duration']}} minutes</p>
-      <form action="" method="post">
-        <button type="submit" class="btn btn-primary" name="Confirm" value="Confirm">Confirm</button>
-      </form>
-    </div>
-  </div>
-{% elif fetchedMovieCheck == 0 %}
-  <h4>Movie not found</h4>
-{% endif %}
+
+
+
+<table class="table">
+  <thead class="thead-dark">
+    <!-- Headings -->
+    <tr>
+      <th scope="col">Movie</th>
+      <th> </th>
+    </tr>
+  </thead>
+<!-- for loop through all the  movies and create a new table row for each  -->
+<tbody>
+{% for movie in movies%}
+  <tr>
+    <td>
+      <form action="" method="post" name="selectMovie" value = "selectMovie">
+      <div class="row">
+        <div class="col-sm" style="padding-right: 0px;">
+          <img width = "130px" src="{{movie.PosterURL}}" />
+        </div>
+        <div class="col-sm" style="padding-left: 0px;">
+          <p><b>Name: </b>{{movie.Title}}</p>
+          <p><b>Age Rating: </b>{{movie.Age_Rating}}</p>
+          <p><b>Running Time: </b>{{movie.Duration}} mins</p>
+        </div>
+        <div class="col-sm" style="padding-right: 0px;">
+          
+            {{selectMovie.tmdbID(value=movie.ID)}}
+            <input type="submit" class="btn btn-primary" value="Add movie"></div>
+          
+      </div>
+    </form>
+    </td>
+  </tr>
+{% endfor %}
+  </tbody>
+</table>
+
 </div>
 <br />
 </div>

@@ -19,7 +19,7 @@ admin.add_view(ModelView(models.Ticket, db.session))
 admin.add_view(ModelView(models.Seat, db.session))
 admin.add_view(ModelView(models.Movie, db.session))
 
-from imdbSearch import getMovieInfo
+from imdbSearch import *
 
 premium = ['D6', 'D7', 'D8', 'D9', 'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'D16',
 'E6', 'E7', 'E8', 'E9', 'E10', 'E11', 'E12', 'E13', 'E14', 'E15', 'E16',
@@ -44,39 +44,70 @@ def resetBookingSessionData():
 def index():
     resetBookingSessionData()
     date = datetime.date.today()
+    return redirect('/screenings/' + str(date))
+
+@app.route('/screenings/<date>', methods=['GET','POST'])
+def datedScreenings(date):
+    resetBookingSessionData()
+    if date < str(datetime.date.today()):
+        return redirect("/")
+    #Fetch all the movies
+    everyMovie = models.Movie.query.all()
+    # Variables for the pop up to work
     allMovies = models.Movie.query.all()
+    foundMovieInfo = 0
+    # --------------------------------
     dailyScreenings = 0
-    for i in allMovies:
-        if i.getScreenings(date):
+    moviesWithScreenings = []
+    for i in allMovies: #Go through all the movies
+        if i.getScreenings(date): #Get all the screenings for each movie on that day
             dailyScreenings = dailyScreenings + 1
-    moviesLength = len(allMovies)
+            moviesWithScreenings.append(i) #add to an array for movies with screenings
+    searchForScreening = forms.searchForScreening()
     if request.method == 'POST':
-        if request.form.get("Filter"):
+        if request.form.get("Search"):
+                filteredMovies = []
+                for movie in moviesWithScreenings:
+                    if searchForScreening.searchMovie.data.lower() in movie.Name.lower():
+                        filteredMovies.append(movie)
+                moviesWithScreenings = filteredMovies
+                numScreenings = len(moviesWithScreenings)
+        elif request.form.get("Filter"):
             date = request.form['screeningDateFilter']
-            dailyScreenings = 0
-            for i in allMovies:
-                if i.getScreenings(date):
-                    dailyScreenings = dailyScreenings + 1
+            if date == "": #if no data is entered for the date
+                return redirect('/')
+            else:
+                return redirect('/screenings/' + str(date))
+        elif request.form.get("viewInfo"):
+            foundMovieInfo = request.form.get("viewInfo")
+            print(foundMovieInfo)
+            print(everyMovie[int(foundMovieInfo)-1].Name)
         else: # Clicked to buy tickets
             foundScreeningID = request.form.get("buy")
             # Needs here to be replaced with a redirect to the specific ticket booking of that screening
-            return redirect('seats/' + str(foundScreeningID))
+            return redirect('/seats/' + str(foundScreeningID))
     if current_user.is_authenticated:
         return render_template('index.html',
                             title='Homepage',
-                            allMovies = allMovies,
-                            moviesLength = moviesLength,
+                            allMovies = moviesWithScreenings,
+                            moviesLength = len(moviesWithScreenings),
                             date = date,
                             dailyScreenings = dailyScreenings,
-                            user=current_user.Email
+                            user=current_user.Email,
+                            searchForScreening = searchForScreening,
+                            everyMovie = everyMovie,
+                            foundMovieInfo = int(foundMovieInfo)
                             )
     else:
         return render_template('index.html',
                         title='Homepage',
-                        allMovies = allMovies,
-                        moviesLength = moviesLength,
+                        allMovies = moviesWithScreenings,
+                        moviesLength = len(moviesWithScreenings),
                         date = date,
-                        dailyScreenings = dailyScreenings
+                        dailyScreenings = dailyScreenings,
+                        searchForScreening = searchForScreening,
+                        everyMovie = everyMovie,
+                        foundMovieInfo = foundMovieInfo
                         )
 
 @app.route('/login', methods=['GET','POST'])
@@ -169,33 +200,33 @@ def addNewMovie():
     if current_user.is_authenticated:   #checks user is signed in
         if (current_user.Privilage <= 1):   #checks user has required permission
             enterMovie = forms.enterMovie()
-            fetchedMovie = {} #Blank dictionary
-            fetchedMovieCheck = -1 #Flag variable to ensure an actual movie is fetched
+            fetchedMovies = getUpcomingMovies()
+            selectMovie = forms.selectNewMovie()
             if request.method == 'POST':
-                if request.form.get("Search"):
-                    fetchedMovie = getMovieInfo(enterMovie.movietitle.data)
-                    if fetchedMovie != None: #If a movie was found
-                        fetchedMovieCheck = 1
-                        session['fetchedMovie'] = fetchedMovie
-                    else: #If no movie was found
-                        fetchedMovieCheck = 0
-                elif request.form.get("Confirm"):
-                    currentMovies = models.Movie.query.filter_by(Description=session['fetchedMovie']['Description']).all() # Find current movies
+                if enterMovie.validate_on_submit(): #if search is used and is not empty, search for movies by title
+                    if(enterMovie.movietitle.data != ""):
+                        fetchedMovies = getMovieInfo(enterMovie.movietitle.data)
+                elif selectMovie.is_submitted(): #if movie is selected, get its data and try to add it to db
+                    selectedMovie = getMovieInfoFromID(selectMovie.tmdbID.data)
+                    selectedMovieDescription = selectedMovie['Description']
+                    currentMovies = models.Movie.query.filter_by(Description=selectedMovie['Description']).all() # Find current movies
                     if len(currentMovies) > 0: # If a movie with a matching description was found, don't add the movie
                         flash("Movie already added and available.")
                     else: # ELse, add as new movie
-                        newMovie = models.Movie(Name = session['fetchedMovie']['Title'], Age = session['fetchedMovie']['Age_Rating'], Description = session['fetchedMovie']['Description'],
-                                                RunningTime = session['fetchedMovie']['Duration'], PosterURL = session['fetchedMovie']['PosterURL'])
+                        newMovie = models.Movie(Name = selectedMovie['Title'], Age = selectedMovie['Age_Rating'], Description = selectedMovie['Description'],
+                                                RunningTime = selectedMovie['Duration'], PosterURL = selectedMovie['PosterURL'])
                         db.session.add(newMovie)
                         db.session.commit()
-                    return redirect(url_for('addMovieScreening'))
+                        return redirect(url_for('addMovieScreening'))
+
+
 
             return render_template('add-new-movie.html',
                                 title='Add New Movie',
                                 enterMovie = enterMovie,
-                                fetchedMovie = fetchedMovie,
-                                fetchedMovieCheck = fetchedMovieCheck,
-                                user=current_user.Email
+                                user=current_user.Email,
+                                movies = fetchedMovies,
+                                selectMovie = selectMovie
                                 )
         else:
             flash("You lack the required permission")
@@ -354,8 +385,8 @@ def seats(screening):   #seat selection page
         screening = models.Screening.query.get(screening) #get screening
 
         return render_template('seating-auto-layout.html',
-        rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'], 
-        vip=['D', 'E', 'F'], 
+        rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'],
+        vip=['D', 'E', 'F'],
         reserved = screening.reserved(),
         screening=screening)
     else:
@@ -367,15 +398,15 @@ def confirmBooking(screening, seats):   # succeed seat selection page
     if current_user.is_authenticated:
         retrieved = seats.split("$") # retrieved seats
         selected = [] # choosen and validated seats
-        
+
         for seat in retrieved:  #validate each retireved seat exists and no repeats
             if seat in models.Screening.query.get(screening).seats() and seat not in selected:
-                selected.append(seat)   
+                selected.append(seat)
 
         return  render_template('confirm-booking.html',
         seats=selected,
-        premium=premium, 
-        StandardGeneralPrice=StandardGeneralPrice, 
+        premium=premium,
+        StandardGeneralPrice=StandardGeneralPrice,
         StandardConcessionPrice=StandardConcessionPrice,
         PremiumGeneralPrice=PremiumGeneralPrice,
         PremiumConcessionPrice=PremiumConcessionPrice)
@@ -387,7 +418,7 @@ def confirmBooking(screening, seats):   # succeed seat selection page
 
 @app.route('/payment/<screeningID>/<seats>/<types>', methods=['GET','POST'])
 def Payment(screeningID, seats, types): # succeed booking confirmation page
-    if current_user.is_authenticated:            
+    if current_user.is_authenticated:
         retrieved = seats.split("$") #choosen seats
         concessions = types.split("$") #choosen ticket types
         selected =[] #choosen and validated seats
@@ -397,14 +428,14 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
             flash("Something went wrong, please try again")
             return redirect(url_for('index'))
 
-        if len(retrieved) != len(concessions):  #validate equal number of seats to tickets 
+        if len(retrieved) != len(concessions):  #validate equal number of seats to tickets
             return redirect("/confirmBooking/"+screeningID+"/"+seats)
 
         for seat in retrieved:  #validate seats exist, are not booked and are not repeated
             if seat in screening.seats() and seat not in selected:
                 selected.append(seat)
             if seat in screening.reserved():
-                return redirect(url_for('seats')+screeningID) 
+                return redirect(url_for('seats')+screeningID)
 
         enterPaymentDetailsForm = forms.enterPaymentDetails()
         order = list(zip(selected, concessions))    #create order merging seats with tickets
@@ -483,4 +514,3 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
     else:
         flash('You must be signed in to book tickets')
         return redirect(url_for('login'))
-
