@@ -471,7 +471,7 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
 
             for item in order:  #create and add new tickets to booking
                 seatID = models.Seat.query.filter(models.Seat.ScreenID==screening.ScreenID).filter(models.Seat.code==item[0]).first().SeatID
-                newTicket = models.Ticket(BookingID=newBooking.BookingID, SeatID=seatID, Category=item[1], QR='qr') 
+                newTicket = models.Ticket(BookingID=newBooking.BookingID, SeatID=seatID, Category=item[1], QR='qr')
                 db.session.add(newTicket)
             db.session.commit()
 
