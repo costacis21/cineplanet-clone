@@ -61,9 +61,13 @@
       <td>
         <div class="row">
           <div class="col-sm" style="padding-right: 0px;">
-            <a href="" data-toggle="modal" data-target="#exampleModalLong">
-              <img width = "130px" src="{{allMovies[i].PosterURL}}" name="{{i}}" onclick="showName(this);"/>
-            </a>
+            <img width = "130px" src="{{allMovies[i].PosterURL}}"/>
+            <br /><br />
+            <form action="" method="post" class="showInfo" value={{allMovies[i].MovieID}}>
+              <input type="submit" class="btn btn-primary" value="View Info" data-toggle="modal" data-target="#exampleModalLong">
+              <input type="hidden" value="{{allMovies[i].MovieID}}" name="viewInfo">
+              <br /><br />
+            </form>
           </div>
           <div class="col-sm" style="padding-left: 0px;"">
             <p><b>Name: </b>{{allMovies[i].Name}}</p>
@@ -75,10 +79,10 @@
       <td>
       {% set screenings = allMovies[i].getScreenings(date) %}
       {% for screening in screenings %}
-        <form action="" method="post">
+        <form action="" method="post" value="{{screening.ScreeningID}}">
           <input type="submit" class="btn btn-success" value="{{(screening.StartTimestamp|string)[11:16]}}">
-          <br /><br />
           <input type="hidden" value={{screening.ScreeningID}} name="buy">
+          <br /><br />
         </form>
       {% endfor %}
       </td>
@@ -90,7 +94,7 @@
   </table>
 </div>
 
-{% if screenings|length >= 1 %}
+
 <!-- Modal -->
 <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -107,7 +111,7 @@
             <img width = "130px" src=""/>
           </div>
           <div class="col-sm" style="padding-left: 0px;"">
-            <p><b>Name: {{allMovies[0].Name}}</b></p>
+            <p><b>Name: {{everyMovie[0].Name}}</b></p>
             <p><b>Age Rating: </b></p>
             <p><b>Running Time: </b></p>
           </div>
@@ -120,6 +124,18 @@
     </div>
   </div>
 </div>
-{% endif %}
+
+<script>
+  $(document).ready(function(ev){
+    var movieID = 0
+    $('.showInfo').on('click', function(ev){
+      $('#exampleModalLong').modal("toggle");
+      ev.preventDefault(ev);
+      movieID = ($(this).attr("value"));
+      // alert(movieID);
+    })
+  });
+</script>
+
 
 {% endblock %}

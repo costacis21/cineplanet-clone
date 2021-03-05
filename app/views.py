@@ -48,7 +48,12 @@ def datedScreenings(date):
     resetBookingSessionData()
     if date < str(datetime.date.today()):
         return redirect("/")
-    allMovies = models.Movie.query.all() #Fetch all the movies
+    #Fetch all the movies
+    everyMovie = models.Movie.query.all()
+    # Variables for the pop up to work
+    allMovies = models.Movie.query.all()
+    foundMovieInfo = 0
+    # --------------------------------
     dailyScreenings = 0
     moviesWithScreenings = []
     for i in allMovies: #Go through all the movies
@@ -66,7 +71,14 @@ def datedScreenings(date):
                 numScreenings = len(moviesWithScreenings)
         elif request.form.get("Filter"):
             date = request.form['screeningDateFilter']
-            return redirect('/screenings/' + str(date))
+            if date == "": #if no data is entered for the date
+                return redirect('/')
+            else:
+                return redirect('/screenings/' + str(date))
+        elif request.form.get("viewInfo"):
+            foundMovieInfo = request.form.get("viewInfo")
+            print(foundMovieInfo)
+            print(everyMovie[int(foundMovieInfo)-1].Name)
         else: # Clicked to buy tickets
             foundScreeningID = request.form.get("buy")
             # Needs here to be replaced with a redirect to the specific ticket booking of that screening
@@ -79,7 +91,9 @@ def datedScreenings(date):
                             date = date,
                             dailyScreenings = dailyScreenings,
                             user=current_user.Email,
-                            searchForScreening = searchForScreening
+                            searchForScreening = searchForScreening,
+                            everyMovie = everyMovie,
+                            foundMovieInfo = int(foundMovieInfo)
                             )
     else:
         return render_template('index.html',
@@ -88,7 +102,9 @@ def datedScreenings(date):
                         moviesLength = len(moviesWithScreenings),
                         date = date,
                         dailyScreenings = dailyScreenings,
-                        searchForScreening = searchForScreening
+                        searchForScreening = searchForScreening,
+                        everyMovie = everyMovie,
+                        foundMovieInfo = foundMovieInfo
                         )
 
 @app.route('/login', methods=['GET','POST'])
