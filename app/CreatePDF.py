@@ -4,7 +4,7 @@ from reportlab.lib.units import inch, cm
 from reportlab.lib.pagesizes import *
 from reportlab.lib.colors import *
 
-def main(Filename, MovieName, Seat, Category, Screen, Date, Time):
+def MakePDF(Filename, qr, MovieName, Seat, Category, Screen, Date, Time):
     """
     Generates a PDF ticket with the information given in the arguments
 
@@ -20,11 +20,12 @@ def main(Filename, MovieName, Seat, Category, Screen, Date, Time):
     """
     
     #Creating the Cavnas object to allow the PDF to be written on
-    canvas = Canvas(Filename+".pdf", pagesize="A4")
+    canvas = Canvas(Filename, pagesize="A4")
     
     #Adding images to the ticket
-    canvas.drawImage("test_logo.jpg", 0, 560, width=200, height=250)
-    canvas.drawImage("test_qr.png", 400, 580)
+    canvas.drawImage('app\static\\ticket\\accessories\\test_logo.jpg', 0, 560, width=200, height=250)
+    #canvas.drawImage("test_qr.png", 400, 580)
+    canvas.drawImage(qr, 400, 580)
 
     #Adding the text to the PDF
     canvas.drawString(10,580, "Movie Name: "+ MovieName)
@@ -39,4 +40,5 @@ def main(Filename, MovieName, Seat, Category, Screen, Date, Time):
     canvas.save()
 
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7])
+    pass
+    #main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7])

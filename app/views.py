@@ -4,7 +4,10 @@ from app import app,models,forms,db,admin
 import datetime
 from passlib.hash import sha256_crypt
 import logging
-
+from app import CreatePDF
+from app import SendEmail
+import pyqrcode
+from PIL import Image
 
 # FLASK ADMIN setup
 # remove before deployment
@@ -317,7 +320,7 @@ def enterPaymentDetails():
         if session['bookingProgress'] >= 4:
             enterPaymentDetailsForm = forms.enterPaymentDetails()
             if enterPaymentDetailsForm.validate_on_submit():
-                newBooking = models.Booking(UserID=current_user.UserID, ScreeningID=session['screening'], Timestamp=datetime.now(), TotalPrice=session['total'])
+                newBooking = models.Booking(UserID=current_user.UserID, ScreeningID=session['screening'], Timestamp=datetime.datetime.now(), TotalPrice=session['total'])
                 db.session.add(newBooking)
                 db.session.commit()
                 for seat in session['seats']:
@@ -330,6 +333,26 @@ def enterPaymentDetails():
                     newTicket = models.Ticket(BookingID=newBooking.BookingID, SeatID=seat[0], Category=Category, QR='qr') #seat[0] and 'qr' are placeholders
                     db.session.add(newTicket)
                 db.session.commit()
+
+                screening = models.Screening.query.filter_by(ScreeningID=newBooking.ScreeningID).first()
+                screen = screening.ScreeningID
+                i=0
+                filenames=[]
+                for ticket in models.Ticket.query.filter_by(BookingID=newBooking.BookingID): # For all of the tickets just purchased
+                    # Make QR code for ticket
+                    qr_filename = 'app\static/ticket/qr/qr'+str(ticket.TicketID)+'.png'
+                    qr = pyqrcode.create(ticket.QR)
+                    qr.png(qr_filename, scale=6)
+
+                    #Make a PDF for the ticket
+                    filename = 'app\static\\ticket\\tickets\\ticket'+str(ticket.TicketID)+'.pdf'
+                    CreatePDF.MakePDF('app\static\\ticket\\tickets\\ticket'+str(ticket.TicketID)+'.pdf', qr_filename, session['movie'], str(session['seats'][i][0]), session['seats'][i][2], str(screen), str(newBooking.Timestamp.date()), str(newBooking.Timestamp.time()))
+                    filenames.append(filename)
+                    i += 1
+
+                #Send all the PDFs in an email to the user
+                SendEmail.SendMail("vader358@gmail.com", filenames)
+
                 return redirect(url_for('index'))
 
             return render_template('book-tickets.html',
@@ -448,9 +471,41 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
 
             for item in order:  #create and add new tickets to booking
                 seatID = models.Seat.query.filter(models.Seat.ScreenID==screening.ScreenID).filter(models.Seat.code==item[0]).first().SeatID
-                newTicket = models.Ticket(BookingID=newBooking.BookingID, SeatID=seatID, Category=item[1])
+                newTicket = models.Ticket(BookingID=newBooking.BookingID, SeatID=seatID, Category=item[1], QR='qr') 
                 db.session.add(newTicket)
             db.session.commit()
+
+            screening = models.Screening.query.filter_by(ScreeningID=newBooking.ScreeningID).first()
+            screen = screening.ScreeningID
+            i=0
+            filenames=[]
+            for ticket in models.Ticket.query.filter_by(BookingID=newBooking.BookingID): # For all of the tickets just purchased
+                # Make QR code for ticket
+                qr_filename = 'app\static/ticket/qr/qr'+str(ticket.TicketID)+'.png'
+                qr = pyqrcode.create(ticket.QR)
+                qr.png(qr_filename, scale=6)
+
+                if ticket.Category == 1:
+                    Category = "Adult"
+                elif ticket.Category == 2:
+                    Category = "Child"
+                elif ticket.Category == 3:
+                    Category = "Senior"
+                else:
+                    Category = "Unknown"
+
+                #Make a PDF for the ticket
+                filename = 'app\static\\ticket\\tickets\\ticket'+str(ticket.TicketID)+'.pdf'
+                CreatePDF.MakePDF('app\static\\ticket\\tickets\\ticket'+str(ticket.TicketID)+'.pdf', qr_filename, session['movie'], order[i][0], Category, str(screen), str(newBooking.Timestamp.date()), str(newBooking.Timestamp.time()))
+                filenames.append(filename)
+                i += 1
+
+            # Send all the PDFs in an email to the user
+            # First argument gives the destination email, currently set to email ourselves to prevent one of us receiving lots of emails during testing
+            SendEmail.SendMail("leeds.cineplanet.com", filenames)
+            # Un-comment the line below to send emails to their actual destination
+            #SendEmail.SendMail(current_user.email, filenames)
+
             return redirect(url_for('index'))
 
         return render_template('book-tickets.html', title='Checkout',
