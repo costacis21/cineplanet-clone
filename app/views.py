@@ -41,6 +41,11 @@ def resetBookingSessionData():
 def index():
     resetBookingSessionData()
     date = datetime.date.today()
+    return redirect('/screenings/' + str(date))
+
+@app.route('/screenings/<date>', methods=['GET','POST'])
+def datedScreenings(date):
+    resetBookingSessionData()
     allMovies = models.Movie.query.all()
     dailyScreenings = 0
     for i in allMovies:
@@ -50,14 +55,11 @@ def index():
     if request.method == 'POST':
         if request.form.get("Filter"):
             date = request.form['screeningDateFilter']
-            dailyScreenings = 0
-            for i in allMovies:
-                if i.getScreenings(date):
-                    dailyScreenings = dailyScreenings + 1
+            return redirect('/screenings/' + str(date))
         else: # Clicked to buy tickets
             foundScreeningID = request.form.get("buy")
             # Needs here to be replaced with a redirect to the specific ticket booking of that screening
-            return redirect('seats/' + str(foundScreeningID))
+            return redirect('/seats/' + str(foundScreeningID))
     if current_user.is_authenticated:
         return render_template('index.html',
                             title='Homepage',
@@ -184,7 +186,7 @@ def addNewMovie():
                         db.session.add(newMovie)
                         db.session.commit()
                         return redirect(url_for('addMovieScreening'))
-                
+
 
 
             return render_template('add-new-movie.html',
@@ -331,8 +333,8 @@ def seats(screening):   #seat selection page
         screening = models.Screening.query.get(screening) #get screening
 
         return render_template('seating-auto-layout.html',
-        rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'], 
-        vip=['D', 'E', 'F'], 
+        rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'],
+        vip=['D', 'E', 'F'],
         reserved = screening.reserved(),
         screening=screening)
     else:
@@ -344,15 +346,15 @@ def confirmBooking(screening, seats):   # succeed seat selection page
     if current_user.is_authenticated:
         retrieved = seats.split("$") # retrieved seats
         selected = [] # choosen and validated seats
-        
+
         for seat in retrieved:  #validate each retireved seat exists and no repeats
             if seat in models.Screening.query.get(screening).seats() and seat not in selected:
-                selected.append(seat)   
+                selected.append(seat)
 
         return  render_template('confirm-booking.html',
         seats=selected,
-        premium=premium, 
-        StandardGeneralPrice=StandardGeneralPrice, 
+        premium=premium,
+        StandardGeneralPrice=StandardGeneralPrice,
         StandardConcessionPrice=StandardConcessionPrice,
         PremiumGeneralPrice=PremiumGeneralPrice,
         PremiumConcessionPrice=PremiumConcessionPrice)
@@ -364,7 +366,7 @@ def confirmBooking(screening, seats):   # succeed seat selection page
 
 @app.route('/payment/<screeningID>/<seats>/<types>', methods=['GET','POST'])
 def Payment(screeningID, seats, types): # succeed booking confirmation page
-    if current_user.is_authenticated:            
+    if current_user.is_authenticated:
         retrieved = seats.split("$") #choosen seats
         concessions = types.split("$") #choosen ticket types
         selected =[] #choosen and validated seats
@@ -374,14 +376,14 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
             flash("Something went wrong, please try again")
             return redirect(url_for('index'))
 
-        if len(retrieved) != len(concessions):  #validate equal number of seats to tickets 
+        if len(retrieved) != len(concessions):  #validate equal number of seats to tickets
             return redirect("/confirmBooking/"+screeningID+"/"+seats)
 
         for seat in retrieved:  #validate seats exist, are not booked and are not repeated
             if seat in screening.seats() and seat not in selected:
                 selected.append(seat)
             if seat in screening.reserved():
-                return redirect(url_for('seats')+screeningID) 
+                return redirect(url_for('seats')+screeningID)
 
         enterPaymentDetailsForm = forms.enterPaymentDetails()
         order = list(zip(selected, concessions))    #create order merging seats with tickets
@@ -417,7 +419,7 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
 
             for item in order:  #create and add new tickets to booking
                 seatID = models.Seat.query.filter(models.Seat.ScreenID==screening.ScreenID).filter(models.Seat.code==item[0]).first().SeatID
-                newTicket = models.Ticket(BookingID=newBooking.BookingID, SeatID=seatID, Category=item[1]) 
+                newTicket = models.Ticket(BookingID=newBooking.BookingID, SeatID=seatID, Category=item[1])
                 db.session.add(newTicket)
             db.session.commit()
             return redirect(url_for('index'))
@@ -428,4 +430,3 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
     else:
         flash('You must be signed in to book tickets')
         return redirect(url_for('login'))
-
