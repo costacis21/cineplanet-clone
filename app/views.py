@@ -48,21 +48,22 @@ def datedScreenings(date):
     resetBookingSessionData()
     if date < str(datetime.date.today()):
         return redirect("/")
-    allMovies = models.Movie.query.all()
+    allMovies = models.Movie.query.all() #Fetch all the movies
     dailyScreenings = 0
-    for i in allMovies:
-        if i.getScreenings(date):
+    moviesWithScreenings = []
+    for i in allMovies: #Go through all the movies
+        if i.getScreenings(date): #Get all the screenings for each movie on that day
             dailyScreenings = dailyScreenings + 1
-    moviesLength = len(allMovies)
+            moviesWithScreenings.append(i) #add to an array for movies with screenings
     searchForScreening = forms.searchForScreening()
     if request.method == 'POST':
         if request.form.get("Search"):
                 filteredMovies = []
-                for movie in allMovies:
+                for movie in moviesWithScreenings:
                     if searchForScreening.searchMovie.data.lower() in movie.Name.lower():
                         filteredMovies.append(movie)
-                allMovies = filteredMovies
-                numScreenings = len(allMovies)
+                moviesWithScreenings = filteredMovies
+                numScreenings = len(moviesWithScreenings)
         elif request.form.get("Filter"):
             date = request.form['screeningDateFilter']
             return redirect('/screenings/' + str(date))
@@ -73,8 +74,8 @@ def datedScreenings(date):
     if current_user.is_authenticated:
         return render_template('index.html',
                             title='Homepage',
-                            allMovies = allMovies,
-                            moviesLength = moviesLength,
+                            allMovies = moviesWithScreenings,
+                            moviesLength = len(moviesWithScreenings),
                             date = date,
                             dailyScreenings = dailyScreenings,
                             user=current_user.Email,
@@ -83,10 +84,11 @@ def datedScreenings(date):
     else:
         return render_template('index.html',
                         title='Homepage',
-                        allMovies = allMovies,
-                        moviesLength = moviesLength,
+                        allMovies = moviesWithScreenings,
+                        moviesLength = len(moviesWithScreenings),
                         date = date,
-                        dailyScreenings = dailyScreenings
+                        dailyScreenings = dailyScreenings,
+                        searchForScreening = searchForScreening
                         )
 
 @app.route('/login', methods=['GET','POST'])
