@@ -64,7 +64,7 @@
             <img width = "130px" src="{{allMovies[i].PosterURL}}"/>
             <br /><br />
             <form action="" method="post" class="showInfo" value={{allMovies[i].MovieID}}>
-              <input type="submit" class="btn btn-primary" value="View Info" data-toggle="modal" data-target="#exampleModalLong">
+              <input type="submit" class="btn btn-primary" value="View Info" data-toggle="modal" data-target="#exampleModalLong{{i}}">
               <input type="hidden" value="{{allMovies[i].MovieID}}" name="viewInfo">
               <br /><br />
             </form>
@@ -94,13 +94,13 @@
   </table>
 </div>
 
-
+{% for i in range(0, allMovies|length) %}
 <!-- Modal -->
-<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+<div class="modal fade" id="exampleModalLong{{i}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">A Movie</h5>
+        <h5 class="modal-title" id="exampleModalLongTitle">{{allMovies[i].Name}}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -108,13 +108,19 @@
       <div class="modal-body">
         <div class="row">
           <div class="col-sm" style="padding-right: 0px;">
-            <img width = "130px" src=""/>
+            <img width = "130px" src="{{allMovies[i].PosterURL}}"/>
           </div>
           <div class="col-sm" style="padding-left: 0px;"">
-            <p><b>Name: {{everyMovie[0].Name}}</b></p>
-            <p><b>Age Rating: </b></p>
-            <p><b>Running Time: </b></p>
+            <p><b>Age Rating: </b>{{allMovies[i].Age}}</p>
+            <p><b>Running Time: </b>{{allMovies[i].RunningTime}} mins</p>
           </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-sm">
+              <p><b>Description: </b></p>
+              <p>{{allMovies[i].Description}}</p>
+            </div>
         </div>
       </div>
       <div class="modal-footer">
@@ -124,14 +130,15 @@
     </div>
   </div>
 </div>
+{% endfor %}
 
 <script>
   $(document).ready(function(ev){
     var movieID = 0
     $('.showInfo').on('click', function(ev){
-      $('#exampleModalLong').modal("toggle");
+      // $('#exampleModalLong').modal("toggle");
       ev.preventDefault(ev);
-      movieID = ($(this).attr("value"));
+      // movieID = ($(this).attr("value"));
       // alert(movieID);
     })
   });
