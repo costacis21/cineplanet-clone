@@ -46,6 +46,8 @@ def index():
 @app.route('/screenings/<date>', methods=['GET','POST'])
 def datedScreenings(date):
     resetBookingSessionData()
+    if date < str(datetime.date.today()):
+        return redirect("/")
     allMovies = models.Movie.query.all()
     dailyScreenings = 0
     for i in allMovies:
