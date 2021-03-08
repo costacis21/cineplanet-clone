@@ -100,8 +100,8 @@ class Movie(db.Model):
     # Added this for extra detail
     RunningTime = db.Column(db.Integer)
     PosterURL = db.Column(db.String(100))
+    Api = db.Column(db.Integer)
     Screenings = db.relationship('Screening', backref='movie', lazy='dynamic')
-
     def getScreenings(self, date):
         allScreenings = Screening.query.filter_by(MovieID=self.MovieID).all()
         datedScreenings = []
