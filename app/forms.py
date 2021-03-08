@@ -17,7 +17,7 @@ class Login(Form):
 
 class Signup(Form):
     email = EmailField('Email',validators=[DataRequired(),Email()])
-    password = PasswordField('Password',validators=[DataRequired()])
+    password = PasswordField('Password',validators=[DataRequired(), validators.length(min=8, max=25, message='Passwords must be 8 and 25 characters long')])
     passwordCheck = PasswordField('Confirm Password', [validators.EqualTo('password', message='Passwords must match')])
 
 class addMovieScreening(Form):
