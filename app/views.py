@@ -556,7 +556,8 @@ def validateTicket(uuid):
 def viewTickets(BookingID):
     if current_user.is_authenticated:
         if session['booking_complete'] == True:
-            return send_from_directory("static\\ticket\\tickets", 'booking'+str(BookingID)+'.pdf')
+            #return send_from_directory("static\\ticket\\tickets", 'booking'+str(BookingID)+'.pdf')
+            return render_template('view-tickets.html', BookingID=BookingID)
 
         flash("Tickets not found")
         return redirect(url_for('index'))
