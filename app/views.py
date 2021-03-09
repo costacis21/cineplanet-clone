@@ -1,13 +1,12 @@
-from flask import flash, render_template, redirect, url_for, session, request
+from flask import flash, render_template, redirect, url_for, session, request, send_from_directory
 from flask_login import current_user, login_user, logout_user
-from app import app,models,forms,db,admin
+from app import app,models,forms,db,admin,CreatePDF,SendEmail
 import datetime
 from passlib.hash import sha256_crypt
 import logging
-from app import CreatePDF
-from app import SendEmail
 import pyqrcode
 from PIL import Image
+import uuid
 
 # FLASK ADMIN setup
 # remove before deployment
@@ -43,6 +42,7 @@ def resetBookingSessionData():
 @app.route('/', methods=['GET','POST'])
 def index():
     resetBookingSessionData()
+    session['booking_complete'] = False
     date = datetime.date.today()
     return redirect('/screenings/' + str(date))
 
@@ -471,7 +471,7 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
 
             for item in order:  #create and add new tickets to booking
                 seatID = models.Seat.query.filter(models.Seat.ScreenID==screening.ScreenID).filter(models.Seat.code==item[0]).first().SeatID
-                newTicket = models.Ticket(BookingID=newBooking.BookingID, SeatID=seatID, Category=item[1], QR='qr')
+                newTicket = models.Ticket(BookingID=newBooking.BookingID, SeatID=seatID, Category=item[1], QR=str(uuid.uuid4()))
                 db.session.add(newTicket)
             db.session.commit()
 
@@ -479,12 +479,17 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
             screen = screening.ScreeningID
             i=0
             filenames=[]
+            QRs = []
+            Seats = []
+            Categories = []
+            Types = []
             for ticket in models.Ticket.query.filter_by(BookingID=newBooking.BookingID): # For all of the tickets just purchased
                 # Make QR code for ticket
                 qr_filename = 'app\static/ticket/qr/qr'+str(ticket.TicketID)+'.png'
-                qr = pyqrcode.create(ticket.QR)
+                qr = pyqrcode.create('http://127.0.0.1:5000/validate-ticket/'+ticket.QR)
                 qr.png(qr_filename, scale=6)
 
+                # Converting the numerical value for the ticket's category that is stored in the database to the string value that will appear on the ticket
                 if ticket.Category == 1:
                     Category = "Adult"
                 elif ticket.Category == 2:
@@ -494,23 +499,67 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
                 else:
                     Category = "Unknown"
 
-                #Make a PDF for the ticket
-                filename = 'app\static\\ticket\\tickets\\ticket'+str(ticket.TicketID)+'.pdf'
-                CreatePDF.MakePDF('app\static\\ticket\\tickets\\ticket'+str(ticket.TicketID)+'.pdf', qr_filename, session['movie'], order[i][0], Category, str(screen), str(newBooking.Timestamp.date()), str(newBooking.Timestamp.time()))
-                filenames.append(filename)
+                # Converting the numerical value for the seat's type that is stored in the database to the string value that will appear on the ticket
+                t = models.Seat.query.filter(models.Seat.ScreenID==screening.ScreenID).filter(models.Seat.code==item[0]).first().Type
+                if t == 0:
+                    Type = "Standard"
+                else:
+                    Type = "Premium"
+
+                # Appending the values of the properties of the ticket to the relevant arrays 
+                QRs.append(qr_filename)
+                Seats.append(order[i][0])
+                Categories.append(Category)
+                Types.append(Type)
                 i += 1
+
+            #Make a PDF for the ticket
+            movie = models.Movie.query.filter_by(MovieID=screening.MovieID).first().Name
+            filename = 'app\static\\ticket\\tickets\\booking'+str(newBooking.BookingID)+'.pdf'
+            CreatePDF.MakePDF(filename, QRs, movie, Seats, Categories, str(screen), str(screening.StartTimestamp.date().strftime('%d/%m/%y')), str(screening.StartTimestamp.time().strftime('%H:%M')), Types)
 
             # Send all the PDFs in an email to the user
             # First argument gives the destination email, currently set to email ourselves to prevent one of us receiving lots of emails during testing
-            SendEmail.SendMail("leeds.cineplanet.com", filenames)
+            SendEmail.SendMail("leeds.cineplanet.com", [filename])
             # Un-comment the line below to send emails to their actual destination
             #SendEmail.SendMail(current_user.email, filenames)
 
-            return redirect(url_for('index'))
+            session['booking_complete'] = True
+            flash("Displaying your tickets now")
+            print('/view-tickets/'+str(newBooking.BookingID))
+            return redirect('/view-tickets/'+str(newBooking.BookingID))
 
         return render_template('book-tickets.html', title='Checkout',
                             enterPaymentDetailsForm = enterPaymentDetailsForm,
                             page=4)
+    else:
+        flash('You must be signed in to book tickets')
+        return redirect(url_for('login'))
+
+@app.route('/validate-ticket/<uuid>', methods = ['GET', 'POST'])
+def validateTicket(uuid):
+    if current_user.is_authenticated:
+        if models.Ticket.query.filter_by(QR=uuid).first(): # If the uuid is valid
+            flash('Ticket is valid')
+            valid = True
+        else:
+            flash('Ticket is not valid')
+            valid = False
+        
+        return render_template('validate-ticket.html', valid=valid)
+
+    else:
+        flash('You must be signed in to book tickets')
+        return redirect(url_for('login'))
+
+@app.route('/view-tickets/<BookingID>', methods = ['GET', 'POST'])
+def viewTickets(BookingID):
+    if current_user.is_authenticated:
+        if session['booking_complete'] == True:
+            return send_from_directory("static\\ticket\\tickets", 'booking'+str(BookingID)+'.pdf')
+
+        flash("Tickets not found")
+        return redirect(url_for('index'))
     else:
         flash('You must be signed in to book tickets')
         return redirect(url_for('login'))
