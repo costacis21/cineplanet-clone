@@ -2,7 +2,7 @@
     position: relative;
     display: inline-block;
   }
-  
+
   #layout .seat .seatinfo {
     visibility: hidden;
     width: 70px;
@@ -18,12 +18,13 @@
     position: absolute;
     z-index: 1;
   }
-  
-  
+
+
   #layout .seat:hover .seatinfo {
     visibility: visible;
+    color: black;
   }
-  
+
   #layout img {
     width:30px;
     height:30px;

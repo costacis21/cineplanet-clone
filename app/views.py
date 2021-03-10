@@ -45,6 +45,7 @@ def index():
     resetBookingSessionData()
     allMovies = models.Movie.query.all()
     quickBookForm = forms.addMovieScreening.new()
+    movie = None;
     if request.method == 'POST':
         if request.form.get("Search"):
             movie = quickBookForm.movie.data
@@ -57,7 +58,8 @@ def index():
                             user=current_user.Email,
                             title='Home',
                             allMovies = allMovies,
-                            quickBookForm = quickBookForm)
+                            quickBookForm = quickBookForm,
+                            movie = movie)
 
 @app.route('/screenings', methods=['GET','POST'])
 def screeningsRedirect():
