@@ -340,7 +340,7 @@ def enterPaymentDetails():
                 filenames=[]
                 for ticket in models.Ticket.query.filter_by(BookingID=newBooking.BookingID): # For all of the tickets just purchased
                     # Make QR code for ticket
-                    qr_filename = 'app\static/ticket/qr/qr'+str(ticket.TicketID)+'.png'
+                    qr_filename = 'app/static/ticket/qr/qr'+str(ticket.TicketID)+'.png'
                     qr = pyqrcode.create(ticket.QR)
                     qr.png(qr_filename, scale=6)
 
