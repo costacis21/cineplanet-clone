@@ -53,3 +53,14 @@ class enterPaymentDetails(Form):
 
 class searchForScreening(Form):
     searchMovie = StringField('Movie', validators=[DataRequired()])
+
+class quickBook(Form):
+    movie = SelectField('movie', choices=fetchAllMovieTitles(), validators=[DataRequired()])
+
+    @classmethod
+    def new(cls):
+        # Instantiate the form
+        form = cls()
+        # Update the choices for the agency field
+        form.movie.choices = fetchAllMovieTitles()
+        return form

@@ -44,10 +44,20 @@ def resetBookingSessionData():
 def index():
     resetBookingSessionData()
     allMovies = models.Movie.query.all()
+    quickBookForm = forms.addMovieScreening.new()
+    if request.method == 'POST':
+        if request.form.get("Search"):
+            movie = quickBookForm.movie.data
+            date = request.form['screeningDateFilter']
+            if date == "": #if no data is entered for the date
+                flash('Please enter a date')
+            else:
+                flash("Searching for " + movie + " on " + date)
     return render_template('index.html',
                             user=current_user.Email,
                             title='Home',
-                            allMovies = allMovies)
+                            allMovies = allMovies,
+                            quickBookForm = quickBookForm)
 
 @app.route('/screenings', methods=['GET','POST'])
 def screeningsRedirect():
