@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+ {% block content %}
+  <div class="container-fluid">
+    <br>
+    <div class="row justify-content-center">
+        <table>
+        {% for booking in bookings %}
+        <tr>    
+        <td>
+            <div class="col-sm" style="padding-left: 0px; padding-right: 50px;"">
+                <p><b>Name: </b>{{booking[1]}}</p>
+                <p><b>Time: </b>{{booking[2]}}</p>
+                <p><b>Date: </b>{{booking[3]}}</p>
+            </div>
+        </td>
+        <td>
+            <div>
+            <a href="http://127.0.0.1:5000/view-tickets/{{booking[0].BookingID}}" class="btn btn-outline-primary btn-sm" role="button" aria-pressed="true">View Tickets</a>
+            <line x1="0" y1="0" x2="200" y2="200" style="stroke:rgb(200,200,200);stroke-width:2" />
+            </div>
+        </td>
+        </tr>
+        {% endfor %}
+        <table>    
+    </div>
+    </div>
+{% endblock %}>

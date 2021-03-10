@@ -42,24 +42,27 @@ def resetBookingSessionData():
 
 @app.route('/', methods=['GET','POST'])
 def index():
-    resetBookingSessionData()
-    allMovies = models.Movie.query.all()
-    quickBookForm = forms.addMovieScreening.new()
-    movie = None;
-    if request.method == 'POST':
-        if request.form.get("Search"):
-            movie = quickBookForm.movie.data
-            date = request.form['screeningDateFilter']
-            if date == "": #if no data is entered for the date
-                flash('Please enter a date')
-            else:
-                flash("Searching for " + movie + " on " + date)
-    return render_template('index.html',
-                            user=current_user.Email,
-                            title='Home',
-                            allMovies = allMovies,
-                            quickBookForm = quickBookForm,
-                            movie = movie)
+    if current_user.is_authenticated:
+        resetBookingSessionData()
+        allMovies = models.Movie.query.all()
+        quickBookForm = forms.addMovieScreening.new()
+        movie = None;
+        if request.method == 'POST':
+            if request.form.get("Search"):
+                movie = quickBookForm.movie.data
+                date = request.form['screeningDateFilter']
+                if date == "": #if no data is entered for the date
+                    flash('Please enter a date')
+                else:
+                    flash("Searching for " + movie + " on " + date)
+        return render_template('index.html',
+                                user=current_user.Email,
+                                title='Home',
+                                allMovies = allMovies,
+                                quickBookForm = quickBookForm,
+                                movie = movie)
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/screenings', methods=['GET','POST'])
 def screeningsRedirect():
@@ -399,6 +402,28 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
         return render_template('book-tickets.html', title='Checkout',
                             enterPaymentDetailsForm = enterPaymentDetailsForm,
                             page=4)
+    else:
+        flash('You must be signed in to book tickets')
+        return redirect(url_for('login'))
+
+@app.route('/view-bookings/<UserID>')
+def viewBookings(UserID):
+    if current_user.is_authenticated:
+        booking_records = models.Booking.query.filter_by(UserID=UserID).all()
+        
+        bookings = []
+        for booking in booking_records:
+            screening = models.Screening.query.filter_by(ScreeningID=booking.ScreeningID).first()
+            print(screening)
+            print(screening.MovieID)
+            time = screening.StartTimestamp.time().strftime('%H:%M')
+            date = screening.StartTimestamp.date().strftime('%d/%m/%y')
+            movie = models.Movie.query.filter_by(MovieID=screening.MovieID).first().Name
+            print(movie)
+            bookings.append([booking, movie, time, date])
+            print(bookings)
+
+        return render_template('view-bookings.html', bookings=bookings)
     else:
         flash('You must be signed in to book tickets')
         return redirect(url_for('login'))
