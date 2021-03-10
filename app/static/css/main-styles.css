@@ -67,3 +67,7 @@ select {
   color: white;
   border: none;
 }
+
+.footer {
+  background-color: #23272b;
+}
