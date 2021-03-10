@@ -43,6 +43,14 @@ def resetBookingSessionData():
 @app.route('/', methods=['GET','POST'])
 def index():
     resetBookingSessionData()
+    allMovies = models.Movie.query.all()
+    return render_template('index.html',
+                            user=current_user.Email,
+                            title='Home',
+                            allMovies = allMovies)
+
+@app.route('/screenings', methods=['GET','POST'])
+def screeningsRedirect():
     date = datetime.date.today()
     return redirect('/screenings/' + str(date))
 
@@ -87,8 +95,8 @@ def datedScreenings(date):
             # Needs here to be replaced with a redirect to the specific ticket booking of that screening
             return redirect('/seats/' + str(foundScreeningID))
     if current_user.is_authenticated:
-        return render_template('index.html',
-                            title='Homepage',
+        return render_template('screenings.html',
+                            title='Screenings',
                             allMovies = moviesWithScreenings,
                             moviesLength = len(moviesWithScreenings),
                             date = date,
