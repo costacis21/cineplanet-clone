@@ -221,3 +221,30 @@ def getMovieInfoFromID(tmdbID:str):
         return returnDictionary
 
 
+def getTrailerFromID(tmdbID:str):
+    """
+    param: tmdbID
+
+    return URL of trailer, if not available return none
+    
+    """
+    apiKey="bd3bccc81b8b90568f58a7d8d3299477"
+
+    TMDBurl = "https://api.themoviedb.org/3/movie/{movie_id}/videos?api_key={api_key}&language=en-US".format(movie_id = tmdbID, api_key = apiKey)
+
+
+    TMDBresponse = requests.get(TMDBurl)
+    TMDBjson_response = TMDBresponse.json()
+
+
+
+    for result in TMDBjson_response["results"]:
+        if(result["type"]=="Trailer" and result["site"]=="YouTube"):
+            return "https://www.youtube.com/watch?v={youtubeID}".format(youtubeID=result["key"])
+
+    
+    return None
+
+
+
+
