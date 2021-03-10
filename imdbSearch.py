@@ -1,5 +1,6 @@
 import requests
 
+from app import app,models,forms,db,admin
 
 
 # API key = bd3bccc81b8b90568f58a7d8d3299477
@@ -236,15 +237,25 @@ def getTrailerFromID(tmdbID:str):
     TMDBresponse = requests.get(TMDBurl)
     TMDBjson_response = TMDBresponse.json()
 
+    if( tmdbID == None):
+        return None
 
+    if TMDBresponse.status_code == 200:
 
-    for result in TMDBjson_response["results"]:
-        if(result["type"]=="Trailer" and result["site"]=="YouTube"):
-            return "https://www.youtube.com/watch?v={youtubeID}".format(youtubeID=result["key"])
+        for result in TMDBjson_response["results"]:
+            if(result["type"]=="Trailer" and result["site"]=="YouTube"):
+                return "https://www.youtube.com/watch?v={youtubeID}".format(youtubeID=result["key"])
 
     
     return None
 
+everyMovie = models.Movie.query.all()
 
+for movie in everyMovie:
+    if movie.Api == None:
+        movieInfo = getMovieInfo(movie.Name)[0]
+        movie.Api = movieInfo["ID"]
+    # movie.TrailerLink = getTrailerFromID(movie.Api)
+db.session.commit()
 
 
