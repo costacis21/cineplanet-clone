@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row justify-content-md-center">
+  <h1>{{movie.Name}}</h1>
+</div>
+<br />
+<div class="container">
+  <div class="row">
+    <div class="col-sm">
+      <img width = "300px" src="{{movie.PosterURL}}"/>
+    </div>
+    <div class="col-sm">
+      <p><b>Age Rating: </b>{{movie.Age}}</p>
+      <p><b>Running Time: </b>{{movie.RunningTime}} mins</p>
+      <p><b>Description: </b></p>
+      <p>{{movie.Description}}</p>
+    </div>
+    <div class="col-sm">
+      <h3>Avaliable screenings</h3>
+      <table class="table">
+        <thead class="thead-dark">
+          <!-- Headings -->
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Times</th>
+            <th> </th>
+          </tr>
+        </thead>
+      {% if numScreenings == 0 %}
+        <tbody>
+          <tr>
+              <td>No Avaliable screenings</td>
+          </tr>
+        </tbody>
+      {% else %}
+      <tbody>
+        {% for screening in screenings %}
+        <tr>
+          <td>
+            <p>{{(screening.StartTimestamp|string)[0:10]}}</p>
+          </td>
+          <td>
+            <form action="" method="post" value="{{screening.ScreeningID}}">
+              <input type="submit" class="btn btn-success" value="{{(screening.StartTimestamp|string)[11:16]}}">
+              <input type="hidden" value={{screening.ScreeningID}} name="buy">
+            </form
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      {% endif %}
+      </table>
+    </div>
+  </div>
+</div>
+
+<br />
+
+<div class="row justify-content-md-center">
+</div>
+<br />
+
+{% endblock %}

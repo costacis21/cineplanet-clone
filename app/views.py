@@ -54,6 +54,8 @@ def index():
                 flash('Please enter a date')
             else:
                 flash("Searching for " + movie + " on " + date)
+        if request.form.get("showModal"):
+            print("hello")
     return render_template('index.html',
                             user=current_user.Email,
                             title='Home',
@@ -129,6 +131,26 @@ def datedScreenings(date):
                         everyMovie = everyMovie,
                         foundMovieInfo = foundMovieInfo
                         )
+
+@app.route('/movie/<MovieID>', methods=['GET','POST'])
+def movieInformation(MovieID):
+    resetBookingSessionData()
+    lastMovie = models.Movie.query.order_by(models.Movie.MovieID.desc()).first()
+    if int(lastMovie.MovieID) < int(MovieID): #If try and get to URL where no movie exists for it
+        return redirect('/') # Redirect back to home
+    movie = models.Movie.query.filter_by(MovieID=MovieID).first()
+    screenings = models.Screening.query.filter_by(MovieID = MovieID).all()
+    numScreenings = len(screenings)
+    if request.method == 'POST':
+        foundScreeningID = request.form.get("buy")
+        # Needs here to be replaced with a redirect to the specific ticket booking of that screening
+        return redirect('/seats/' + str(foundScreeningID))
+    return render_template('movie-information.html',
+                    title="Movie Information - " + movie.Name,
+                    movie = movie,
+                    screenings = screenings,
+                    numScreenings = numScreenings
+                    )
 
 @app.route('/login', methods=['GET','POST'])
 def login():

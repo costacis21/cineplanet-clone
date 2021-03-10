@@ -36,7 +36,7 @@
 <h1 class="row justify-content-md-center">All Movies</h1>
 <div class="row justify-content-md-center">
   {% for movie in allMovies %}
-    <a href="/screenings"><img width = "190px" src="{{movie.PosterURL}}" class="homePosters"/></a>
+    <a href="/movie/{{movie.MovieID}}"><img width = "190px" src="{{movie.PosterURL}}" class="homePosters"/></a>
   {% endfor %}
 </div>
 <br /><br /><br /><br />
