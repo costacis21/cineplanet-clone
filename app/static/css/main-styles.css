@@ -1,11 +1,28 @@
 body {
   background-color: black;
   color: white;
+  overflow-x: hidden;
 }
 
 input {
   background-color: #343A40;
   color: white;
+}
+
+/* ---- scrollbar ---- */
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #343A40;
+}
+/* ---- end scrollbar ---- */
+
+.modal-content {
+  background-color: #23272b;
 }
 
 #birthday {
@@ -28,4 +45,19 @@ input {
 
 .homePosters {
   padding: 15px;
+  transition: .3s;
+}
+
+.homePosters:hover {
+  filter: brightness(50%);
+  transform: scale(1.1);
+}
+
+.logo {
+  transition: .3s;
+}
+
+.logo:hover {
+  filter: brightness(50%);
+  transform: scale(1.1);
 }
