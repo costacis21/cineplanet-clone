@@ -71,3 +71,11 @@ select {
 .footer {
   background-color: #23272b;
 }
+
+.footer h3 {
+  font-size: 22px;
+}
+
+.footer p {
+  font-size: 12px;
+}
