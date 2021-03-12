@@ -57,7 +57,6 @@ def index():
         if request.form.get("showModal"):
             print("hello")
     return render_template('index.html',
-                            user=current_user.Email,
                             title='Home',
                             allMovies = allMovies,
                             quickBookForm = quickBookForm,
@@ -424,3 +423,23 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
     else:
         flash('You must be signed in to book tickets')
         return redirect(url_for('login'))
+
+@app.route('/profile', methods=['GET','POST'])
+def settings():
+    if current_user.is_authenticated:
+        form = forms.changePasswordForm()
+        if form.validate_on_submit():
+            if sha256_crypt.verify(form.currentPassword.data, current_user.Password):
+                current_user.Password = sha256_crypt.encrypt(form.newPassword.data)
+                db.session.commit()
+                flash("Password updated")
+                logging.info('User: %s updated password', current_user.Email)
+            else:
+                logging.error('User: %s inputted incorect password on settings page', current_user.Email)
+                form.currentPassword.errors.append('Password does not match')
+        logging.info('User: %s visited settings page', current_user.Email)
+        return render_template('profile.html',
+                            form=form)
+    else:
+        logging.warning('Anonymous user attempted to access settings page')
+        return redirect('/signIn')

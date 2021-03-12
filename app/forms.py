@@ -17,7 +17,7 @@ class Login(Form):
 
 class Signup(Form):
     email = EmailField('Email',validators=[DataRequired(),Email()])
-    password = PasswordField('Password',validators=[DataRequired(), validators.length(min=8, max=25, message='Passwords must be 8 and 25 characters long')])
+    password = PasswordField('Password',validators=[DataRequired(), validators.length(min=8, max=25, message='Passwords must be between 8 and 25 characters long')])
     passwordCheck = PasswordField('Confirm Password', [validators.EqualTo('password', message='Passwords must match')])
 
 class addMovieScreening(Form):
@@ -64,3 +64,8 @@ class quickBook(Form):
         # Update the choices for the agency field
         form.movie.choices = fetchAllMovieTitles()
         return form
+
+class changePasswordForm(Form):
+    currentPassword = PasswordField('Current Password', [validators.DataRequired()])
+    newPassword = PasswordField('New Password', [validators.DataRequired(), validators.length(min=8, max=25, message='Passwords must be between 8 and 25 characters long')])
+    newPasswordCheck = PasswordField('Confirm New Password', [validators.EqualTo('newPassword', message='Passwords must match')])
