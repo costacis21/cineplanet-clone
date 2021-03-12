@@ -26,7 +26,9 @@
                     <div class="input-group mb-3">
                         <select class="custom-select" onchange="updatePrice(id)" id="{{seat}}">
                             <option selected value="1">Standard</option>
+                            {% if child %}
                             <option value="2">Child (up to 16)</option>
+                            {% endif %}
                             <option value="3">Senior (65+)</option>
                         </select>
                     </div>

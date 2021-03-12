@@ -45,7 +45,7 @@ def index():
     resetBookingSessionData()
     allMovies = models.Movie.query.all()
     quickBookForm = forms.addMovieScreening.new()
-    movie = None;
+    movie = None
     if request.method == 'POST':
         if request.form.get("Search"):
             movie = quickBookForm.movie.data
@@ -307,7 +307,10 @@ def confirmBooking(screening, seats):   # succeed seat selection page
     if current_user.is_authenticated:
         retrieved = seats.split("$") # retrieved seats
         selected = [] # choosen and validated seats
-
+        child = False
+        age = models.Movie.query.get(models.Screening.query.get(screening).MovieID).Age 
+        if age != 'R' and age != 'X':   #decide whether child seats are available
+            child = True 
         for seat in retrieved:  #validate each retireved seat exists and no repeats
             if seat in models.Screening.query.get(screening).seats() and seat not in selected:
                 selected.append(seat)
@@ -318,7 +321,8 @@ def confirmBooking(screening, seats):   # succeed seat selection page
         StandardGeneralPrice=StandardGeneralPrice,
         StandardConcessionPrice=StandardConcessionPrice,
         PremiumGeneralPrice=PremiumGeneralPrice,
-        PremiumConcessionPrice=PremiumConcessionPrice)
+        PremiumConcessionPrice=PremiumConcessionPrice,
+        child = child)
 
     else:
         flash('You must be signed in to book tickets')
@@ -340,6 +344,12 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
         if len(retrieved) != len(concessions):  #validate equal number of seats to tickets
             return redirect("/confirmBooking/"+screeningID+"/"+seats)
 
+        age = models.Movie.query.get(screening.MovieID).Age #gets movie age rating
+        if '2' in concessions:  #have child tickets been selected
+            if age in ['R', 'X']:   #checks that child tickets are available for the screening
+                flash("Something went wrong, please try again")
+                return redirect(url_for('index'))
+        
         for seat in retrieved:  #validate seats exist, are not booked and are not repeated
             if seat in screening.seats() and seat not in selected:
                 selected.append(seat)
