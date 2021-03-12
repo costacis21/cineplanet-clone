@@ -414,14 +414,11 @@ def viewBookings(UserID):
         bookings = []
         for booking in booking_records:
             screening = models.Screening.query.filter_by(ScreeningID=booking.ScreeningID).first()
-            print(screening)
-            print(screening.MovieID)
             time = screening.StartTimestamp.time().strftime('%H:%M')
             date = screening.StartTimestamp.date().strftime('%d/%m/%y')
-            movie = models.Movie.query.filter_by(MovieID=screening.MovieID).first().Name
-            print(movie)
-            bookings.append([booking, movie, time, date])
-            print(bookings)
+            movie = models.Movie.query.filter_by(MovieID=screening.MovieID).first()
+            print(movie.PosterURL)
+            bookings.append([booking, movie.Name, time, date, movie.PosterURL])
 
         return render_template('view-bookings.html', bookings=bookings)
     else:

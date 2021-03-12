@@ -3,11 +3,20 @@
   <div class="container-fluid">
     <br>
     <div class="row justify-content-center">
+        <div>
+            <h1>Your Bookings</h1>
+        <div>
+            <br>
         <table>
         {% for booking in bookings %}
-        <tr>    
+        <tr>
         <td>
-            <div class="col-sm" style="padding-left: 0px; padding-right: 50px;"">
+            <div class="col-sm" style="padding-bottom: 30px;""></div>
+                <img width = "130px" alt="Image Unavailable" src="{{booking[4]}}"/>
+            </div>
+        </td>
+        <td>
+            <div class="col-sm" style="padding-left: 50px; padding-right: 50px;"">
                 <p><b>Name: </b>{{booking[1]}}</p>
                 <p><b>Time: </b>{{booking[2]}}</p>
                 <p><b>Date: </b>{{booking[3]}}</p>
