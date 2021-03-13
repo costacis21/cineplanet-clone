@@ -79,3 +79,44 @@ select {
 .footer p {
   font-size: 12px;
 }
+
+.dropdown-menu {
+  background-color: #23272b;
+}
+
+.dropdown-item {
+  color: white;
+}
+
+.dropdown-item:hover {
+  background-color: #343A40;
+  color: white;
+}
+
+.buy-buttons {
+  display: inline-block;
+  padding-right: 15px;
+}
+
+.screening-movie-title {
+  font-size: 25px;
+}
+
+.movie-screening-entry {
+  background-color: #23272b;
+  border-radius: 15px;
+}
+
+.screenings-filters {
+  background-color: #23272b;
+  border-radius: 15px;
+  padding: 20px;
+}
+
+.all-screenings-column {
+  width: 400px;
+}
+
+.screening-button {
+  margin-bottom: 15px;
+}

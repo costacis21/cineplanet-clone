@@ -36,62 +36,81 @@
   </div>
   <br />
   <br />
-  <table class="table">
-    <thead class="thead-dark">
-      <!-- Headings -->
-      <tr>
-        <th scope="col">Movie</th>
-        <th scope="col">Time</th>
-        <th> </th>
-      </tr>
-    </thead>
-  {% if dailyScreenings == 0 %}
-    <tbody>
-      <tr>
-          <td>No Movies on show today</td>
-      </tr>
-    </tbody>
-  {% else %}
-  <!-- for loop through all the activities and create a new table row for each -->
-  {% for i in range(0, allMovies|length) %}
-  <tbody>
-    {% set screenings = allMovies[i].getScreenings(date) %}
-    {% if screenings|length >= 1 %}
-    <tr>
-      <td>
-        <div class="row">
-          <div class="col-sm" style="padding-right: 0px;">
+  <div class="row">
+    <div class="col-9">
+      {% if dailyScreenings == 0 %}
+      <table class="table table-borderless movie-screening-entry">
+        <tbody>
+          <tr>
+              <td>No Movies on show today</td>
+          </tr>
+        </tbody>
+      </table>
+      {% else %}
+      <!-- for loop through all the activities and create a new table row for each -->
+      {% for i in range(0, allMovies|length) %}
+        {% set screenings = allMovies[i].getScreenings(date) %}
+        {% if screenings|length >= 1 %}
+        <table class="table table-borderless movie-screening-entry">
+        <tr>
+          <td class="screening-movie-title" colspan="3"><b><u>{{allMovies[i].Name}}</u></b></td>
+        </tr>
+        <tr>
+          <td>
             <img width = "130px" src="{{allMovies[i].PosterURL}}"/>
             <br /><br />
             <form action="" method="post" class="showInfo" value={{allMovies[i].MovieID}}>
               <input type="submit" class="btn btn-primary" value="View Info" data-toggle="modal" data-target="#exampleModalLong{{i}}">
               <input type="hidden" value="{{allMovies[i].MovieID}}" name="viewInfo">
-              <br /><br />
             </form>
-          </div>
-          <div class="col-sm" style="padding-left: 0px;"">
-            <p><b>Name: </b>{{allMovies[i].Name}}</p>
+          </td>
+          <td>
             <p><b>Age Rating: </b>{{allMovies[i].Age}}</p>
             <p><b>Running Time: </b>{{allMovies[i].RunningTime}} mins</p>
-          </div>
-        </div>
-      </td>
-      <td>
-      {% set screenings = allMovies[i].getScreenings(date) %}
-      {% for screening in screenings %}
-        <form action="" method="post" value="{{screening.ScreeningID}}">
-          <input type="submit" class="btn btn-success" value="{{(screening.StartTimestamp|string)[11:16]}}">
-          <input type="hidden" value={{screening.ScreeningID}} name="buy">
-          <br /><br />
-        </form>
+          </td>
+          <td class="all-screenings-column">
+          {% set screenings = allMovies[i].getScreenings(date) %}
+              {% for screening in screenings %}
+                <form action="" method="post" value="{{screening.ScreeningID}}" class ="buy-buttons">
+                  <input type="submit" class="btn btn-success screening-button" value="{{(screening.StartTimestamp|string)[11:16]}}">
+                  <input type="hidden" value={{screening.ScreeningID}} name="buy" class="screening-button">
+                </form>
+              {% endfor %}
+          </td>
+        </tr>
+        {% endif %}
       {% endfor %}
-      </td>
-    </tr>
-    {% endif %}
-  {% endfor %}
-  {% endif %}
-    </tbody>
-  </table>
+      {% endif %}
+        </tbody>
+      </table>
+    </div>
+    <div class="col-3">
+      <div class="screenings-filters">
+        <h4>Filter by age</h4>
+        <form>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+            <label class="form-check-label" for="exampleRadios1">
+              PG
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+            <label class="form-check-label" for="exampleRadios2">
+              PG-13
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+            <label class="form-check-label" for="exampleRadios2">
+              R (18+)
+            </label>
+          </div>
+          <br />
+          <button type="submit" class="btn btn-primary" name="Apply" value="Apply">Apply</button>
+        </form>
+    </div>
+  </div>
 </div>
 
 {% for i in range(0, allMovies|length) %}
@@ -129,6 +148,7 @@
       </div>
     </div>
   </div>
+</div>
 </div>
 {% endfor %}
 

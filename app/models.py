@@ -41,7 +41,7 @@ class Screening(db.Model):
                 seat = Seat.query.get(ticket.SeatID)
                 reserved.append(seat.code)
         return reserved
-    
+
     def seats(self):
         seats = []
         room = Screen.query.get(self.ScreenID)
@@ -65,10 +65,10 @@ class Ticket(db.Model):
     TicketID = db.Column(db.Integer, primary_key=True)
     BookingID = db.Column(db.Integer, db.ForeignKey('booking.BookingID'))
     SeatID = db.Column(db.Integer, db.ForeignKey('seat.SeatID'))
-    # 1 for adult, 2 for child, 3 for senior 
+    # 1 for adult, 2 for child, 3 for senior
     Category = db.Column(db.Integer)
     QR = db.Column(db.String(4296))
-    
+
 
 class Screen(db.Model):
     ScreenID = db.Column(db.Integer, primary_key=True)
@@ -80,7 +80,7 @@ class Seat(db.Model):
     SeatID = db.Column(db.Integer, primary_key=True)
     ScreenID = db.Column(db.Integer, db.ForeignKey('screen.ScreenID'))
     code = db.Column(db.String(5))
-    # 0 for standard, 1 for VIP 
+    # 0 for standard, 1 for VIP
     Type = db.Column(db.Integer)
     Tickets = db.relationship('Ticket', backref='seat', lazy='dynamic')
 
@@ -102,10 +102,13 @@ class Movie(db.Model):
     PosterURL = db.Column(db.String(100))
     Api = db.Column(db.Integer)
     Screenings = db.relationship('Screening', backref='movie', lazy='dynamic')
+
     def getScreenings(self, date):
         allScreenings = Screening.query.filter_by(MovieID=self.MovieID).all()
         datedScreenings = []
         for screening in allScreenings:
             if str(date) in str(screening.StartTimestamp):
                 datedScreenings.append(screening)
+        # Sort by time
+        datedScreenings = sorted(datedScreenings, key=lambda Screening: Screening.StartTimestamp)
         return datedScreenings
