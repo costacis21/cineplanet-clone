@@ -406,9 +406,10 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
         flash('You must be signed in to book tickets')
         return redirect(url_for('login'))
 
-@app.route('/view-bookings/<UserID>')
-def viewBookings(UserID):
+@app.route('/view-bookings')
+def viewBookings():
     if current_user.is_authenticated:
+        UserID=current_user.UserID
         booking_records = models.Booking.query.filter_by(UserID=UserID).all()
         
         bookings = []
