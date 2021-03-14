@@ -9,7 +9,7 @@ from app import app,models,forms,db,admin
 def getMovieInfo(movieTitle: str):
     """
 
-    return list of dictionaries containing imdb url with keys= {Title, Rating, Description, PosterURL, InfoURL, Age_Rating, Duration, ID}
+    return list of dictionaries containing imdb url with keys= {Title, Rating, Description, PosterURL, InfoURL, Age_Rating, Duration, ID, TrailerLink}
 
 
     return None if error
@@ -43,9 +43,9 @@ def getMovieInfo(movieTitle: str):
             for movie in TMDBjson_response['results']:
                 movieTitle = movie['original_title']
                 movieRating = movie['vote_average']
-                movieDescription = movie['overview']
                 moviePosterURL = "https://image.tmdb.org/t/p/w500{posterUrl}".format(posterUrl = movie['poster_path'])
                 tmdbID=movie['id']
+                movieDescription = movie['overview'] + "\n" + getMovieCrew(tmdbID)
                 movieTMDB_URL = "https://www.themoviedb.org/movie/{movie_id}".format(movie_id=tmdbID)
 
 
@@ -116,9 +116,10 @@ def getUpcomingMovies():
             for movie in TMDBjson_response['results']:
                 movieTitle = movie['original_title']
                 movieRating = movie['vote_average']
-                movieDescription = movie['overview']
                 moviePosterURL = "https://image.tmdb.org/t/p/w500{posterUrl}".format(posterUrl = movie['poster_path'])
                 tmdbID=movie['id']
+                movieDescription = movie['overview'] + "\n" + getMovieCrew(tmdbID)
+
                 movieTMDB_URL = "https://www.themoviedb.org/movie/{movie_id}".format(movie_id=tmdbID)
 
 
@@ -179,9 +180,9 @@ def getMovieInfoFromID(tmdbID:str):
         movie = TMDBjson_response
         movieTitle = movie['original_title']
         movieRating = movie['vote_average']
-        movieDescription = movie['overview']
         moviePosterURL = "https://image.tmdb.org/t/p/w500{posterUrl}".format(posterUrl = movie['poster_path'])
         tmdbID=movie['id']
+        movieDescription = movie['overview'] + "\n" + getMovieCrew(tmdbID)
         movieTMDB_URL = "https://www.themoviedb.org/movie/{movie_id}".format(movie_id=tmdbID)
 
 
@@ -250,6 +251,44 @@ def getTrailerFromID(tmdbID:str):
 
     
     return None
+
+
+
+
+def getMovieCrew(tmdbID:str):
+    """
+    param: tmdbID
+
+    return String containing the main 5 actors + director, if not available return none
+    
+    """
+    apiKey="bd3bccc81b8b90568f58a7d8d3299477"
+
+    TMDBurl = "https://api.themoviedb.org/3/movie/{movie_id}/credits?api_key={api_key}&language=en-US".format(movie_id = tmdbID, api_key = apiKey)
+
+
+    TMDBresponse = requests.get(TMDBurl)
+    TMDBjson_response = TMDBresponse.json()
+
+    returnStr="Actors: "
+
+    if( tmdbID == None):
+        return None
+
+    if TMDBresponse.status_code == 200:
+
+        for i in range(5):
+            returnStr+= TMDBjson_response["cast"][i]["name"]
+            if i < 4:
+                returnStr+= ", "
+
+        returnStr+= "\nDirector: "
+        for p in TMDBjson_response["crew"]:
+            if p["job"]=="Director":
+                returnStr+= p["name"]
+                return returnStr
+    
+    return None    
 
 
 

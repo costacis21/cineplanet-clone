@@ -259,7 +259,7 @@ def addNewMovie():
                         flash("Movie already added and available.")
                     else: # ELse, add as new movie
                         newMovie = models.Movie(Name = selectedMovie['Title'], Age = selectedMovie['Age_Rating'], Description = selectedMovie['Description'],
-                                                RunningTime = selectedMovie['Duration'], PosterURL = selectedMovie['PosterURL'])
+                                                RunningTime = selectedMovie['Duration'], PosterURL = selectedMovie['PosterURL'],Api = selectedMovie['ID'],TrailerURL=selectedMovie['TrailerURL'])
                         db.session.add(newMovie)
                         db.session.commit()
                         return redirect(url_for('addMovieScreening'))
