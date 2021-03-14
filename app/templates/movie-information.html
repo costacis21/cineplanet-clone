@@ -15,6 +15,7 @@
       <p><b>Running Time: </b>{{movie.RunningTime}} mins</p>
       <p><b>Description: </b></p>
       <p>{{movie.Description}}</p>
+      <button type="button" class="btn btn-secondary" onclick="window.open('{{movie.TrailerURL}}');"> Watch Trailer </button>
     </div>
     <div class="col-sm">
       <h3>Avaliable screenings</h3>
@@ -44,7 +45,7 @@
             <form action="" method="post" value="{{screening.ScreeningID}}">
               <input type="submit" class="btn btn-success" value="{{(screening.StartTimestamp|string)[11:16]}}">
               <input type="hidden" value={{screening.ScreeningID}} name="buy">
-            </form
+            </form>
           </td>
         </tr>
         {% endfor %}
