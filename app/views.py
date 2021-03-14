@@ -101,8 +101,6 @@ def datedScreenings(date):
                 return redirect('/screenings/' + str(date))
         elif request.form.get("viewInfo"):
             foundMovieInfo = request.form.get("viewInfo")
-            print(foundMovieInfo)
-            print(everyMovie[int(foundMovieInfo)-1].Name)
         else: # Clicked to buy tickets
             foundScreeningID = request.form.get("buy")
             # Needs here to be replaced with a redirect to the specific ticket booking of that screening
@@ -140,9 +138,11 @@ def movieInformation(MovieID):
     movie = models.Movie.query.filter_by(MovieID=MovieID).first()
     screenings = models.Screening.query.filter_by(MovieID = MovieID).all()
     # Code below removes any screenings that have already happended so you can't direct to buy tickets
+    futureScreenings = []
     for screening in screenings:
-        if screening.StartTimestamp < datetime.datetime.now():
-            screenings.remove(screening)
+        if screening.StartTimestamp > datetime.datetime.now():
+            futureScreenings.append(screening)
+    screenings = futureScreenings
     numScreenings = len(screenings)
     if request.method == 'POST':
         foundScreeningID = request.form.get("buy")
