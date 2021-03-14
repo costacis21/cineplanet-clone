@@ -445,16 +445,19 @@ def viewBookings():
             bookings.append([booking, movie.Name, time, date, movie.PosterURL])
 
         return render_template('view-bookings.html', bookings=bookings)
-        
+
 @app.route('/validate-ticket/<uuid>', methods = ['GET', 'POST'])
 def validateTicket(uuid):
     if current_user.is_authenticated:
-        if models.Ticket.query.filter_by(QR=uuid).first(): # If the uuid is valid
-            flash('Ticket is valid')
-            valid = True
+        if current_user.Privilage <= 1: # Checks that the user has the required permissions to validate tickets (customers can't validate tickets)
+            if models.Ticket.query.filter_by(QR=uuid).first(): # If the uuid is valid
+                flash('Ticket is valid')
+                valid = True
+            else:
+                flash('Ticket is not valid')
+                valid = False
         else:
-            flash('Ticket is not valid')
-            valid = False
+            flash("You do not have the required permissions to validate tickets")
         
         return render_template('validate-ticket.html', valid=valid)
 
@@ -465,12 +468,26 @@ def validateTicket(uuid):
 @app.route('/view-tickets/<BookingID>', methods = ['GET', 'POST'])
 def viewTickets(BookingID):
     if current_user.is_authenticated:
-        if session['booking_complete'] == True:
-            #return send_from_directory("static\\ticket\\tickets", 'booking'+str(BookingID)+'.pdf')
-            return render_template('view-tickets.html', BookingID=BookingID)
+        # Gets all bookings made by a user
+        bookings = models.Booking.query.filter_by(UserID=current_user.UserID).all()
+        # Checks that the user has made bookings
+        if len(bookings) > 0:
+            # Checks that this booking is one made by the current user
+            valid = False
+            for booking in bookings:
+                if booking.BookingID == int(BookingID):
+                    valid = True
 
-        flash("Tickets not found")
+            # If the booking was made by the current user
+            if valid == True:
+                return render_template('view-tickets.html', BookingID=BookingID)
+            else:
+                flash("You cannot view another user's bookings")
+        else:    
+            flash("Tickets not found")
+
         return redirect(url_for('index'))
+    
     else:
         flash('You must be signed in to book tickets')
         return redirect(url_for('login'))
