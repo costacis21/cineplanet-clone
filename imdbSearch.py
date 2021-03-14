@@ -77,11 +77,10 @@ def getMovieInfo(movieTitle: str):
 
 
 
-            
+                 # get trailer link
+                trailerLink = getTrailerFromID(tmdbID)
+                returnDictionary.append({"Title": movieTitle, "Rating": movieRating, "Description": movieDescription, "PosterURL": moviePosterURL, "InfoURL": movieTMDB_URL, "Age_Rating": age_rating, "Duration": movieDuration, "ID":tmdbID, "TrailerURL":trailerLink})
 
-
-                # store it to dictionary
-                returnDictionary.append({"Title": movieTitle, "Rating": movieRating, "Description": movieDescription, "PosterURL": moviePosterURL, "InfoURL": movieTMDB_URL, "Age_Rating": age_rating, "Duration": movieDuration, "ID":tmdbID})
 
             
 
@@ -145,7 +144,10 @@ def getUpcomingMovies():
                 durationResponse = requests.get(durationURL)
                 durationJsonResponse = durationResponse.json()
                 movieDuration = durationJsonResponse['runtime']
-                returnDictionary.append({"Title": movieTitle, "Rating": movieRating, "Description": movieDescription, "PosterURL": moviePosterURL, "InfoURL": movieTMDB_URL, "Age_Rating": age_rating, "Duration": movieDuration, "ID":tmdbID})
+            
+                # get trailer link
+                trailerLink = getTrailerFromID(tmdbID)
+                returnDictionary.append({"Title": movieTitle, "Rating": movieRating, "Description": movieDescription, "PosterURL": moviePosterURL, "InfoURL": movieTMDB_URL, "Age_Rating": age_rating, "Duration": movieDuration, "ID":tmdbID, "TrailerURL":trailerLink})
 
 
 
@@ -213,10 +215,10 @@ def getMovieInfoFromID(tmdbID:str):
 
     
 
-
-        # store it to dictionary
-        returnDictionary={"Title": movieTitle, "Rating": movieRating, "Description": movieDescription, "PosterURL": moviePosterURL, "InfoURL": movieTMDB_URL, "Age_Rating": age_rating, "Duration": movieDuration, "ID":tmdbID}
-
+        # get trailer link
+        trailerLink = getTrailerFromID(tmdbID)
+        returnDictionary={"Title": movieTitle, "Rating": movieRating, "Description": movieDescription, "PosterURL": moviePosterURL, "InfoURL": movieTMDB_URL, "Age_Rating": age_rating, "Duration": movieDuration, "ID":tmdbID, "TrailerURL":trailerLink}
+        
     
 
         return returnDictionary
@@ -249,13 +251,5 @@ def getTrailerFromID(tmdbID:str):
     
     return None
 
-everyMovie = models.Movie.query.all()
-
-for movie in everyMovie:
-    if movie.Api == None:
-        movieInfo = getMovieInfo(movie.Name)[0]
-        movie.Api = movieInfo["ID"]
-    # movie.TrailerLink = getTrailerFromID(movie.Api)
-db.session.commit()
 
 
