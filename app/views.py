@@ -8,6 +8,11 @@ from app import CreatePDF
 from app import SendEmail
 import pyqrcode
 from PIL import Image
+from datetime import timedelta
+try:
+    import urlparse
+except ImportError:
+    import urllib.parse as urlparse
 
 # FLASK ADMIN setup
 # remove before deployment
@@ -105,6 +110,13 @@ def datedScreenings(date):
             foundScreeningID = request.form.get("buy")
             # Needs here to be replaced with a redirect to the specific ticket booking of that screening
             return redirect('/seats/' + str(foundScreeningID))
+    # Code to get all youtube id's
+    movieTrailerIDs = []
+    for movie in moviesWithScreenings:
+        url_data = urlparse.urlparse(movie.TrailerURL)
+        query = urlparse.parse_qs(url_data.query)
+        video = query["v"][0]
+        movieTrailerIDs.append(video)
     if current_user.is_authenticated:
         return render_template('screenings.html',
                             title='Screenings',
@@ -115,7 +127,8 @@ def datedScreenings(date):
                             user=current_user.Email,
                             searchForScreening = searchForScreening,
                             everyMovie = everyMovie,
-                            foundMovieInfo = int(foundMovieInfo)
+                            foundMovieInfo = int(foundMovieInfo),
+                            movieTrailerIDs = movieTrailerIDs
                             )
     else:
         return render_template('index.html',
@@ -140,10 +153,14 @@ def movieInformation(MovieID):
     # Code below removes any screenings that have already happended so you can't direct to buy tickets
     futureScreenings = []
     for screening in screenings:
-        if screening.StartTimestamp > datetime.datetime.now():
+        if screening.StartTimestamp > datetime.datetime.now() - timedelta(days=1):
             futureScreenings.append(screening)
     screenings = futureScreenings
     numScreenings = len(screenings)
+    # Get Youtube Video ID
+    url_data = urlparse.urlparse(movie.TrailerURL)
+    query = urlparse.parse_qs(url_data.query)
+    video = query["v"][0]
     if request.method == 'POST':
         foundScreeningID = request.form.get("buy")
         # Needs here to be replaced with a redirect to the specific ticket booking of that screening
@@ -152,7 +169,8 @@ def movieInformation(MovieID):
                     title="Movie Information - " + movie.Name,
                     movie = movie,
                     screenings = screenings,
-                    numScreenings = numScreenings
+                    numScreenings = numScreenings,
+                    video = video
                     )
 
 @app.route('/login', methods=['GET','POST'])

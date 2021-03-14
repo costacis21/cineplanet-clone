@@ -141,10 +141,16 @@
               <p>{{allMovies[i].Description}}</p>
             </div>
         </div>
+        <div class="row">
+            <div class="col-sm">
+              <p><b>Watch Trailer: </b></p>
+              <iframe width="465" height="260" src="https://www.youtube.com/embed/{{movieTrailerIDs[i]}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-secondary" onclick="window.open('{{allMovies[i].TrailerURL}}');"> Watch Trailer </button>
+        <button type="button" class="btn btn-primary" onclick="window.open('{{allMovies[i].TrailerURL}}');"> Watch Trailer on YouTube </button>
       </div>
     </div>
   </div>

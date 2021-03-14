@@ -15,7 +15,9 @@
       <p><b>Running Time: </b>{{movie.RunningTime}} mins</p>
       <p><b>Description: </b></p>
       <p>{{movie.Description}}</p>
-      <button type="button" class="btn btn-secondary" onclick="window.open('{{movie.TrailerURL}}');"> Watch Trailer </button>
+      <!-- Button to Open the Modal -->
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Watch Now</button>
+      <button type="button" class="btn btn-secondary" onclick="window.open('{{movie.TrailerURL}}');"> Watch Trailer on YouTube </button>
     </div>
     <div class="col-sm">
       <h3>Avaliable screenings</h3>
@@ -61,5 +63,30 @@
 <div class="row justify-content-md-center">
 </div>
 <br />
+
+  <!-- The Modal -->
+  <div class="modal fade" id="myModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">{{movie.Name}} Trailer</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="modal-body">
+          <iframe width="765" height="440" src="https://www.youtube.com/embed/{{video}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
 
 {% endblock %}
