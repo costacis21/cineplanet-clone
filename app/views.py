@@ -8,6 +8,7 @@ import pyqrcode
 from PIL import Image
 import uuid
 from datetime import timedelta
+import os
 try:
     import urlparse
 except ImportError:
@@ -446,7 +447,7 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
             Types = []
             for ticket in models.Ticket.query.filter_by(BookingID=newBooking.BookingID): # For all of the tickets just purchased
                 # Make QR code for ticket
-                qr_filename = 'app\static/ticket/qr/qr'+str(ticket.TicketID)+'.png'
+                qr_filename = os.getcwd() + '/app/static/ticket/qr/qr'+str(ticket.TicketID)+'.png'
                 qr = pyqrcode.create(ticket.QR)
                 qr.png(qr_filename, scale=6)
 
@@ -476,7 +477,7 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
 
             #Make a PDF for the ticket
             movie = models.Movie.query.filter_by(MovieID=screening.MovieID).first().Name
-            filename = 'app\static\\ticket\\tickets\\booking'+str(newBooking.BookingID)+'.pdf'
+            filename = os.getcwd() + '/app/static/ticket/tickets/booking'+str(newBooking.BookingID)+'.pdf'
             CreatePDF.MakePDF(filename, QRs, movie, Seats, Categories, str(screen), str(screening.StartTimestamp.date().strftime('%d/%m/%y')), str(screening.StartTimestamp.time().strftime('%H:%M')), Types)
 
             # Send all the PDFs in an email to the user
@@ -589,7 +590,7 @@ def CashPayment(screeningID, seats, types): # succeed booking confirmation page
             Types = []
             for ticket in models.Ticket.query.filter_by(BookingID=newBooking.BookingID): # For all of the tickets just purchased
                 # Make QR code for ticket
-                qr_filename = 'app\static/ticket/qr/qr'+str(ticket.TicketID)+'.png'
+                qr_filename = os.getcwd() + '/app/static/ticket/qr/qr'+str(ticket.TicketID)+'.png'
                 #qr = pyqrcode.create('http://127.0.0.1:5000/validate-ticket/'+ticket.QR) # Needs to be changed to not have the port hardcoded into it
                 qr = pyqrcode.create(url_for('index')+ticket.QR)
                 qr.png(qr_filename, scale=6)
@@ -621,7 +622,7 @@ def CashPayment(screeningID, seats, types): # succeed booking confirmation page
 
             #Make a PDF for the ticket
             movie = models.Movie.query.filter_by(MovieID=screening.MovieID).first().Name
-            filename = 'app\static\\ticket\\tickets\\booking'+str(newBooking.BookingID)+'.pdf'
+            filename = os.getcwd() + '/app/static/ticket/tickets/booking'+str(newBooking.BookingID)+'.pdf'
             CreatePDF.MakePDF(filename, QRs, movie, Seats, Categories, str(screen), str(screening.StartTimestamp.date().strftime('%d/%m/%y')), str(screening.StartTimestamp.time().strftime('%H:%M')), Types)
 
             # Send all the PDFs in an email to the user

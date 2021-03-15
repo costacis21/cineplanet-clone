@@ -1,4 +1,4 @@
-import sys
+import sys, os
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.units import inch, cm
 from reportlab.lib.pagesizes import *
@@ -38,7 +38,7 @@ def MakePDF(Filename, QRs, MovieName, Seats, Categories, Screen, Date, Time, Typ
         y = (i % 3)
 
         #Adding images to the ticket
-        canvas.drawImage('app\static\\ticket\\accessories\\test_logo.jpg', 0, (3-y)*(842/3)- 250, width=200, height=200, preserveAspectRatio=True)
+        canvas.drawImage(os.getcwd()+'/app/static/ticket/accessories/test_logo.jpg', 0, (3-y)*(842/3)- 250, width=200, height=200, preserveAspectRatio=True)
         canvas.drawImage(qr, 420, (3-y)*(842/3)- 220, width=170, height=170, preserveAspectRatio=True)
 
         #Adding the text to the PDF
