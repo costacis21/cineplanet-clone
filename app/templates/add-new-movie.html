@@ -1,63 +1,66 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container-fluid">
-<br><br>
-<h1 class="row justify-content-md-center">Add a new movie</h1>
-<div class="row justify-content-center">
-  <form action="" method="post" name="Add_item" value="Add_item">
-  {{ enterMovie.csrf_token() }}
-  {{ enterMovie.hidden_tag() }}
+  <br><br>
+  <h1 class="row justify-content-md-center">Add a new movie</h1>
+  <div class="row justify-content-center">
+    <form action="" method="post" name="Add_item" value="Add_item">
+      {% if enterMovie.csrf_token() %}
+      {{enterMovie.csrf_token()}}
+      {% endif %}
+      {{ enterMovie.hidden_tag() }}
       <div class="form-group">
-          <label for="taskNameInput">{{enterMovie.movietitle.label}}</label><br>
-      {{enterMovie.movietitle}}
-      {% for error in enterMovie.movietitle.errors %}
-          </br><span style="color: red;">{{error}}</span>
-      {% endfor %}<br>
+        <label for="taskNameInput">{{enterMovie.movietitle.label}}</label><br>
+        {{enterMovie.movietitle}}
+        {% for error in enterMovie.movietitle.errors %}
+        </br><span style="color: red;">{{error}}</span>
+        {% endfor %}<br>
       </div>
       <div class="row justify-content-center">
-      <button type="submit" class="btn btn-primary" name="Search" value="Search">Search</button>
-      </div>
-  </form>
-</div>
-<br />
-
-
-
-<table class="table">
-  <thead class="thead-dark">
-    <!-- Headings -->
-    <tr>
-      <th scope="col">Movie</th>
-      <th> </th>
-    </tr>
-  </thead>
-<!-- for loop through all the  movies and create a new table row for each  -->
-<tbody>
-{% for movie in movies%}
-  <tr>
-    <td>
-      <form action="" method="post" name="selectMovie" value = "selectMovie">
-      <div class="row">
-        <div class="col-sm" style="padding-right: 0px;">
-          <img width = "130px" src="{{movie.PosterURL}}" />
-        </div>
-        <div class="col-sm" style="padding-left: 0px;">
-          <p><b>Name: </b>{{movie.Title}}</p>
-          <p><b>Age Rating: </b>{{movie.Age_Rating}}</p>
-          <p><b>Running Time: </b>{{movie.Duration}} mins</p>
-        </div>
-        <div class="col-sm" style="padding-right: 0px;">
-          
-            {{selectMovie.tmdbID(value=movie.ID)}}
-            <input type="submit" class="btn btn-primary" value="Add movie"></div>
-          
+        <button type="submit" class="btn btn-primary" name="Search" value="Search">Search</button>
       </div>
     </form>
-    </td>
-  </tr>
-{% endfor %}
-  </tbody>
-</table>
+  </div>
+  <br />
+
+
+
+  <table class="table">
+    <thead class="thead-dark">
+      <!-- Headings -->
+      <tr>
+        <th scope="col">Movie</th>
+        <th> </th>
+      </tr>
+    </thead>
+    <!-- for loop through all the  movies and create a new table row for each  -->
+    <tbody>
+      {% for movie in movies%}
+      <tr>
+        <td>
+          <form action="" method="post" name="selectMovie" value="selectMovie">
+            <div class="row">
+              <div class="col-sm" style="padding-right: 0px;">
+                <img width="130px" src="{{movie.PosterURL}}" />
+              </div>
+              <div class="col-sm" style="padding-left: 0px;">
+                <p><b>Name: </b>{{movie.Title}}</p>
+                <p><b>Age Rating: </b>{{movie.Age_Rating}}</p>
+                <p><b>Running Time: </b>{{movie.Duration}} mins</p>
+              </div>
+              <div class="col-sm" style="padding-right: 0px;">
+
+                {{selectMovie.tmdbID(value=movie.ID)}}
+                <input type="submit" class="btn btn-primary" value="Add movie">
+              </div>
+
+            </div>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
 </div>
 <br />

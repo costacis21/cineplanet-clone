@@ -1,16 +1,19 @@
 {% extends "base.html" %}
- {% block content %}
-  <div class="container-fluid">
+{% block content %}
+<div class="container-fluid">
     <br>
     <div class="row justify-content-center">
         <form action="" method="post" name="Add_item">
-          {{ signupForm.hidden_tag() }}
+            {% if signupForm.csrf_token() %}
+            {{signupForm.csrf_token()}}
+            {% endif %}
+            {{ signupForm.hidden_tag() }}
             <div class="form-group">
                 <label for="taskNameInput">{{signupForm.email.label}}</label><br>
-            {{signupForm.email}}
-            {% for error in signupForm.email.errors %}
+                {{signupForm.email}}
+                {% for error in signupForm.email.errors %}
                 </br><span style="color: red;">{{error}}</span>
-            {% endfor %}<br>
+                {% endfor %}<br>
             </div>
             <div class="form-group">
                 <label for="taskDescriptionInput">{{signupForm.password.label}}</label><br>
@@ -27,12 +30,12 @@
                 {% endfor %}<br>
                 <small>Already have an account? <a href='/login'>Sign In</a></small>
             </div>
-            
+
             <div class="row justify-content-center">
-    
-            <button type="submit" class="btn btn-outline-primary btn-sm">Submit</button>
+
+                <button type="submit" class="btn btn-outline-primary btn-sm">Submit</button>
             </div>
         </form>
-        </div>
     </div>
+</div>
 {% endblock %}

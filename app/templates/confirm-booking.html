@@ -15,7 +15,7 @@
         </thead>
         <tbody>
             {% for seat in seats %}
-            <tr>
+            <tr class="bg-white text-dark">
                 <th scope="col">{{seat}}</th>
                 {% if seat in premium %}
                 <td id="{{seat}}t" onload="addPremium();">Premium</td>
@@ -23,16 +23,18 @@
                 <td id="{{seat}}t" onload="addStandard();">Standard</td>
                 {% endif %}
                 <td>
-                    <div class="input-group mb-3">
+                    <div class="input-group mb-3 bg-white">
                         <select class="custom-select" onchange="updatePrice(id)" id="{{seat}}">
                             <option selected value="1">Standard</option>
+                            {% if child %}
                             <option value="2">Child (up to 16)</option>
+                            {% endif %}
                             <option value="3">Senior (65+)</option>
                         </select>
                     </div>
                 </td>
                 {% if seat in premium %}
-                <td>
+                <td class=>
                     <div id="{{seat}}p" style="text-align: center;">{{PremiumGeneralPrice}}</div>
                 </td>
                 {% else %}
@@ -42,7 +44,7 @@
                 {% endif %}
             </tr>
             {% endfor %}
-            <tr>
+            <tr class="bg-white text-dark">
                 <td></td>
                 <td></td>
                 <td></td>
@@ -50,17 +52,22 @@
                     <div id="total" style="text-align: center;">Total: £</div>
                 </td>
             </tr>
-            <tr>
+            <tr >
                 <td>
                     <div style="text-align: left;">
-                        <button id="back" type="button-sm" class="btn btn-outline-dark btn-sm">Back</button>
+                        <button id="back" type="button-sm" class="btn btn-dark btn-sm">Back</button>
                     </div>
                 </td>
                 <td></td>
                 <td></td>
                 <td>
                     <div style="text-align: right;">
-                        <button id="confirm" type="button-sm" class="btn btn-dark btn-sm">Proceed to Payment</button>
+                        {% if current_user.Privilage < 2 %}
+                        <button id="cashConfirm" type="button-sm" class="btn btn-warning btn-sm">Process Cash Payment</button>
+                        <button id="confirm" type="button-sm" class="btn btn-info btn-sm">Process Card Payment</button>
+                        {% else %}
+                        <button id="confirm" type="button-sm" class="btn btn-primary btn-sm">Proceed to Payment</button>
+                        {% endif %}
                     </div>
                 </td>
             </tr>
@@ -70,6 +77,13 @@
 </div>
 </div>
 <script>
+    var ss = {{ StandardGeneralPrice }};
+    var sc = {{ StandardConcessionPrice }};
+    var ps = {{ PremiumGeneralPrice }};
+    var pc = {{ PremiumConcessionPrice }};
+
+    updateTotal();
+    
     document.getElementById("confirm").onclick = function () {
         var allSeats = window.location.pathname.split("/")[3];
         var seats = allSeats.split("$");
@@ -80,16 +94,20 @@
         location.href = "/payment/" + window.location.pathname.split("/")[2] + "/" + window.location.pathname.split("/")[3] + "/" + types.join("$");
     };
 
+    document.getElementById("cashConfirm").onclick = function () {
+        var allSeats = window.location.pathname.split("/")[3];
+        var seats = allSeats.split("$");
+        var types = [];
+        for (var i = 0; i < seats.length; i++) {
+            types.push(document.getElementById(seats[i]).value);
+        }
+        location.href = "/cashPayment/" + window.location.pathname.split("/")[2] + "/" + window.location.pathname.split("/")[3] + "/" + types.join("$");
+    };
+
     document.getElementById("back").onclick = function () {
         location.href = "/seats/" + window.location.pathname.split("/")[2];
 
     }
-    var ss = {{ StandardGeneralPrice }};
-    var sc = {{ StandardConcessionPrice }};
-    var ps = {{ PremiumGeneralPrice }};
-    var pc = {{ PremiumConcessionPrice }};
-
-    updateTotal();
 
     function updatePrice(id) {  //changes prices depending on select box option
         var x = document.getElementById(id).value;  
