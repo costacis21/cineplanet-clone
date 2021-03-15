@@ -590,7 +590,8 @@ def CashPayment(screeningID, seats, types): # succeed booking confirmation page
             for ticket in models.Ticket.query.filter_by(BookingID=newBooking.BookingID): # For all of the tickets just purchased
                 # Make QR code for ticket
                 qr_filename = 'app\static/ticket/qr/qr'+str(ticket.TicketID)+'.png'
-                qr = pyqrcode.create('http://127.0.0.1:5000/validate-ticket/'+ticket.QR)
+                #qr = pyqrcode.create('http://127.0.0.1:5000/validate-ticket/'+ticket.QR) # Needs to be changed to not have the port hardcoded into it
+                qr = pyqrcode.create(url_for('index')+ticket.QR)
                 qr.png(qr_filename, scale=6)
 
                 # Converting the numerical value for the ticket's category that is stored in the database to the string value that will appear on the ticket
