@@ -449,15 +449,16 @@ def viewBookings():
 @app.route('/validate-ticket/<uuid>', methods = ['GET', 'POST'])
 def validateTicket(uuid):
     if current_user.is_authenticated:
+        valid = False
         if current_user.Privilage <= 1: # Checks that the user has the required permissions to validate tickets (customers can't validate tickets)
             if models.Ticket.query.filter_by(QR=uuid).first(): # If the uuid is valid
                 flash('Ticket is valid')
                 valid = True
             else:
                 flash('Ticket is not valid')
-                valid = False
         else:
             flash("You do not have the required permissions to validate tickets")
+            return redirect(url_for('index'))
         
         return render_template('validate-ticket.html', valid=valid)
 
