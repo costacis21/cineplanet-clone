@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block content %}
+<br><br>
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-sm-5 py-2">
+            <div class="card">
+                
+                <div class="card-body">
+                    <h6 class="card-title justify-content-center" style="text-align: center;"><br>Total Payment</h6>
+                    <h1 class="card-title justify-content-center" style="text-align: center;">£{{total}}</h1>
+                    <table class="table">
+                        <tbody>
+                            {% for item in displayOrder %}
+                            <tr>
+                                <td>{{item[0]}}</td>
+                                <td style="text-align: right;">£{{item[1]}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 py-2">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    Select Payment method
+                    <img src="../../../static/icons/cc2.png" />
+                </div>
+                <form action="" method="post" name="details">
+                    {% if UseCard.csrf_token() %}
+                        {{UseCard.csrf_token()}}
+                    {% endif %}
+                    {{ UseCard.hidden_tag() }}
+
+                <div class="card-body">
+                    {% if cards %}
+                    <h6>Saved cards</h6>
+                    {% endif %}
+                    <table class="table">
+                        <tbody>
+                            {% for card in cards %}
+                            <tr>
+                                <td>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div>xxxx-xxxx-xxxx-{{card.CardNo[12:]}}</div>
+                                        </div>
+                                        <div class="col">
+                                            <button type="submit" class="btn btn-outline-primary btn-sm">Pay with this
+                                                card</button>
+                                        </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </form>
+                            <form action="" method="post" name="details">
+                                {% if PaymentDetailsForm.csrf_token() %}
+                                    {{PaymentDetailsForm.csrf_token()}}
+                                {% endif %}
+                                {{ PaymentDetailsForm.hidden_tag() }}
+                            <tr>
+                                <td>
+                                    {% if cards %}
+                                    <br>
+                                    {% endif %}
+                                    <h6>Add a new card</h6>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                        <div class="container-fluid">
+                                            <div class="row">
+                                                <div class="col-sm-5">
+                                                    <div class="form-group">
+                                                        <label
+                                                            for="CardNo">{{PaymentDetailsForm.CardNo.label}}</label><br>
+                                                        {{PaymentDetailsForm.CardNo}}
+                                                        {% for error in PaymentDetailsForm.CardNo.errors %}
+                                                        </br><span style="color: red;">{{error}}</span>
+                                                        {% endfor %}<br>
+                                                    </div>
+                                                </div>
+                                                <div clas="col-sm-5">
+                                                    <div class="form-group">
+                                                        <label
+                                                            for="Expiry">{{PaymentDetailsForm.Expiry.label}}</label><br>
+                                                        {{PaymentDetailsForm.Expiry}}
+                                                        {% for error in PaymentDetailsForm.Expiry.errors %}
+                                                        </br><span style="color: red;">{{error}}</span>
+                                                        {% endfor %}<br>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-sm-5">
+                                                    <div class="form-group">
+                                                        <label for="Name">{{PaymentDetailsForm.Name.label}}</label><br>
+                                                        {{PaymentDetailsForm.Name}}
+                                                        {% for error in PaymentDetailsForm.Name.errors %}
+                                                        </br><span style="color: red;">{{error}}</span>
+                                                        {% endfor %}<br>
+                                                    </div>
+                                                </div>
+                                                <div clas="col-sm-5">
+                                                    <div class="form-group">
+                                                        <label for="CVV">{{PaymentDetailsForm.CVV.label}}</label><br>
+                                                        {{PaymentDetailsForm.CVV}}
+                                                        {% for error in PaymentDetailsForm.CVV.errors %}
+                                                        </br><span style="color: red;">{{error}}</span>
+                                                        {% endfor %}<br>
+                                                    </div>
+                                                </div>
+                                            </div><br>
+                                            <div class="row">
+                                                <div class="col-sm-5">
+                                                    <div class="form-group">
+                                                        {{PaymentDetailsForm.Save}}
+                                                        <label for="Save">{{PaymentDetailsForm.Save.label}}</label><br>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-5 " style="text-align: center;">
+                                                    <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

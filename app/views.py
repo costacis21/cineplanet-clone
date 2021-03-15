@@ -340,7 +340,7 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
         concessions = types.split("$") #choosen ticket types
         selected =[] #choosen and validated seats
         screening = models.Screening.query.get(screeningID) #get screening
-
+        
         if not screening:   #validate screening does exist
             flash("Something went wrong, please try again")
             return redirect(url_for('index'))
@@ -360,33 +360,51 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
             if seat in screening.reserved():
                 return redirect(url_for('seats')+screeningID)
 
-        enterPaymentDetailsForm = forms.enterPaymentDetails()
         order = list(zip(selected, concessions))    #create order merging seats with tickets
 
-        if enterPaymentDetailsForm.validate_on_submit():
-            total = 0.0
-            for item in order:  #calculate total cost
-                seatType = models.Seat.query.filter(models.Seat.ScreenID==screening.ScreenID).filter(models.Seat.code==item[0]).first().Type
-                if seatType == 0:   #standard seat costing
-                    if int(item[1]) == 3:   #senior ticket
-                        total = total + StandardConcessionPrice
-                    elif int(item[1]) == 1 or int(item[1]) == 2:    #standard & child
-                        total = total + StandardGeneralPrice
-                    else:
-                        flash("Something went wrong, please try again")
-                        return redirect(url_for('index'))
-
-                elif seatType == 1: #Premium seat costing
-                    if int(item[1]) == 3:   #senior ticket
-                        total = total + PremiumConcessionPrice
-                    elif int(item[1]) == 1 or int(item[1]) == 2:    #standard & child
-                        total = total + PremiumGeneralPrice
-                    else:
-                        flash("Something went wrong, please try again")
-                        return redirect(url_for('index'))
+        total = 0.0
+        displayOrder = []
+        PaymentDetailsForm = forms.PaymentDetailsForm()
+        UseCard = forms.UseCard()
+        for item in order:  #calculate total cost
+            seatType = models.Seat.query.filter(models.Seat.ScreenID==screening.ScreenID).filter(models.Seat.code==item[0]).first().Type
+            if seatType == 0:   #standard seat costing
+                if int(item[1]) == 3:   #senior ticket
+                    total = total + StandardConcessionPrice
+                    displayOrder.append(['Standard Senior Ticket', StandardConcessionPrice])
+                elif int(item[1]) == 2:    #child
+                    total = total + StandardGeneralPrice
+                    displayOrder.append(['Standard Child Ticket', StandardGeneralPrice])
+                elif int(item[1]) == 1:     #adult
+                    total = total + StandardGeneralPrice
+                    displayOrder.append(['Standard Adult Ticket', StandardGeneralPrice])
                 else:
                     flash("Something went wrong, please try again")
                     return redirect(url_for('index'))
+
+            elif seatType == 1: #Premium seat costing
+                if int(item[1]) == 3:   #senior ticket
+                    total = total + PremiumConcessionPrice
+                    displayOrder.append(['Premium Senior Ticket', PremiumConcessionPrice])
+                elif int(item[1]) == 2:    #child
+                    total = total + PremiumGeneralPrice
+                    displayOrder.append(['Premium Child Ticket', PremiumGeneralPrice])
+                elif int(item[1]) == 1:     #adult
+                    total = total + PremiumGeneralPrice
+                    displayOrder.append(['Premium Adult Ticket', PremiumGeneralPrice])
+                else:
+                    flash("Something went wrong, please try again")
+                    return redirect(url_for('index'))
+            else:
+                flash("Something went wrong, please try again")
+                return redirect(url_for('index'))
+
+        if PaymentDetailsForm.validate_on_submit() or UseCard.validate_on_submit():
+
+            if PaymentDetailsForm.Save.data:    #add card to db if use chooses
+                card = models.Card(UserID=current_user.UserID, CardNo=PaymentDetailsForm.CardNo.data ,Name=PaymentDetailsForm.Name.data, Expiry=datetime.datetime.strptime(PaymentDetailsForm.Expiry.data, '%m-%y'), CVV=PaymentDetailsForm.CVV.data)
+                db.session.add(card)
+                db.session.commit()
 
             newBooking = models.Booking(UserID=current_user.UserID, ScreeningID=screeningID, Timestamp=datetime.datetime.now(), TotalPrice=total)
             db.session.add(newBooking)  #create and add new booking
@@ -431,9 +449,134 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
 
             return redirect(url_for('index'))
 
-        return render_template('book-tickets.html', title='Checkout',
-                            enterPaymentDetailsForm = enterPaymentDetailsForm,
-                            page=4)
+        return render_template('payment.html', title='Checkout',
+                            total = total,
+                            displayOrder = displayOrder,
+                            PaymentDetailsForm = PaymentDetailsForm,
+                            UseCard = UseCard,
+                            cards = current_user.Cards.all()
+                            )
+    else:
+        flash('You must be signed in to book tickets')
+        return redirect(url_for('login'))
+
+
+@app.route('/cashPayment/<screeningID>/<seats>/<types>', methods=['GET','POST'])
+def CashPayment(screeningID, seats, types): # succeed booking confirmation page
+    if current_user.is_authenticated and  current_user.Privilage < 2:
+        retrieved = seats.split("$") #choosen seats
+        concessions = types.split("$") #choosen ticket types
+        selected =[] #choosen and validated seats
+        screening = models.Screening.query.get(screeningID) #get screening
+        
+        if not screening:   #validate screening does exist
+            flash("Something went wrong, please try again")
+            return redirect(url_for('index'))
+
+        if len(retrieved) != len(concessions):  #validate equal number of seats to tickets
+            return redirect("/confirmBooking/"+screeningID+"/"+seats)
+
+        age = models.Movie.query.get(screening.MovieID).Age #gets movie age rating
+        if '2' in concessions:  #have child tickets been selected
+            if age in ['R', 'X']:   #checks that child tickets are available for the screening
+                flash("Something went wrong, please try again")
+                return redirect(url_for('index'))
+
+        for seat in retrieved:  #validate seats exist, are not booked and are not repeated
+            if seat in screening.seats() and seat not in selected:
+                selected.append(seat)
+            if seat in screening.reserved():
+                return redirect(url_for('seats')+screeningID)
+
+        order = list(zip(selected, concessions))    #create order merging seats with tickets
+
+        total = 0.0
+        displayOrder = []
+        Paid = forms.Paid()
+        for item in order:  #calculate total cost
+            seatType = models.Seat.query.filter(models.Seat.ScreenID==screening.ScreenID).filter(models.Seat.code==item[0]).first().Type
+            if seatType == 0:   #standard seat costing
+                if int(item[1]) == 3:   #senior ticket
+                    total = total + StandardConcessionPrice
+                    displayOrder.append(['Standard Senior Ticket', StandardConcessionPrice])
+                elif int(item[1]) == 2:    #child
+                    total = total + StandardGeneralPrice
+                    displayOrder.append(['Standard Child Ticket', StandardGeneralPrice])
+                elif int(item[1]) == 1:     #adult
+                    total = total + StandardGeneralPrice
+                    displayOrder.append(['Standard Adult Ticket', StandardGeneralPrice])
+                else:
+                    flash("Something went wrong, please try again")
+                    return redirect(url_for('index'))
+
+            elif seatType == 1: #Premium seat costing
+                if int(item[1]) == 3:   #senior ticket
+                    total = total + PremiumConcessionPrice
+                    displayOrder.append(['Premium Senior Ticket', PremiumConcessionPrice])
+                elif int(item[1]) == 2:    #child
+                    total = total + PremiumGeneralPrice
+                    displayOrder.append(['Premium Child Ticket', PremiumGeneralPrice])
+                elif int(item[1]) == 1:     #adult
+                    total = total + PremiumGeneralPrice
+                    displayOrder.append(['Premium Adult Ticket', PremiumGeneralPrice])
+                else:
+                    flash("Something went wrong, please try again")
+                    return redirect(url_for('index'))
+            else:
+                flash("Something went wrong, please try again")
+                return redirect(url_for('index'))
+
+        if Paid.validate_on_submit():
+
+            newBooking = models.Booking(UserID=current_user.UserID, ScreeningID=screeningID, Timestamp=datetime.datetime.now(), TotalPrice=total)
+            db.session.add(newBooking)  #create and add new booking
+            db.session.commit()
+
+            for item in order:  #create and add new tickets to booking
+                seatID = models.Seat.query.filter(models.Seat.ScreenID==screening.ScreenID).filter(models.Seat.code==item[0]).first().SeatID
+                newTicket = models.Ticket(BookingID=newBooking.BookingID, SeatID=seatID, Category=item[1], QR='qr')
+                db.session.add(newTicket)
+            db.session.commit()
+
+            screening = models.Screening.query.filter_by(ScreeningID=newBooking.ScreeningID).first()
+            screen = screening.ScreeningID
+            i=0
+            filenames=[]
+            for ticket in models.Ticket.query.filter_by(BookingID=newBooking.BookingID): # For all of the tickets just purchased
+                # Make QR code for ticket
+                qr_filename = 'app\static/ticket/qr/qr'+str(ticket.TicketID)+'.png'
+                qr = pyqrcode.create(ticket.QR)
+                qr.png(qr_filename, scale=6)
+
+                if ticket.Category == 1:
+                    Category = "Adult"
+                elif ticket.Category == 2:
+                    Category = "Child"
+                elif ticket.Category == 3:
+                    Category = "Senior"
+                else:
+                    Category = "Unknown"
+
+                #Make a PDF for the ticket
+                filename = 'app\static\\ticket\\tickets\\ticket'+str(ticket.TicketID)+'.pdf'
+                CreatePDF.MakePDF('app\static\\ticket\\tickets\\ticket'+str(ticket.TicketID)+'.pdf', qr_filename, session['movie'], order[i][0], Category, str(screen), str(newBooking.Timestamp.date()), str(newBooking.Timestamp.time()))
+                filenames.append(filename)
+                i += 1
+
+            # Send all the PDFs in an email to the user
+            # First argument gives the destination email, currently set to email ourselves to prevent one of us receiving lots of emails during testing
+            SendEmail.SendMail("leeds.cineplanet.com", filenames)
+            # Un-comment the line below to send emails to their actual destination
+            #SendEmail.SendMail(current_user.email, filenames)
+
+            return redirect(url_for('index'))
+
+        return render_template('cash-payment.html', title='Checkout',
+                            total = total,
+                            displayOrder = displayOrder,
+                            Paid = Paid,
+                            cards = current_user.Cards.all()
+                            )
     else:
         flash('You must be signed in to book tickets')
         return redirect(url_for('login'))
@@ -457,3 +600,4 @@ def settings():
     else:
         logging.warning('Anonymous user attempted to access settings page')
         return redirect('/signIn')
+

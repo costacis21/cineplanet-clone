@@ -13,6 +13,7 @@ class User(db.Model):
     # 0 for admin, 1 for staff and 2 for normal user
     Privilage = db.Column(db.Integer)
     Bookings = db.relationship('Booking', backref='user', lazy='dynamic')
+    Cards = db.relationship('Card', backref='user', lazy='dynamic')
 
     def is_active(self):
         return True
@@ -113,3 +114,12 @@ class Movie(db.Model):
         # Sort by time
         datedScreenings = sorted(datedScreenings, key=lambda Screening: Screening.StartTimestamp)
         return datedScreenings
+
+class Card(db.Model):
+    CardID = db.Column(db.Integer, primary_key=True)
+    UserID = db.Column(db.Integer, db.ForeignKey('user.UserID'))
+    CardNo = db.Column(db.String(25))
+    Name = db.Column(db.String(50))
+    CVV = db.Column(db.String(5))
+    Expiry = db.Column(db.DateTime)
+

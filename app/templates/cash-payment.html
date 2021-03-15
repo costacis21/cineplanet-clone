@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<br><br>
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-sm-5">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title justify-content-center" style="text-align: center;"><br>Total Cash Payment Due
+                    </h6>
+                    <h1 class="card-title justify-content-center" style="text-align: center;">£{{total}}</h1>
+                    <table class="table">
+                        <form action="" method="post" name="details">
+                            {% if Paid.csrf_token() %}
+                            {{Paid.csrf_token()}}
+                            {% endif %}
+                            {{ Paid.hidden_tag() }}
+                            <tbody>
+                                {% for item in displayOrder %}
+                                <tr>
+                                    <td>{{item[0]}}</td>
+                                    <td style="text-align: right;">£{{item[1]}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                    </table>
+                    <br>
+                    <div class="row justify-content-center">
+                        <button type="submit" class="btn-lg btn-warning btn">Paid in full</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
