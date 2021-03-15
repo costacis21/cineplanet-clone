@@ -15,7 +15,7 @@
         </thead>
         <tbody>
             {% for seat in seats %}
-            <tr>
+            <tr class="bg-white text-dark">
                 <th scope="col">{{seat}}</th>
                 {% if seat in premium %}
                 <td id="{{seat}}t" onload="addPremium();">Premium</td>
@@ -23,7 +23,7 @@
                 <td id="{{seat}}t" onload="addStandard();">Standard</td>
                 {% endif %}
                 <td>
-                    <div class="input-group mb-3">
+                    <div class="input-group mb-3 bg-white">
                         <select class="custom-select" onchange="updatePrice(id)" id="{{seat}}">
                             <option selected value="1">Standard</option>
                             {% if child %}
@@ -34,7 +34,7 @@
                     </div>
                 </td>
                 {% if seat in premium %}
-                <td>
+                <td class=>
                     <div id="{{seat}}p" style="text-align: center;">{{PremiumGeneralPrice}}</div>
                 </td>
                 {% else %}
@@ -44,7 +44,7 @@
                 {% endif %}
             </tr>
             {% endfor %}
-            <tr>
+            <tr class="bg-white text-dark">
                 <td></td>
                 <td></td>
                 <td></td>
@@ -52,10 +52,10 @@
                     <div id="total" style="text-align: center;">Total: £</div>
                 </td>
             </tr>
-            <tr>
+            <tr >
                 <td>
                     <div style="text-align: left;">
-                        <button id="back" type="button-sm" class="btn btn-outline-dark btn-sm">Back</button>
+                        <button id="back" type="button-sm" class="btn btn-dark btn-sm">Back</button>
                     </div>
                 </td>
                 <td></td>
@@ -66,7 +66,7 @@
                         <button id="cashConfirm" type="button-sm" class="btn btn-warning btn-sm">Process Cash Payment</button>
                         <button id="confirm" type="button-sm" class="btn btn-info btn-sm">Process Card Payment</button>
                         {% else %}
-                        <button id="confirm" type="button-sm" class="btn btn-dark btn-sm">Proceed to Payment</button>
+                        <button id="confirm" type="button-sm" class="btn btn-primary btn-sm">Proceed to Payment</button>
                         {% endif %}
                     </div>
                 </td>

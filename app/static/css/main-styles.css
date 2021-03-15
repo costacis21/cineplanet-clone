@@ -9,6 +9,11 @@ input {
   color: white;
 }
 
+#light input {
+  background-color: white;
+  color:  black;
+}
+
 /* ---- scrollbar ---- */
 /* width */
 ::-webkit-scrollbar {

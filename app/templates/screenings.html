@@ -8,25 +8,27 @@
   <div class="row">
     <div class="col-sm">
       <form action="" method="post" name="Add_item" value="Add_item">
-      {{ searchForScreening.csrf_token() }}
-      {{ searchForScreening.hidden_tag() }}
-          <div class="form-group">
+        {% if searchForScreening.csrf_token() %}
+        {{searchForScreening.csrf_token()}}
+        {% endif %}
+        {{ searchForScreening.hidden_tag() }}
+        <div class="form-group">
           {{searchForScreening.searchMovie}}
           {% for error in searchForScreening.searchMovie.errors %}
-              </br><span style="color: red;">{{error}}</span>
+          </br><span style="color: red;">{{error}}</span>
           {% endfor %}<br>
-          </div>
+        </div>
     </div>
     <div class="col-sm">
       <div class="row justify-content-center">
-      <button type="submit" class="btn btn-primary" name="Search" value="Search">Search</button>
+        <button type="submit" class="btn btn-primary" name="Search" value="Search">Search</button>
       </div>
     </div>
     </form>
   </div>
 </div>
 <br />
-<div class ="container">
+<div class="container">
   <div class="float-right">
     <form action="" method="post">
       <label for="birthday">Date:</label>
@@ -42,25 +44,26 @@
       <table class="table table-borderless movie-screening-entry">
         <tbody>
           <tr>
-              <td>No Movies on show today</td>
+            <td>No Movies on show today</td>
           </tr>
         </tbody>
       </table>
       {% else %}
       <!-- for loop through all the activities and create a new table row for each -->
       {% for i in range(0, allMovies|length) %}
-        {% set screenings = allMovies[i].getScreenings(date) %}
-        {% if screenings|length >= 1 %}
-        <table class="table table-borderless movie-screening-entry">
+      {% set screenings = allMovies[i].getScreenings(date) %}
+      {% if screenings|length >= 1 %}
+      <table class="table table-borderless movie-screening-entry">
         <tr>
           <td class="screening-movie-title" colspan="3"><b><u>{{allMovies[i].Name}}</u></b></td>
         </tr>
         <tr>
           <td>
-            <img width = "130px" src="{{allMovies[i].PosterURL}}"/>
+            <img width="130px" src="{{allMovies[i].PosterURL}}" />
             <br /><br />
             <form action="" method="post" class="showInfo" value={{allMovies[i].MovieID}}>
-              <input type="submit" class="btn btn-primary" value="View Info" data-toggle="modal" data-target="#exampleModalLong{{i}}">
+              <input type="submit" class="btn btn-primary" value="View Info" data-toggle="modal"
+                data-target="#exampleModalLong{{i}}">
               <input type="hidden" value="{{allMovies[i].MovieID}}" name="viewInfo">
             </form>
           </td>
@@ -69,18 +72,19 @@
             <p><b>Running Time: </b>{{allMovies[i].RunningTime}} mins</p>
           </td>
           <td class="all-screenings-column">
-          {% set screenings = allMovies[i].getScreenings(date) %}
-              {% for screening in screenings %}
-                <form action="" method="post" value="{{screening.ScreeningID}}" class ="buy-buttons">
-                  <input type="submit" class="btn btn-success screening-button" value="{{(screening.StartTimestamp|string)[11:16]}}">
-                  <input type="hidden" value={{screening.ScreeningID}} name="buy" class="screening-button">
-                </form>
-              {% endfor %}
+            {% set screenings = allMovies[i].getScreenings(date) %}
+            {% for screening in screenings %}
+            <form action="" method="post" value="{{screening.ScreeningID}}" class="buy-buttons">
+              <input type="submit" class="btn btn-success screening-button"
+                value="{{(screening.StartTimestamp|string)[11:16]}}">
+              <input type="hidden" value={{screening.ScreeningID}} name="buy" class="screening-button">
+            </form>
+            {% endfor %}
           </td>
         </tr>
         {% endif %}
-      {% endfor %}
-      {% endif %}
+        {% endfor %}
+        {% endif %}
         </tbody>
       </table>
     </div>
@@ -89,7 +93,8 @@
         <h4>Filter by age</h4>
         <form>
           <div class="form-check">
-            <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+            <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1"
+              checked>
             <label class="form-check-label" for="exampleRadios1">
               PG
             </label>
@@ -109,66 +114,71 @@
           <br />
           <button type="submit" class="btn btn-primary" name="Filter" value="Apply">Apply</button>
         </form>
+      </div>
     </div>
   </div>
-</div>
 
-{% for i in range(0, allMovies|length) %}
-<!-- Modal -->
-<div class="modal fade" id="exampleModalLong{{i}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">{{allMovies[i].Name}}</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-sm" style="padding-right: 0px;">
-            <img width = "130px" src="{{allMovies[i].PosterURL}}"/>
-          </div>
-          <div class="col-sm" style="padding-left: 0px;"">
+  {% for i in range(0, allMovies|length) %}
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModalLong{{i}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">{{allMovies[i].Name}}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-sm" style="padding-right: 0px;">
+              <img width="130px" src="{{allMovies[i].PosterURL}}" />
+            </div>
+            <div class="col-sm" style="padding-left: 0px;"">
             <p><b>Age Rating: </b>{{allMovies[i].Age}}</p>
             <p><b>Running Time: </b>{{allMovies[i].RunningTime}} mins</p>
           </div>
         </div>
         <br />
-        <div class="row">
-            <div class="col-sm">
-              <p><b>Description: </b></p>
-              <p>{{allMovies[i].Description}}</p>
+        <div class=" row">
+              <div class="col-sm">
+                <p><b>Description: </b></p>
+                <p>{{allMovies[i].Description}}</p>
+              </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-sm">
-              <p><b>Watch Trailer: </b></p>
-              <iframe width="465" height="260" src="https://www.youtube.com/embed/{{movieTrailerIDs[i]}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <div class="row">
+              <div class="col-sm">
+                <p><b>Watch Trailer: </b></p>
+                <iframe width="465" height="260" src="https://www.youtube.com/embed/{{movieTrailerIDs[i]}}"
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen></iframe>
+              </div>
             </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="window.open('{{allMovies[i].TrailerURL}}');"> Watch
+              Trailer on YouTube </button>
+          </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" onclick="window.open('{{allMovies[i].TrailerURL}}');"> Watch Trailer on YouTube </button>
       </div>
     </div>
+    {% endfor %}
   </div>
-</div>
-{% endfor %}
-</div>
 
-<script>
-  $(document).ready(function(ev){
-    var movieID = 0
-    $('.showInfo').on('click', function(ev){
-      // $('#exampleModalLong').modal("toggle");
-      ev.preventDefault(ev);
-      // movieID = ($(this).attr("value"));
-      // alert(movieID);
-    })
-  });
-</script>
+  <script>
+    $(document).ready(function (ev) {
+      var movieID = 0
+      $('.showInfo').on('click', function (ev) {
+        // $('#exampleModalLong').modal("toggle");
+        ev.preventDefault(ev);
+        // movieID = ($(this).attr("value"));
+        // alert(movieID);
+      })
+    });
+  </script>
 
 
-{% endblock %}
+  {% endblock %}
