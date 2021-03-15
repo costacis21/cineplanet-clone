@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block content %}
+
+<br><br>
+<div class="container-fluid">
+  <div class="row justify-content-center">
+    <div class="col-sm-5">
+      <div class="card">
+        <div class="card-body text-dark">
+          <h6 class="card-title justify-content-center" style="text-align: center;"><br>You are signed in as:
+            {{current_user.Email}}
+          </h6>
+          <br>
+          <div class="row justify-content-center">
+            <a href="\logout" type="button" class="btn btn-dark">Sign Out</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-5">
+      <div class="card" id="light">
+        <form action="" method="post" name="details">
+          {% if form.csrf_token() %}
+          {{form.csrf_token()}}
+          {% endif %}
+          {{ form.hidden_tag() }}
+          <div class="card-body text-dark">
+            <h4 class="card-title justify-content-center" style="text-align: center;"><br>Change Password</h4>
+            <table class="table">
+              <tbody>
+                <tr class="justify-content-center">
+                  <div class="form-group">
+                    <td></td>
+                    <td>
+                      <label for="currentPasswordInput">{{form.currentPassword.label}}</label></br>
+                    </td>
+                    <td>{{form.currentPassword}}
+                      {% for error in form.currentPassword.errors %}
+                      </br><span style="color: red;">{{error}}</span>
+                      {% endfor %}<br>
+                    </td>
+                </tr>
+
+                <tr>
+                  <div class="form-group">
+                    <td></td>
+                    <td>
+                      <label for="newPasswordInput">{{form.newPassword.label}}</label></br>
+                    </td>
+                    <td>{{ form.newPassword }}
+                      {% for error in form.newPassword.errors %}
+                      </br><span style="color: red;">{{error}}</span>
+                      {% endfor %}<br>
+                    </td>
+                  </div>
+                </tr>
+                <tr>
+                  <div class="form-group">
+                    <td></td>
+                    <td>
+                      <label for="newPasswordCheckInput">{{form.newPasswordCheck.label}}</label></br>
+                    </td>
+                    <td>{{ form.newPasswordCheck }}
+                      {% for error in form.newPasswordCheck.errors %}
+                      </br><span style="color: red;">{{error}}</span>
+                      {% endfor %}<br>
+                    </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="row justify-content-center" style="text-align: center;">
+              <button type="submit" class="btn btn-dark btn-sm">Submit</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

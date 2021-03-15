@@ -1,4 +1,5 @@
 from app import db, login
+import datetime
 
 @login.user_loader
 def user_loader(UserID):
@@ -7,12 +8,12 @@ def user_loader(UserID):
 class User(db.Model):
     UserID = db.Column(db.Integer, primary_key=True)
     Authenticated = db.Column(db.Boolean, default=False)
-    Username = db.Column(db.String(20))
     Password = db.Column(db.String(20))
     Email = db.Column(db.String(50))
     # 0 for admin, 1 for staff and 2 for normal user
     Privilage = db.Column(db.Integer)
     Bookings = db.relationship('Booking', backref='user', lazy='dynamic')
+    Cards = db.relationship('Card', backref='user', lazy='dynamic')
 
     def is_active(self):
         return True
@@ -34,6 +35,25 @@ class Screening(db.Model):
     EndTimestamp = db.Column(db.DateTime)
     Bookings = db.relationship('Booking', backref='screening', lazy='dynamic')
 
+    def reserved(self):
+        reserved = []
+        for booking in self.Bookings:  #find all booked seats
+            for ticket in booking.Tickets:
+                seat = Seat.query.get(ticket.SeatID)
+                reserved.append(seat.code)
+        return reserved
+
+    def seats(self):
+        seats = []
+        room = Screen.query.get(self.ScreenID)
+        for seat in room.Seats:
+            seats.append(seat.code)
+        return seats
+
+    def title(self):
+        movie = Movie.query.get(self.MovieID)
+        return movie.Name
+
 class Booking(db.Model):
     BookingID = db.Column(db.Integer, primary_key=True)
     UserID = db.Column(db.Integer, db.ForeignKey('user.UserID'))
@@ -46,9 +66,10 @@ class Ticket(db.Model):
     TicketID = db.Column(db.Integer, primary_key=True)
     BookingID = db.Column(db.Integer, db.ForeignKey('booking.BookingID'))
     SeatID = db.Column(db.Integer, db.ForeignKey('seat.SeatID'))
-    # 0 for child, 1 for adult, 2 for senior ?
+    # 1 for adult, 2 for child, 3 for senior
     Category = db.Column(db.Integer)
     QR = db.Column(db.String(4296))
+
 
 class Screen(db.Model):
     ScreenID = db.Column(db.Integer, primary_key=True)
@@ -59,8 +80,8 @@ class Screen(db.Model):
 class Seat(db.Model):
     SeatID = db.Column(db.Integer, primary_key=True)
     ScreenID = db.Column(db.Integer, db.ForeignKey('screen.ScreenID'))
-    # 0 for standard, 1 for VIP ?
-    # Could change to Boolean - isVip?
+    code = db.Column(db.String(5))
+    # 0 for standard, 1 for VIP
     Type = db.Column(db.Integer)
     Tickets = db.relationship('Ticket', backref='seat', lazy='dynamic')
 
@@ -80,4 +101,25 @@ class Movie(db.Model):
     # Added this for extra detail
     RunningTime = db.Column(db.Integer)
     PosterURL = db.Column(db.String(100))
+    Api = db.Column(db.Integer)
     Screenings = db.relationship('Screening', backref='movie', lazy='dynamic')
+    TrailerURL = db.Column(db.String(100))
+
+    def getScreenings(self, date):
+        allScreenings = Screening.query.filter_by(MovieID=self.MovieID).all()
+        datedScreenings = []
+        for screening in allScreenings:
+            if str(date) in str(screening.StartTimestamp):
+                datedScreenings.append(screening)
+        # Sort by time
+        datedScreenings = sorted(datedScreenings, key=lambda Screening: Screening.StartTimestamp)
+        return datedScreenings
+
+class Card(db.Model):
+    CardID = db.Column(db.Integer, primary_key=True)
+    UserID = db.Column(db.Integer, db.ForeignKey('user.UserID'))
+    CardNo = db.Column(db.String(25))
+    Name = db.Column(db.String(50))
+    CVV = db.Column(db.String(5))
+    Expiry = db.Column(db.DateTime)
+

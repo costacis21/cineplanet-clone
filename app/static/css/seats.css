@@ -1,0 +1,46 @@
+#layout .seat {
+    position: relative;
+    display: inline-block;
+  }
+
+  #layout .seat .seatinfo {
+    visibility: hidden;
+    width: 70px;
+    top: 100%;
+    left: 50%;
+    margin-left: -30px;
+    background-color: white;
+    text-align: center;
+    border-radius: 3px;
+    padding: 4px 4px;
+    font-family: Arial, sans-serif;
+    font-size: small;
+    position: absolute;
+    z-index: 1;
+  }
+
+
+  #layout .seat:hover .seatinfo {
+    visibility: visible;
+    color: black;
+  }
+
+  #layout img {
+    width:30px;
+    height:30px;
+    padding: 1px ;
+  }
+
+  #key img {
+    width:30px;
+    height:30px;
+    padding: 5px ;
+  }
+
+  #screen img {
+    width:750px;
+    height:30px;
+    padding: 2px ;
+    margin-left: 50px;
+    margin-right: 50px;
+  }

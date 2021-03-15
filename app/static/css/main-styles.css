@@ -1,0 +1,155 @@
+body {
+  background-color: black;
+  color: white;
+  overflow-x: hidden;
+}
+
+input {
+  background-color: #343A40;
+  color: white;
+}
+
+#light input {
+  background-color: white;
+  color:  black;
+}
+
+/* ---- scrollbar ---- */
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #343A40;
+}
+/* ---- end scrollbar ---- */
+
+.modal-content {
+  background-color: #23272b;
+}
+
+#birthday {
+  border: none;
+  color: white;
+}
+
+.fixed-bottom {
+  padding: 15px;
+  text-align: center;
+  background-color: #343A40;
+}
+
+#footer-search {
+  height: 36px;
+  justify-content: center;
+  font-size: 12px;
+  background-color: #23272b;
+}
+
+.homePosters {
+  padding: 15px;
+  transition: .3s;
+}
+
+.homePosters:hover {
+  filter: brightness(50%);
+  transform: scale(1.1);
+}
+
+.logo {
+  transition: .3s;
+}
+
+.logo:hover {
+  filter: brightness(50%);
+  transform: scale(1.1);
+}
+
+select {
+  background-color: #343A40;
+  color: white;
+  border: none;
+}
+
+.footer {
+  background-color: #23272b;
+}
+
+.footer h3 {
+  font-size: 22px;
+}
+
+.footer p {
+  font-size: 12px;
+}
+
+.dropdown-menu {
+  background-color: #23272b;
+}
+
+.dropdown-item {
+  color: white;
+}
+
+.dropdown-item:hover {
+  background-color: #343A40;
+  color: white;
+}
+
+.buy-buttons {
+  display: inline-block;
+  padding-right: 15px;
+}
+
+.screening-movie-title {
+  font-size: 25px;
+}
+
+.movie-screening-entry {
+  background-color: #23272b;
+  border-radius: 15px;
+}
+
+.screenings-filters {
+  background-color: #23272b;
+  border-radius: 15px;
+  padding: 20px;
+}
+
+.all-screenings-column {
+  width: 400px;
+}
+
+.screening-button {
+  margin-bottom: 15px;
+}
+
+.trailer-button {
+  color: white;
+}
+
+.trailer-button:hover {
+  color: white;
+  text-decoration: none;
+}
+
+.modal-footer p {
+  margin-top: 15px;
+}
+
+.admin-dropdown {
+  background-color: black;
+  padding: 0;
+  margin-bottom: 6px;
+  color: grey;
+  border: none;
+}
+
+.admin-dropdown:hover {
+  background-color: black;
+  margin-bottom: 6px;
+  color: #babcbe;
+  border: none;
+}
