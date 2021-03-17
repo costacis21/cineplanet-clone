@@ -427,7 +427,7 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
                 db.session.add(card)
                 db.session.commit()
 
-            newBooking = models.Booking(UserID=current_user.UserID, ScreeningID=screeningID, Timestamp=datetime.datetime.now(), TotalPrice=total)
+            newBooking = models.Booking(UserID=current_user.UserID, ScreeningID=screeningID, Timestamp=datetime.datetime.now(), TotalPrice=total, Ticketqty = len(order))
             db.session.add(newBooking)  #create and add new booking
             db.session.commit()
 
@@ -743,19 +743,21 @@ def viewIncomes():
             totalTotal =0
             for movie in movies:
                 totalPrice=0
-
+                ticketCount=0
                 screenings = models.Screening.query.filter_by(MovieID = movie.MovieID).all()
 
                 for screening in screenings:
                     if (screening.StartTimestamp.date() >= start) and (screening.StartTimestamp.date() <=end):
                         bookings = models.Booking.query.filter_by(ScreeningID=screening.ScreeningID).all()
                         for booking in bookings:
+                            tickets = models.Ticket.query.filter_by(BookingID=booking.BookingID).all()
+                            ticketCount +=len(tickets)
                             totalPrice+=booking.TotalPrice
                     else:
                         continue
                 if totalPrice==0:
                     continue
-                incomes.append({'name': movie.Name, 'ticketsSold':'N/A', 'total':round(totalPrice, 2)})
+                incomes.append({'name': movie.Name, 'ticketsSold':ticketCount, 'total':round(totalPrice, 2)})
                 totalTotal+=totalPrice
             totalTotal=round(totalTotal, 2)
             return render_template('view-incomes.html',
