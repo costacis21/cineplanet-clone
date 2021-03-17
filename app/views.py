@@ -448,7 +448,8 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
             for ticket in models.Ticket.query.filter_by(BookingID=newBooking.BookingID): # For all of the tickets just purchased
                 # Make QR code for ticket
                 qr_filename = os.getcwd() + '/app/static/ticket/qr/qr'+str(ticket.TicketID)+'.png'
-                qr = pyqrcode.create(ticket.QR)
+                qr = pyqrcode.create('http://127.0.0.1:5000/validate-ticket/'+ticket.QR) # Needs to be changed to not have the port hardcoded into it
+                #qr = pyqrcode.create(ticket.QR)
                 qr.png(qr_filename, scale=6)
 
                 if ticket.Category == 1:
@@ -591,8 +592,8 @@ def CashPayment(screeningID, seats, types): # succeed booking confirmation page
             for ticket in models.Ticket.query.filter_by(BookingID=newBooking.BookingID): # For all of the tickets just purchased
                 # Make QR code for ticket
                 qr_filename = os.getcwd() + '/app/static/ticket/qr/qr'+str(ticket.TicketID)+'.png'
-                #qr = pyqrcode.create('http://127.0.0.1:5000/validate-ticket/'+ticket.QR) # Needs to be changed to not have the port hardcoded into it
-                qr = pyqrcode.create(url_for('index')+ticket.QR)
+                qr = pyqrcode.create('http://127.0.0.1:5000/validate-ticket/'+ticket.QR) # Needs to be changed to not have the port hardcoded into it
+                #qr = pyqrcode.create(url_for('index')+ticket.QR)
                 qr.png(qr_filename, scale=6)
 
                 # Converting the numerical value for the ticket's category that is stored in the database to the string value that will appear on the ticket
@@ -729,3 +730,38 @@ def settings():
         logging.warning('Anonymous user attempted to access settings page')
         return redirect('/signIn')
 
+
+@app.route('/view-incomes', methods=['GET','POST'])
+def viewIncomes():
+     if current_user.is_authenticated:   #checks user is signed in
+        if (current_user.Privilage < 2): 
+            today = datetime.date.today()
+            start = today - datetime.timedelta(days=today.weekday())
+            end = start + datetime.timedelta(days=6)
+            incomes = [{}]
+            movies = models.Movie.query.all()
+            totalTotal =0
+            for movie in movies:
+                totalPrice=0
+
+                screenings = models.Screening.query.filter_by(MovieID = movie.MovieID).all()
+
+                for screening in screenings:
+                    if (screening.StartTimestamp.date() >= start) and (screening.StartTimestamp.date() <=end):
+                        bookings = models.Booking.query.filter_by(ScreeningID=screening.ScreeningID).all()
+                        for booking in bookings:
+                            totalPrice+=booking.TotalPrice
+                    else:
+                        continue
+                if totalPrice==0:
+                    continue
+                incomes.append({'name': movie.Name, 'ticketsSold':'N/A', 'total':round(totalPrice, 2)})
+                totalTotal+=totalPrice
+            totalTotal=round(totalTotal, 2)
+            return render_template('view-incomes.html',
+                                    incomes = incomes,
+                                    totalIncome = totalTotal,
+                                    week = "{start} - {end}".format(start = start, end = end)
+                                    )
+        else:
+            return redirect("/index")
