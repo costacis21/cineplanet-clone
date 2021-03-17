@@ -730,3 +730,38 @@ def settings():
         logging.warning('Anonymous user attempted to access settings page')
         return redirect('/signIn')
 
+
+@app.route('/view-incomes', methods=['GET','POST'])
+def viewIncomes():
+     if current_user.is_authenticated:   #checks user is signed in
+        if (current_user.Privilage < 2): 
+            today = datetime.date.today()
+            start = today - datetime.timedelta(days=today.weekday())
+            end = start + datetime.timedelta(days=6)
+            incomes = [{}]
+            movies = models.Movie.query.all()
+            totalTotal =0
+            for movie in movies:
+                totalPrice=0
+
+                screenings = models.Screening.query.filter_by(MovieID = movie.MovieID).all()
+
+                for screening in screenings:
+                    if (screening.StartTimestamp.date() >= start) and (screening.StartTimestamp.date() <=end):
+                        bookings = models.Booking.query.filter_by(ScreeningID=screening.ScreeningID).all()
+                        for booking in bookings:
+                            totalPrice+=booking.TotalPrice
+                    else:
+                        continue
+                if totalPrice==0:
+                    continue
+                incomes.append({'name': movie.Name, 'ticketsSold':'N/A', 'total':round(totalPrice, 2)})
+                totalTotal+=totalPrice
+            totalTotal=round(totalTotal, 2)
+            return render_template('view-incomes.html',
+                                    incomes = incomes,
+                                    totalIncome = totalTotal,
+                                    week = "{start} - {end}".format(start = start, end = end)
+                                    )
+        else:
+            return redirect("/index")
