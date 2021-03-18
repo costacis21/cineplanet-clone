@@ -661,7 +661,7 @@ def viewBookings():
             print(movie.PosterURL)
             bookings.append([booking, movie.Name, time, date, movie.PosterURL])
 
-        return render_template('view-bookings.html', bookings=bookings)
+        return render_template('view-bookings.html', bookings=bookings, title="View Bookings")
 
 @app.route('/validate-ticket/<uuid>', methods = ['GET', 'POST'])
 def validateTicket(uuid):
@@ -669,15 +669,12 @@ def validateTicket(uuid):
         valid = False
         if current_user.Privilage <= 1: # Checks that the user has the required permissions to validate tickets (customers can't validate tickets)
             if models.Ticket.query.filter_by(QR=uuid).first(): # If the uuid is valid
-                flash('Ticket is valid')
                 valid = True
-            else:
-                flash('Ticket is not valid')
         else:
             flash("You do not have the required permissions to validate tickets")
             return redirect(url_for('index'))
         
-        return render_template('validate-ticket.html', valid=valid)
+        return render_template('validate-ticket.html', valid=valid, title="Validate Ticket")
 
     else:
         flash('You must be signed in to book tickets')
@@ -698,7 +695,7 @@ def viewTickets(BookingID):
 
             # If the booking was made by the current user
             if valid == True:
-                return render_template('view-tickets.html', BookingID=BookingID)
+                return render_template('view-tickets.html', BookingID=BookingID, title="View Tickets")
             else:
                 flash("You cannot view another user's bookings")
         else:    
