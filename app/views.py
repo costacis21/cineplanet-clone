@@ -427,7 +427,7 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
                 db.session.add(card)
                 db.session.commit()
 
-            newBooking = models.Booking(UserID=current_user.UserID, ScreeningID=screeningID, Timestamp=datetime.datetime.now(), TotalPrice=total, Ticketqty = len(order))
+            newBooking = models.Booking(UserID=current_user.UserID, ScreeningID=screeningID, Timestamp=datetime.datetime.now(), TotalPrice=total)
             db.session.add(newBooking)  #create and add new booking
             db.session.commit()
 
@@ -708,9 +708,10 @@ def viewTickets(BookingID):
         return redirect(url_for('login'))
 
 @app.route('/profile', methods=['GET','POST'])
-def settings():
+def profile():
     if current_user.is_authenticated:
         form = forms.changePasswordForm()
+        UseCard = forms.UseCard()
         if form.validate_on_submit():
             if sha256_crypt.verify(form.currentPassword.data, current_user.Password):
                 current_user.Password = sha256_crypt.encrypt(form.newPassword.data)
@@ -722,6 +723,8 @@ def settings():
                 form.currentPassword.errors.append('Password does not match')
         logging.info('User: %s visited settings page', current_user.Email)
         return render_template('profile.html',
+                            cards = current_user.Cards.all(),
+                            UseCard = UseCard,
                             form=form)
     else:
         logging.warning('Anonymous user attempted to access settings page')
@@ -764,3 +767,21 @@ def viewIncomes():
                                     )
         else:
             return redirect("/index")
+
+
+@app.route('/remove-card/<CardID>', methods = ['GET', 'POST'])
+def removeCard(CardID):
+    if current_user.is_authenticated:
+        # Gets all bookings made by a user
+        
+        if (models.Card.query.get(CardID).UserID == current_user.UserID): #if the card is the current users
+            card = models.Card.query.get(CardID) #get card
+            db.session.delete(card) #remove card
+            db.session.commit() #commits database changes
+        
+        return redirect(url_for('profile'))
+    
+    else:
+        flash('You must be signed in to book tickets')
+        return redirect(url_for('login'))
+
