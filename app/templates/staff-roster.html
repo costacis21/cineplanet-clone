@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block content %}
+
+<br><br>
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-sm-5">
+            <div class="card">
+                <div class="card-body text-dark">
+                    <h5 class="card-title justify-content-center" style="text-align: center;"><br>Staff Roster</h5>
+                    <table class="table">
+                        <thead>
+                            <tr style="text-align: center;">
+                                <th scope="col">Username</th>
+                                <th scope="col">User Privilage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for member in staff %}
+                            <tr style="text-align: center;">
+                                <td>{{member.Email}}</td>
+                                {% if member.Privilage == 0 %}
+                                <td>Admin</td>
+                                {% elif member.Privilage == 1%}
+                                <td>Staff</td>
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-sm-5">
+            <div class="card " id="light"><br>
+                <h5 class="card-title justify-content-center" style="text-align: center; color: black;"><br>Update staff
+                    Privilage</h5><br>
+                <form action="" method="post" name="details">
+                    {% if PrivilageForm.csrf_token() %}
+                    {{PrivilageForm.csrf_token()}}
+                    {% endif %}
+                    {{ PrivilageForm.hidden_tag() }}
+                    <div class="row justify-content-center" style="text-align: center;">
+                        <div class="col-sm-5">
+                            <div class="form-group">
+                                <label for="Username" style="color: black;">{{PrivilageForm.Username.label}}</label><br>
+                                {{PrivilageForm.Username}}
+                                {% for error in PrivilageForm.Username.errors %}
+                                </br><span style="color: red;">{{error}}</span>
+                                {% endfor %}<br>
+                            </div>
+                        </div>
+                        <div class="col-sm-5">
+                            <div class="form-group">
+                                <label for="Privilage"
+                                    style="color: black;">{{PrivilageForm.Privilage.label}}</label><br>
+                                {{PrivilageForm.Privilage}}
+                                {% for error in PrivilageForm.Privilage.errors %}
+                                </br><span style="color: red;">{{error}}</span>
+                                {% endfor %}<br>
+                            </div>
+                        </div>
+                        <div class="col-sm-5">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-dark btn-sm">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                </form>
+                <div class="row justify-content-center" style="color: black;">
+                    <div>
+                        <h6>Admin - Has access to all functionality</h6>
+                        <h6>Staff - Has access to all features excluding business analytics and staff management</h6>
+                        <h6>Basic - Has ccess to standard user functionality</h6>
+                        <br>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

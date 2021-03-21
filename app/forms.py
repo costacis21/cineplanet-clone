@@ -78,3 +78,7 @@ class PaymentDetailsForm(Form):
     Expiry = StringField('Expiry', render_kw={"placeholder": "MM-YY"}, validators=[DataRequired()])
     CVV = StringField('CVV', [validators.DataRequired(), validators.length(min=3, max=3, message='Security code should be 3 digits')], render_kw={"placeholder": "---"})
     Save = BooleanField('Save this card for next time', widget=CheckboxInput())
+
+class SetUserPrivilage(Form):
+    Username = StringField('Username', [validators.DataRequired()])
+    Privilage = SelectField('Privilage', choices=['Admin', 'Staff', 'Basic'])

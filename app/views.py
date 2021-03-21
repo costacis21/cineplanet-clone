@@ -785,3 +785,33 @@ def removeCard(CardID):
         flash('You must be signed in to book tickets')
         return redirect(url_for('login'))
 
+@app.route('/manage-staff', methods=['GET','POST'])
+def manageStaff():
+    if current_user.is_authenticated:
+        if current_user.Privilage == 0:
+            staff = models.User.query.filter(models.User.Privilage <= 1).order_by(models.User.Privilage.asc()).all() #get all staff members
+            PrivilageForm = forms.SetUserPrivilage()
+            if PrivilageForm.validate_on_submit():
+                user = models.User.query.filter_by(Email=PrivilageForm.Username.data).first() #get selected user
+                if user:    #if user exists, update to selected privilage
+                    if PrivilageForm.Privilage.data == "Admin":
+                        user.Privilage = 0
+                    elif PrivilageForm.Privilage.data == "Staff":
+                        user.Privilage = 1
+                    elif PrivilageForm.Privilage.data == "Basic":
+                        user.Privilage = 2
+                    else:
+                        return redirect(PrivilageForm.Privilage.data)
+                    db.session.commit()
+                    return redirect('/manage-staff')
+                else:
+                    PrivilageForm.Username.errors.append('No users with matching Username')
+
+            return render_template('staff-roster.html', 
+            staff = staff,
+            PrivilageForm=PrivilageForm)
+        else:
+            return redirect('/signIn')
+    else:
+        logging.warning('Anonymous user attempted to access settings page')
+        return redirect('/signIn')
