@@ -7,7 +7,6 @@ import logging
 import pyqrcode
 from PIL import Image
 import uuid
-from datetime import timedelta
 import os
 try:
     import urlparse
@@ -25,6 +24,7 @@ admin.add_view(ModelView(models.Seat, db.session))
 admin.add_view(ModelView(models.Movie, db.session))
 
 from imdbSearch import *
+from income import *
 
 premium = ['D6', 'D7', 'D8', 'D9', 'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'D16',
 'E6', 'E7', 'E8', 'E9', 'E10', 'E11', 'E12', 'E13', 'E14', 'E15', 'E16',
@@ -735,38 +735,27 @@ def profile():
 def viewIncomes():
      if current_user.is_authenticated:   #checks user is signed in
         if (current_user.Privilage < 2): 
-            today = datetime.date.today()
-            start = today - datetime.timedelta(days=today.weekday())
-            end = start + datetime.timedelta(days=6)
-            incomes = [{}]
-            movies = models.Movie.query.all()
-            totalTotal =0
-            for movie in movies:
-                totalPrice=0
-                ticketCount=0
-                screenings = models.Screening.query.filter_by(MovieID = movie.MovieID).all()
-
-                for screening in screenings:
-                    if (screening.StartTimestamp.date() >= start) and (screening.StartTimestamp.date() <=end):
-                        bookings = models.Booking.query.filter_by(ScreeningID=screening.ScreeningID).all()
-                        for booking in bookings:
-                            tickets = models.Ticket.query.filter_by(BookingID=booking.BookingID).all()
-                            ticketCount +=len(tickets)
-                            totalPrice+=booking.TotalPrice
-                    else:
-                        continue
-                if totalPrice==0:
-                    continue
-                incomes.append({'name': movie.Name, 'ticketsSold':ticketCount, 'total':round(totalPrice, 2)})
-                totalTotal+=totalPrice
-            totalTotal=round(totalTotal, 2)
+            incomes=getWeeklyIncomes()
             return render_template('view-incomes.html',
-                                    incomes = incomes,
-                                    totalIncome = totalTotal,
-                                    week = "{start} - {end}".format(start = start, end = end)
+                                    incomes = incomes[0],
+                                    totalIncome = incomes[1],
+                                    week = incomes[2],
+                                    title = "Incomes per Movie"
                                     )
         else:
             return redirect("/index")
+     return redirect("/index")
+
+
+@app.route('/show-graphs', methods = ['GET','POST'])
+def showGraphs():
+     if current_user.is_authenticated:   #checks user is signed in
+        if (current_user.Privilage < 2): 
+            createWeeklyGraph()
+            return render_template('show-graphs.html', title = "Weekly Income Graph")
+        else:
+            return redirect("/index")    
+     return redirect("/index")
 
 
 @app.route('/remove-card/<CardID>', methods = ['GET', 'POST'])
