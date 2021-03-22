@@ -4,6 +4,7 @@ from wtforms.validators import DataRequired, Email, email_validator
 from wtforms.fields.html5 import EmailField
 from wtforms.widgets import CheckboxInput
 from app import app,models
+from wtforms.fields.html5 import DateField
 
 def fetchAllMovieTitles():
     allMovies = models.Movie.query.all()
@@ -82,3 +83,8 @@ class PaymentDetailsForm(Form):
 class SetUserPrivilage(Form):
     Username = StringField('Username', [validators.DataRequired()])
     Privilage = SelectField('Privilage', choices=['Admin', 'Staff', 'Basic'])
+
+
+class CompareTicketSalesForm(Form):
+    start = DateTimeField('start', validators=[DataRequired()], format='%d-%m-%Y')
+    end = DateTimeField('end', validators=[DataRequired()], format='%d-%m-%Y')

@@ -742,20 +742,42 @@ def viewIncomes():
                                     week = incomes[2],
                                     title = "Incomes per Movie"
                                     )
-        else:
-            return redirect("/index")
-     return redirect("/index")
+ 
+     return redirect(url_for('index'))
 
 
 @app.route('/show-graphs', methods = ['GET','POST'])
 def showGraphs():
      if current_user.is_authenticated:   #checks user is signed in
         if (current_user.Privilage < 2): 
+            
             createWeeklyGraph()
             return render_template('show-graphs.html', title = "Weekly Income Graph")
-        else:
-            return redirect("/index")    
-     return redirect("/index")
+      
+     return redirect(url_for('index'))
+
+@app.route('/compare-ticket-sales', methods = ['GET','POST'])
+def compareTicketSales():
+     week = ""
+     tickets=[]
+     filename=""
+     if current_user.is_authenticated:   #checks user is signed in
+        form = forms.CompareTicketSalesForm()
+
+        if (current_user.Privilage < 2): 
+            if request.method == 'POST':
+                if form.validate_on_submit():
+                    start = form.start.data
+                    end = form.end.data
+                    tickets = compareMovies(start.date(), end.date())
+                    week= str(start.date()) +' - ' + str(end.date())
+                    filename=str(start.date()) +'-' + str(end.date())+'.png'
+                    print(tickets)
+            return render_template('compare-ticket-sales.html', title = "Compare Ticket Sales", form = form, tickets = tickets, week =week,filename=filename )
+        
+     return redirect(url_for('index'))    
+
+          
 
 
 @app.route('/remove-card/<CardID>', methods = ['GET', 'POST'])
@@ -804,3 +826,7 @@ def manageStaff():
     else:
         logging.warning('Anonymous user attempted to access settings page')
         return redirect('/signIn')
+
+
+
+    

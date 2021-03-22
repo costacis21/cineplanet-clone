@@ -1,4 +1,5 @@
 __pycache__/
+app/static/graphs/
 *.pyc
 *.pyo
 .vscode/
