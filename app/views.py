@@ -133,15 +133,16 @@ def datedScreenings(date):
                             movieTrailerIDs = movieTrailerIDs
                             )
     else:
-        return render_template('index.html',
-                        title='Homepage',
-                        allMovies = moviesWithScreenings,
-                        moviesLength = len(moviesWithScreenings),
-                        date = date,
-                        dailyScreenings = dailyScreenings,
-                        searchForScreening = searchForScreening,
-                        everyMovie = everyMovie,
-                        foundMovieInfo = foundMovieInfo
+        return render_template('screenings.html',
+                            title='Screenings',
+                            allMovies = moviesWithScreenings,
+                            moviesLength = len(moviesWithScreenings),
+                            date = date,
+                            dailyScreenings = dailyScreenings,
+                            searchForScreening = searchForScreening,
+                            everyMovie = everyMovie,
+                            foundMovieInfo = int(foundMovieInfo),
+                            movieTrailerIDs = movieTrailerIDs
                         )
 
 @app.route('/movie/<MovieID>', methods=['GET','POST'])
@@ -361,7 +362,7 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
         concessions = types.split("$") #choosen ticket types
         selected =[] #choosen and validated seats
         screening = models.Screening.query.get(screeningID) #get screening
-        
+
         if not screening:   #validate screening does exist
             flash("Something went wrong, please try again")
             return redirect(url_for('index'))
@@ -460,7 +461,7 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
                     Category = "Senior"
                 else:
                     Category = "Unknown"
-                
+
                 # Converting the numerical value for the seat's type that is stored in the database to the string value that will appear on the ticket
                 #t = models.Seat.query.filter(models.Seat.ScreenID==screening.ScreenID).filter(models.Seat.code==item[0]).first().Type
                 t = models.Seat.query.filter_by(SeatID=ticket.SeatID).first().Type
@@ -469,7 +470,7 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
                 else:
                     Type = "Premium"
 
-                # Appending the values of the properties of the ticket to the relevant arrays 
+                # Appending the values of the properties of the ticket to the relevant arrays
                 QRs.append(qr_filename)
                 Seats.append(order[i][0])
                 Categories.append(Category)
@@ -511,7 +512,7 @@ def CashPayment(screeningID, seats, types): # succeed booking confirmation page
         concessions = types.split("$") #choosen ticket types
         selected =[] #choosen and validated seats
         screening = models.Screening.query.get(screeningID) #get screening
-        
+
         if not screening:   #validate screening does exist
             flash("Something went wrong, please try again")
             return redirect(url_for('index'))
@@ -614,7 +615,7 @@ def CashPayment(screeningID, seats, types): # succeed booking confirmation page
                 else:
                     Type = "Premium"
 
-                # Appending the values of the properties of the ticket to the relevant arrays 
+                # Appending the values of the properties of the ticket to the relevant arrays
                 QRs.append(qr_filename)
                 Seats.append(order[i][0])
                 Categories.append(Category)
@@ -651,7 +652,7 @@ def viewBookings():
     if current_user.is_authenticated:
         UserID=current_user.UserID
         booking_records = models.Booking.query.filter_by(UserID=UserID).all() # Returns all bookings made by the current user
-        
+
         bookings = []
         for booking in booking_records:
             screening = models.Screening.query.filter_by(ScreeningID=booking.ScreeningID).first()
@@ -673,7 +674,7 @@ def validateTicket(uuid):
         else:
             flash("You do not have the required permissions to validate tickets")
             return redirect(url_for('index'))
-        
+
         return render_template('validate-ticket.html', valid=valid, title="Validate Ticket")
 
     else:
@@ -698,11 +699,11 @@ def viewTickets(BookingID):
                 return render_template('view-tickets.html', BookingID=BookingID, title="View Tickets")
             else:
                 flash("You cannot view another user's bookings")
-        else:    
+        else:
             flash("Tickets not found")
 
         return redirect(url_for('index'))
-    
+
     else:
         flash('You must be signed in to book tickets')
         return redirect(url_for('login'))
@@ -734,7 +735,7 @@ def profile():
 @app.route('/view-incomes', methods=['GET','POST'])
 def viewIncomes():
      if current_user.is_authenticated:   #checks user is signed in
-        if (current_user.Privilage < 2): 
+        if (current_user.Privilage < 2):
             incomes=getWeeklyIncomes()
             return render_template('view-incomes.html',
                                     incomes = incomes[0],
@@ -784,14 +785,14 @@ def compareTicketSales():
 def removeCard(CardID):
     if current_user.is_authenticated:
         # Gets all bookings made by a user
-        
+
         if (models.Card.query.get(CardID).UserID == current_user.UserID): #if the card is the current users
             card = models.Card.query.get(CardID) #get card
             db.session.delete(card) #remove card
             db.session.commit() #commits database changes
-        
+
         return redirect(url_for('profile'))
-    
+
     else:
         flash('You must be signed in to book tickets')
         return redirect(url_for('login'))
@@ -818,7 +819,7 @@ def manageStaff():
                 else:
                     PrivilageForm.Username.errors.append('No users with matching Username')
 
-            return render_template('staff-roster.html', 
+            return render_template('staff-roster.html',
             staff = staff,
             PrivilageForm=PrivilageForm)
         else:
