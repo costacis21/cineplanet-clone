@@ -483,16 +483,16 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
             movie = models.Movie.query.filter_by(MovieID=screening.MovieID).first().Name
             filename = os.getcwd() + '/app/static/ticket/tickets/booking'+str(newBooking.BookingID)+'.pdf'
             CreatePDF.MakePDF(filename, QRs, movie, Seats, Categories, str(screen), str(screening.StartTimestamp.date().strftime('%d/%m/%y')), str(screening.StartTimestamp.time().strftime('%H:%M')), Types)
+            filenames.append(filename)
 
             # Send all the PDFs in an email to the user
             # First argument gives the destination email, currently set to email ourselves to prevent one of us receiving lots of emails during testing
-            SendEmail.SendMail("leeds.cineplanet.com", filenames)
+            #SendEmail.SendMail("leeds.cineplanet.com", filenames)
             # Un-comment the line below to send emails to their actual destination
-            #SendEmail.SendMail(current_user.email, filenames)
+            SendEmail.SendMail(current_user.Email, filenames)
 
             session['booking_complete'] = True
             flash("Displaying your tickets now")
-            print('/view-tickets/'+str(newBooking.BookingID))
             return redirect('/view-tickets/'+str(newBooking.BookingID))
 
         return render_template('payment.html', title='Checkout',
@@ -628,12 +628,13 @@ def CashPayment(screeningID, seats, types): # succeed booking confirmation page
             movie = models.Movie.query.filter_by(MovieID=screening.MovieID).first().Name
             filename = os.getcwd() + '/app/static/ticket/tickets/booking'+str(newBooking.BookingID)+'.pdf'
             CreatePDF.MakePDF(filename, QRs, movie, Seats, Categories, str(screen), str(screening.StartTimestamp.date().strftime('%d/%m/%y')), str(screening.StartTimestamp.time().strftime('%H:%M')), Types)
+            filenames.append(filename)
 
             # Send all the PDFs in an email to the user
             # First argument gives the destination email, currently set to email ourselves to prevent one of us receiving lots of emails during testing
-            SendEmail.SendMail("leeds.cineplanet.com", [filename])
+            #SendEmail.SendMail("leeds.cineplanet.com", [filename])
             # Un-comment the line below to send emails to their actual destination
-            #SendEmail.SendMail(current_user.email, filenames)
+            SendEmail.SendMail(current_user.Email, filenames)
 
             session['booking_complete'] = True
             flash("Displaying your tickets now")
