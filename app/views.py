@@ -53,18 +53,14 @@ def index():
     movie = None
     if request.method == 'POST':
         if request.form.get("Search"):
-            movie = quickBookForm.movie.data
             date = request.form['screeningDateFilter']
-            if date == "": #if no data is entered for the date
-                flash('Please enter a date')
+            if date == '':
+                return redirect('/screenings')
             else:
-                flash("Searching for " + movie + " on " + date)
-        if request.form.get("showModal"):
-            print("hello")
+                return redirect('/screenings/' + str(date))
     return render_template('index.html',
                             title='Home',
                             allMovies = allMovies,
-                            quickBookForm = quickBookForm,
                             movie = movie)
 
 @app.route('/screenings', methods=['GET','POST'])
@@ -78,7 +74,7 @@ def screeningsRedirect():
 def datedScreenings(date):
     resetBookingSessionData()
     if date < str(datetime.date.today()):
-        return redirect("/")
+        return redirect("/screenings")
     #Fetch all the movies
     everyMovie = models.Movie.query.all()
     # Variables for the pop up to work
@@ -103,11 +99,15 @@ def datedScreenings(date):
         elif request.form.get("Filter"):
             date = request.form['screeningDateFilter']
             if date == "": #if no data is entered for the date
-                return redirect('/')
+                return redirect(request.url)
             else:
                 return redirect('/screenings/' + str(date))
         elif request.form.get("viewInfo"):
             foundMovieInfo = request.form.get("viewInfo")
+        elif request.form.get("Refine runtime"):
+            runtime = request.form['exampleRadios']
+        elif request.form.get("Refine age"):
+            age = request.form['exampleRadios']
         else: # Clicked to buy tickets
             foundScreeningID = request.form.get("buy")
             # Needs here to be replaced with a redirect to the specific ticket booking of that screening
@@ -323,7 +323,8 @@ def seats(screening):   #seat selection page
         rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'],
         vip=['D', 'E', 'F'],
         reserved = screening.reserved(),
-        screening=screening)
+        screening=screening,
+        title = 'Reserve Seats')
     else:
         flash('You must be signed in to book tickets')
         return redirect(url_for('login'))
@@ -348,7 +349,8 @@ def confirmBooking(screening, seats):   # succeed seat selection page
         StandardConcessionPrice=StandardConcessionPrice,
         PremiumGeneralPrice=PremiumGeneralPrice,
         PremiumConcessionPrice=PremiumConcessionPrice,
-        child = child)
+        child = child,
+        title = 'Confirm booking')
 
     else:
         flash('You must be signed in to book tickets')
@@ -724,6 +726,7 @@ def profile():
                 form.currentPassword.errors.append('Password does not match')
         logging.info('User: %s visited settings page', current_user.Email)
         return render_template('profile.html',
+                            title = 'My Profile',
                             cards = current_user.Cards.all(),
                             UseCard = UseCard,
                             form=form)
@@ -743,18 +746,18 @@ def viewIncomes():
                                     week = incomes[2],
                                     title = "Incomes per Movie"
                                     )
- 
+
      return redirect(url_for('index'))
 
 
 @app.route('/show-graphs', methods = ['GET','POST'])
 def showGraphs():
      if current_user.is_authenticated:   #checks user is signed in
-        if (current_user.Privilage < 2): 
-            
+        if (current_user.Privilage < 2):
+
             createWeeklyGraph()
             return render_template('show-graphs.html', title = "Weekly Income Graph")
-      
+
      return redirect(url_for('index'))
 
 @app.route('/compare-ticket-sales', methods = ['GET','POST'])
@@ -765,7 +768,7 @@ def compareTicketSales():
      if current_user.is_authenticated:   #checks user is signed in
         form = forms.CompareTicketSalesForm()
 
-        if (current_user.Privilage < 2): 
+        if (current_user.Privilage < 2):
             if request.method == 'POST':
                 if form.validate_on_submit():
                     start = form.start.data
@@ -775,10 +778,10 @@ def compareTicketSales():
                     filename=str(start.date()) +'-' + str(end.date())+'.png'
                     print(tickets)
             return render_template('compare-ticket-sales.html', title = "Compare Ticket Sales", form = form, tickets = tickets, week =week,filename=filename )
-        
-     return redirect(url_for('index'))    
 
-          
+     return redirect(url_for('index'))
+
+
 
 
 @app.route('/remove-card/<CardID>', methods = ['GET', 'POST'])
@@ -827,7 +830,3 @@ def manageStaff():
     else:
         logging.warning('Anonymous user attempted to access settings page')
         return redirect('/signIn')
-
-
-
-    

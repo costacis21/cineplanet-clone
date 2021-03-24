@@ -57,9 +57,6 @@ class Paid(Form):
 class searchForScreening(Form):
     searchMovie = StringField('Movie', validators=[DataRequired()])
 
-class quickBook(Form):
-    movie = SelectField('movie', choices=fetchAllMovieTitles(), validators=[DataRequired()])
-
     @classmethod
     def new(cls):
         # Instantiate the form

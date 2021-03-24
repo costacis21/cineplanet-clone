@@ -50,17 +50,11 @@
 
     </form>
     <div class="col-sm">
-      <form action="" method="post" name="addScreeningForm">
-        {{quickBookForm.movie}}
-        {% for error in quickBookForm.movie.errors %}
-        [{{ error }}]
-        {% endfor %}
-    </div>
-    <div class="col-sm">
+      <form action="" method="post">
       <input type="date" id="birthday" name="screeningDateFilter">
     </div>
     <div class="col-sm">
-      <button type="submit" class="btn btn-dark" id="footer-search" name="Search" value="Search">Search</button>
+        <button type="submit" class="btn btn-dark" id="footer-search" name="Search" value="Search">Search</button>
       </form>
     </div>
   </div>
