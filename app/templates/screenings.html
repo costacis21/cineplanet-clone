@@ -91,7 +91,7 @@
     <div class="col-3">
       <div class="screenings-filters">
         <h4>Filter by age</h4>
-        <form>
+        <form action="" method="post">
           <div class="form-check">
             <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1"
               checked>
@@ -112,7 +112,34 @@
             </label>
           </div>
           <br />
-          <button type="submit" class="btn btn-primary" name="Filter" value="Apply">Apply</button>
+          <button type="submit" class="btn btn-primary" name="Refine age" value="Refine age">Refine age</button>
+        </form>
+      </div>
+      <br />
+      <div class="screenings-filters">
+        <h4>Filter by runtime</h4>
+        <form action="" method="post">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1"
+              checked>
+            <label class="form-check-label" for="exampleRadios1">
+              0-90 mins
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+            <label class="form-check-label" for="exampleRadios2">
+              90-120 mins
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+            <label class="form-check-label" for="exampleRadios2">
+              120+ mins
+            </label>
+          </div>
+          <br />
+          <button type="submit" class="btn btn-primary" name="Refine runtime" value="Refine runtime">Refine runtime</button>
         </form>
       </div>
     </div>

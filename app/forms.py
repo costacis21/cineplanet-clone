@@ -4,6 +4,7 @@ from wtforms.validators import DataRequired, Email, email_validator
 from wtforms.fields.html5 import EmailField
 from wtforms.widgets import CheckboxInput
 from app import app,models
+from wtforms.fields.html5 import DateField
 
 def fetchAllMovieTitles():
     allMovies = models.Movie.query.all()
@@ -56,9 +57,6 @@ class Paid(Form):
 class searchForScreening(Form):
     searchMovie = StringField('Movie', validators=[DataRequired()])
 
-class quickBook(Form):
-    movie = SelectField('movie', choices=fetchAllMovieTitles(), validators=[DataRequired()])
-
     @classmethod
     def new(cls):
         # Instantiate the form
@@ -78,3 +76,12 @@ class PaymentDetailsForm(Form):
     Expiry = StringField('Expiry', render_kw={"placeholder": "MM-YY"}, validators=[DataRequired()])
     CVV = StringField('CVV', [validators.DataRequired(), validators.length(min=3, max=3, message='Security code should be 3 digits')], render_kw={"placeholder": "---"})
     Save = BooleanField('Save this card for next time', widget=CheckboxInput())
+
+class SetUserPrivilage(Form):
+    Username = StringField('Username', [validators.DataRequired()])
+    Privilage = SelectField('Privilage', choices=['Admin', 'Staff', 'Basic'])
+
+
+class CompareTicketSalesForm(Form):
+    start = DateTimeField('start', validators=[DataRequired()], format='%d-%m-%Y')
+    end = DateTimeField('end', validators=[DataRequired()], format='%d-%m-%Y')

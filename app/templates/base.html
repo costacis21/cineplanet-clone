@@ -25,6 +25,7 @@
   {% else %}
   <title> No title specified</title>
   {% endif %}
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 
 
@@ -65,8 +66,9 @@
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
               <a class="dropdown-item" href="/view-incomes">View Incomes</a>
-              <a class="dropdown-item" href="/#">Show Graphs</a>
-              <a class="dropdown-item" href="/#">Compare Sales</a>
+              <a class="dropdown-item" href="/show-graphs">Show Graphs</a>
+              <a class="dropdown-item" href="/compare-ticket-sales">Compare Sales</a>
+              <a class="dropdown-item" href="/manage-staff">Manage Staff</a>
             </div>
           </div>
         </div>
@@ -85,6 +87,7 @@
           </button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             <a class="dropdown-item" href="/profile">My profile</a>
+            <a class="dropdown-item" href="/view-bookings">My Bookings</a>
             <a class="dropdown-item" href="/logout">Logout</a>
           </div>
         </div>
