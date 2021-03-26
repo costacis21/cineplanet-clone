@@ -314,6 +314,14 @@ def t():
                             page=1, user=current_user.Email
                             )
 
+@app.route('/test-login', methods=['GET', 'POST'])
+def t2():
+    user = models.User.query.filter_by(Email='test@gmail.com').first() #retrieves user profile
+    login_user(user)    #logs user in
+    db.session.commit() #commits database changes
+
+    return redirect(url_for('profile'))
+
 @app.route('/seats/<screening>')
 def seats(screening):   #seat selection page
     if current_user.is_authenticated:
@@ -632,7 +640,7 @@ def CashPayment(screeningID, seats, types): # succeed booking confirmation page
 
             # Send all the PDFs in an email to the user
             # First argument gives the destination email, currently set to email ourselves to prevent one of us receiving lots of emails during testing
-            #SendEmail.SendMail("leeds.cineplanet.com", [filename])
+            #SendEmail.SendMail("leeds.cineplanet.com", filenames)
             # Un-comment the line below to send emails to their actual destination
             SendEmail.SendMail(current_user.Email, filenames)
 
@@ -666,6 +674,10 @@ def viewBookings():
             bookings.append([booking, movie.Name, time, date, movie.PosterURL])
 
         return render_template('view-bookings.html', bookings=bookings, title="View Bookings")
+    
+    else:
+        flash("You must be logged in to view bookings")
+        return redirect(url_for('login'))
 
 @app.route('/validate-ticket/<uuid>', methods = ['GET', 'POST'])
 def validateTicket(uuid):
