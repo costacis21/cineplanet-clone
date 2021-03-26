@@ -697,7 +697,7 @@ def validateTicket(uuid):
         return render_template('validate-ticket.html', valid=valid, title="Validate Ticket")
 
     else:
-        flash('You must be signed in to book tickets')
+        flash('You must be signed in to validate tickets')
         return redirect(url_for('login'))
 
 @app.route('/view-tickets/<BookingID>', methods = ['GET', 'POST'])

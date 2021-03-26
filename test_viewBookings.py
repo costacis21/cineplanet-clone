@@ -60,9 +60,11 @@ class BasicTests(unittest.TestCase):
                 sess['testing'] = True
             
             # Asserts that if you try and access /view-bookings while not logged in, you will be redirected to the login page
+            # Asserts that when this happens, the correct error message is flashed to the user
             r1 = c.get('/view-bookings', follow_redirects=True)
             self.assertEqual(r1.status_code, 200)
             self.assertEqual(request.path, '/login')   
+            self.assertTrue('You must be logged in to view bookings' in str(r1.data))
             
             # Logs the user in
             r2 = c.get('/test-login', follow_redirects=True)
