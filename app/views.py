@@ -504,9 +504,13 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
             # Un-comment the line below to send emails to their actual destination
             SendEmail.SendMail(current_user.Email, filenames)
 
-            session['booking_complete'] = True
-            flash("Displaying your tickets now")
-            return redirect('/view-tickets/'+str(newBooking.BookingID))
+            if current_user.Privilage < 2:
+                session['booking_complete'] = True
+                flash("Displaying your tickets now")
+                return redirect('/view-tickets/'+str(newBooking.BookingID))
+            else:
+                flash("Your tickets have been sent to "+current_user.Email)
+                return redirect(url_for('index'))
 
         return render_template('payment.html', title='Checkout',
                             total = total,
