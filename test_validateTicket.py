@@ -79,5 +79,33 @@ class BasicTests(unittest.TestCase):
             self.assertEqual(request.path, '/')
             self.assertTrue('You do not have the required permissions to validate tickets' in str(r3.data))
 
+            # Asserts that if you try and access /validate-ticekt while logged in to an admin account, you won't be redirected
+            # Logs the user out of the current account and into an admin account
+            r4 = c.get('/logout', follow_redirects=True)
+            with c.session_transaction() as sess:
+                sess['testing'] = True
+            r5 = c.get('/test-admin-login', follow_redirects=True)
+
+            # Asserts that the /validate-ticket page can be accessed correctly
+            r6 = c.get('/validate-ticket/a', follow_redirects=True)
+            self.assertEqual(r3.status_code, 200)
+            self.assertEqual(request.path, '/validate-ticket/a')
+
+            # Asserts that when an invalid uuid is given for a ticket, then the user is informed of this correctly
+            self.assertTrue('Invalid ticket' in str(r6.data))
+            self.assertTrue('cross.jpg' in str(r6.data))
+
+            # Gets the QR field of a ticket from the database
+            valid_uuid = models.Ticket.query.order_by(models.Ticket.TicketID.desc()).first().QR
+
+            # Asserts that the /validate-ticket page can be accessed correctly
+            r7 = c.get('/validate-ticket/'+str(valid_uuid), follow_redirects=True)
+            self.assertEqual(r3.status_code, 200)
+            self.assertEqual(request.path, '/validate-ticket/'+str(valid_uuid))
+
+            # Asserts that when an invalid uuid is given for a ticket, then the user is informed of this correctly
+            self.assertTrue('Ticket validated successfully' in str(r7.data))
+            self.assertTrue('tick.jpg' in str(r7.data))
+
 if __name__ == "__main__":
     unittest.main()

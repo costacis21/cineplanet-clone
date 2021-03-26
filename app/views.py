@@ -327,6 +327,18 @@ def t2():
     else:
         return redirect(url_for('index'))
 
+@app.route('/test-admin-login', methods=['GET', 'POST'])
+def t3():
+    if session['testing'] == True:
+        user = models.User.query.filter_by(Email='admin@admin.com').first() #retrieves user profile
+        login_user(user)    #logs user in
+        db.session.commit() #commits database changes
+
+        return redirect(url_for('profile'))
+    
+    else:
+        return redirect(url_for('index'))
+
 @app.route('/seats/<screening>')
 def seats(screening):   #seat selection page
     if current_user.is_authenticated:
