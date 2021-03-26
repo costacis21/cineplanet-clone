@@ -34,6 +34,11 @@ class BasicTests(unittest.TestCase):
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'app/test.db')
         self.app = app.test_client()
         db = LocalProxy(get_db)
+
+        if not models.User.query.filter_by(Email='test@gmail.com').first():
+            newUser = models.User(Email='test@gmail.com', Password=sha256_crypt.encrypt('password'), Privilage=2)
+            db.session.add(newUser)
+            db.session.commit()
  
     # executed after each test
     def tearDown(self):
@@ -54,12 +59,31 @@ class BasicTests(unittest.TestCase):
             self.assertEqual(request.path, '/login')   
             
             # Logs the user in
-            r2 = c.get('/test-login', follow_redirects=True)         
+            r2 = c.get('/test-login', follow_redirects=True)
+
+            #Gets the UserID of the account just logged in to
+            user = models.User.query.filter_by(Email='test@gmail.com').first()
 
             # Asserts that if you try and access /view-bookings while logged in, you can access the page and you are not redirected
             r3 = c.get('/view-bookings', follow_redirects=True)
             self.assertEqual(r3.status_code, 200)
             self.assertEqual(request.path, '/view-bookings')
+
+            # Asserts that there is a link on the page to all bookings that are made by the logged in user
+            # Asserts that the links all work corrrectly
+            bookings = models.Booking.query.filter_by(UserID=user.UserID).all()
+            for booking in bookings:
+                self.assertTrue('a href=" '+request.url_root+'/view-tickets/'+str(booking.BookingID)+'"' in str(r3.data))
+
+                r4 = c.get(request.url_root+'/view-tickets/'+str(booking.BookingID), follow_redirects=True)
+                self.assertEqual(r4.status_code, 200)
+                self.assertEqual(request.path, '/view-tickets/'+str(booking.BookingID))
+
+            # Asserts that there are no links on the page to bookings that are not made by the logged in user
+            # Does this by checking that the number of links to bookings is the same as the number of bookings made by the logged in user
+            # This, in combination with the above test that all links to bookings are to ones that are made by the logged in user, assert the statement
+            occurrences = [i for i in range(len(str(r3.data))) if str(r3.data).startswith('a href=" '+request.url_root+'/view-tickets/', i)]
+            self.assertEqual(len(occurrences), len(bookings))
 
     """
     def signUpLogin(self, c):
