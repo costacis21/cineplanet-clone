@@ -703,21 +703,25 @@ def validateTicket(uuid):
 @app.route('/view-tickets/<BookingID>', methods = ['GET', 'POST'])
 def viewTickets(BookingID):
     if current_user.is_authenticated:
-        # Gets all bookings made by a user
-        bookings = models.Booking.query.filter_by(UserID=current_user.UserID).all()
-        # Checks that the user has made bookings
-        if len(bookings) > 0:
-            # Checks that this booking is one made by the current user
-            valid = False
-            for booking in bookings:
-                if booking.BookingID == int(BookingID):
-                    valid = True
+        # Check that the booking exists
+        if models.Booking.query.filter_by(BookingID=BookingID).first():
+            # Gets all bookings made by a user
+            bookings = models.Booking.query.filter_by(UserID=current_user.UserID).all()
+            # Checks that the user has made bookings
+            if len(bookings) > 0:
+                # Checks that this booking is one made by the current user
+                valid = False
+                for booking in bookings:
+                    if booking.BookingID == int(BookingID):
+                        valid = True
 
-            # If the booking was made by the current user
-            if valid == True:
-                return render_template('view-tickets.html', BookingID=BookingID, title="View Tickets")
+                # If the booking was made by the current user
+                if valid == True:
+                    return render_template('view-tickets.html', BookingID=BookingID, title="View Tickets")
+                else:
+                    flash("You cannot view another user's bookings")
             else:
-                flash("You cannot view another user's bookings")
+                flash("You do not have any tickets linked to your account")
         else:
             flash("Tickets not found")
 

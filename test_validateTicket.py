@@ -35,6 +35,7 @@ class BasicTests(unittest.TestCase):
         self.app = app.test_client()
         db = LocalProxy(get_db)
 
+        # Creates the user account that is used for most of these tests if it doesn't already exist
         if not models.User.query.filter_by(Email='test@gmail.com').first():
             newUser = models.User(Email='test@gmail.com', Password=sha256_crypt.encrypt('password'), Privilage=2)
             db.session.add(newUser)
@@ -43,22 +44,10 @@ class BasicTests(unittest.TestCase):
     # executed after each test
     def tearDown(self):
         pass
-    
-    def test_attempt(self):
-        with app.test_client() as c:
-            with c.session_transaction() as sess:
-                sess['testing'] = True
-            
-            r1 = c.get('/test-login', follow_redirects=True)
-            self.assertEqual(r1.status_code, 200)
-            self.assertEqual(request.path, '/profile')
 
-    # Tests the /view-bookings page of the application
-    def test_viewBookings(self):
+    # Tests the /validate-ticket page of the application
+    def test_validateTicket(self):
         with app.test_client() as c:
-            with c.session_transaction() as sess:
-                sess['testing'] = True
-            
             # Asserts that if you try and access /validate-ticket while not logged in, you will be redirected to the login page
             # Asserts that when this happens, the correct error message is flashed to the user
             r1 = c.get('/validate-ticket/a', follow_redirects=True)
@@ -68,9 +57,6 @@ class BasicTests(unittest.TestCase):
 
             # Logs the user in to a customer account
             r2 = c.get('/test-login', follow_redirects=True)
-
-            #Gets the UserID of the account just logged in to
-            user = models.User.query.filter_by(Email='test@gmail.com').first()
 
             # Asserts that if you try and access /validate-ticket while logged in to a customer account, you will be redirected to the home page
             # Asserts that when this happens, the correct error message is flashed to the user
@@ -82,8 +68,6 @@ class BasicTests(unittest.TestCase):
             # Asserts that if you try and access /validate-ticekt while logged in to an admin account, you won't be redirected
             # Logs the user out of the current account and into an admin account
             r4 = c.get('/logout', follow_redirects=True)
-            with c.session_transaction() as sess:
-                sess['testing'] = True
             r5 = c.get('/test-admin-login', follow_redirects=True)
 
             # Asserts that the /validate-ticket page can be accessed correctly
