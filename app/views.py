@@ -48,6 +48,7 @@ def resetBookingSessionData():
 @app.route('/', methods=['GET','POST'])
 def index():
     resetBookingSessionData()
+    session['testing'] = False
     allMovies = models.Movie.query.all()
     quickBookForm = forms.addMovieScreening.new()
     movie = None
@@ -316,11 +317,15 @@ def t():
 
 @app.route('/test-login', methods=['GET', 'POST'])
 def t2():
-    user = models.User.query.filter_by(Email='test@gmail.com').first() #retrieves user profile
-    login_user(user)    #logs user in
-    db.session.commit() #commits database changes
+    if session['testing'] == True:
+        user = models.User.query.filter_by(Email='test@gmail.com').first() #retrieves user profile
+        login_user(user)    #logs user in
+        db.session.commit() #commits database changes
 
-    return redirect(url_for('profile'))
+        return redirect(url_for('profile'))
+    
+    else:
+        return redirect(url_for('index'))
 
 @app.route('/seats/<screening>')
 def seats(screening):   #seat selection page
@@ -670,7 +675,6 @@ def viewBookings():
             time = screening.StartTimestamp.time().strftime('%H:%M')
             date = screening.StartTimestamp.date().strftime('%d/%m/%y')
             movie = models.Movie.query.filter_by(MovieID=screening.MovieID).first()
-            print(movie.PosterURL)
             bookings.append([booking, movie.Name, time, date, movie.PosterURL])
 
         return render_template('view-bookings.html', bookings=bookings, title="View Bookings")

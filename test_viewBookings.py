@@ -46,6 +46,9 @@ class BasicTests(unittest.TestCase):
     
     def test_attempt(self):
         with app.test_client() as c:
+            with c.session_transaction() as sess:
+                sess['testing'] = True
+            
             r1 = c.get('/test-login', follow_redirects=True)
             self.assertEqual(r1.status_code, 200)
             self.assertEqual(request.path, '/profile')
@@ -53,6 +56,9 @@ class BasicTests(unittest.TestCase):
     # Tests the /view-bookings page of the application
     def test_viewBookings(self):
         with app.test_client() as c:
+            with c.session_transaction() as sess:
+                sess['testing'] = True
+            
             # Asserts that if you try and access /view-bookings while not logged in, you will be redirected to the login page
             r1 = c.get('/view-bookings', follow_redirects=True)
             self.assertEqual(r1.status_code, 200)
@@ -73,11 +79,48 @@ class BasicTests(unittest.TestCase):
             # Asserts that the links all work corrrectly
             bookings = models.Booking.query.filter_by(UserID=user.UserID).all()
             for booking in bookings:
+                # Asserts that there is a link on the page for the booking
                 self.assertTrue('a href=" '+request.url_root+'/view-tickets/'+str(booking.BookingID)+'"' in str(r3.data))
 
+                # Asserts that the link works correctly
                 r4 = c.get(request.url_root+'/view-tickets/'+str(booking.BookingID), follow_redirects=True)
                 self.assertEqual(r4.status_code, 200)
                 self.assertEqual(request.path, '/view-tickets/'+str(booking.BookingID))
+
+                # Asserts that the correct movie information is displayed on the page
+                screenings = models.Screening.query.filter_by(ScreeningID=booking.ScreeningID).all()
+                for screening in screenings:
+                    movie = models.Movie.query.filter_by(MovieID=screening.MovieID).first()
+                    time = screening.StartTimestamp.time().strftime('%H:%M')
+                    date = screening.StartTimestamp.date().strftime('%d/%m/%y')
+
+                    # HTML replaces all &s with &amp; so in order to check for a string with & in, we have to replace the &s with &amp
+                    if '&' in movie.Name:
+                        movie.Name = movie.Name.replace('&', '&amp;')
+
+                    # Checks that the correct poster is displayed
+                    self.assertTrue(movie.PosterURL in str(r3.data))
+                    
+                    # Checks that the correct information is displayed
+                    self.assertTrue(movie.Name in str(r3.data))
+                    self.assertTrue(date in str(r3.data))
+                    self.assertTrue(time in str(r3.data))
+
+            # Asserts that there are no images on the page for bookings that are not made by the logged in user
+            # Does this by checking that the number of images for bookings is the same as the number of bookings made by the logged in user
+            # This, in combination with the above test that all images for bookings are to ones that are made by the logged in user, assert the statement
+            occurrences = [i for i in range(len(str(r3.data))) if str(r3.data).startswith('src="https://image', i)]
+            self.assertEqual(len(occurrences), len(bookings))
+
+            # Asserts that there are no headings on the page for bookings that are not made by the logged in user
+            # Does this by checking that the number of each heading for bookings is the same as the number of bookings made by the logged in user
+            # This, in combination with the above test that all headings for bookings are for ones made by the logged on user, assert the statement
+            occurrences = [i for i in range(len(str(r3.data))) if str(r3.data).startswith('Name:', i)]
+            self.assertEqual(len(occurrences), len(bookings))
+            occurrences = [i for i in range(len(str(r3.data))) if str(r3.data).startswith('Time:', i)]
+            self.assertEqual(len(occurrences), len(bookings))
+            occurrences = [i for i in range(len(str(r3.data))) if str(r3.data).startswith('Date:', i)]
+            self.assertEqual(len(occurrences), len(bookings))
 
             # Asserts that there are no links on the page to bookings that are not made by the logged in user
             # Does this by checking that the number of links to bookings is the same as the number of bookings made by the logged in user
