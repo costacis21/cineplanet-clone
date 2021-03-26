@@ -301,23 +301,10 @@ def addNewMovie():
     else:
         return redirect(url_for('login'))
 
-
-@app.route('/test', methods=['GET','POST'])
-def t():
-    enterMovieForm = forms.enterMovie()
-    if enterMovieForm.validate_on_submit():
-                session['movie'] = enterMovieForm.movietitle.data
-                return redirect(url_for('index'))
-
-    return render_template('book-tickets.html',
-                            title='Book Tickets',
-                            enterMovieForm = enterMovieForm,
-                            page=1, user=current_user.Email
-                            )
-
+# Used in testing to log the user in to a customer account
 @app.route('/test-login', methods=['GET', 'POST'])
 def t2():
-    if session['testing'] == True:
+    if app.config['TESTING'] == True:
         user = models.User.query.filter_by(Email='test@gmail.com').first() #retrieves user profile
         login_user(user)    #logs user in
         db.session.commit() #commits database changes
@@ -327,9 +314,10 @@ def t2():
     else:
         return redirect(url_for('index'))
 
+# Used in testing to log the user in to an admin account
 @app.route('/test-admin-login', methods=['GET', 'POST'])
 def t3():
-    if session['testing'] == True:
+    if app.config['TESTING'] == True:
         user = models.User.query.filter_by(Email='admin@admin.com').first() #retrieves user profile
         login_user(user)    #logs user in
         db.session.commit() #commits database changes
@@ -736,7 +724,7 @@ def viewTickets(BookingID):
         return redirect(url_for('index'))
 
     else:
-        flash('You must be signed in to book tickets')
+        flash('You must be signed in to view tickets')
         return redirect(url_for('login'))
 
 @app.route('/profile', methods=['GET','POST'])
