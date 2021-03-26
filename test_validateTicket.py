@@ -70,7 +70,7 @@ class BasicTests(unittest.TestCase):
             r4 = c.get('/logout', follow_redirects=True)
             r5 = c.get('/test-admin-login', follow_redirects=True)
 
-            # Asserts that the /validate-ticket page can be accessed correctly
+            # Asserts that the /validate-ticket page can be accessed correctly w
             r6 = c.get('/validate-ticket/a', follow_redirects=True)
             self.assertEqual(r3.status_code, 200)
             self.assertEqual(request.path, '/validate-ticket/a')
@@ -82,12 +82,12 @@ class BasicTests(unittest.TestCase):
             # Gets the QR field of a ticket from the database
             valid_uuid = models.Ticket.query.order_by(models.Ticket.TicketID.desc()).first().QR
 
-            # Asserts that the /validate-ticket page can be accessed correctly
+            # Asserts that the /validate-ticket page can be accessed correctly when given a valid ticket uuid
             r7 = c.get('/validate-ticket/'+str(valid_uuid), follow_redirects=True)
             self.assertEqual(r3.status_code, 200)
             self.assertEqual(request.path, '/validate-ticket/'+str(valid_uuid))
 
-            # Asserts that when an invalid uuid is given for a ticket, then the user is informed of this correctly
+            # Asserts that when an valid uuid is given for a ticket, then the user is informed of this correctly
             self.assertTrue('Ticket validated successfully' in str(r7.data))
             self.assertTrue('tick.jpg' in str(r7.data))
 

@@ -131,7 +131,7 @@ class BasicTests(unittest.TestCase):
                 # Does this by checking that all the information for one ticket is included together in the same section
                 self.assertTrue('Movie Name: '+movie.Name+'\n'+'Seat: '+seat.code+'\n'+'Seat Type: '+seatType+'\n'+'Seat Category: '+ticketCategory in text)
 
-                # Checking the QR code used for each ticket has the correct information
+                # Asserts that the QR code used for each ticket has the correct information
                 qr = decode(Image.open('app/static/ticket/qr/qr'+str(ticket.TicketID)+'.png'))
                 self.assertEqual(str(qr[0][0].decode("utf-8")),'http://127.0.0.1:5000/'+ticket.QR)
 
@@ -146,8 +146,6 @@ class BasicTests(unittest.TestCase):
             self.assertEqual(len(occurrences), len(tickets))
             occurrences = [i for i in range(len(str(text))) if str(text).startswith('Seat Category:', i)]
             self.assertEqual(len(occurrences), len(tickets))
-
-            #had to install fitz, PyMuPDF
 
 if __name__ == "__main__":
     unittest.main()
