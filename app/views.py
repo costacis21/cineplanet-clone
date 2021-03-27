@@ -756,8 +756,8 @@ def profile():
                             UseCard = UseCard,
                             form=form)
     else:
-        logging.warning('Anonymous user attempted to access settings page')
-        return redirect('/signIn')
+        flash('You must be signed in to view profiles')
+        return redirect(url_for('login'))
 
 
 @app.route('/view-incomes', methods=['GET','POST'])
