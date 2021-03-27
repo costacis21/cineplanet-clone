@@ -7,6 +7,8 @@ from werkzeug.local import LocalProxy
 import fitz
 from pyzbar.pyzbar import decode
 from PIL import Image
+import datetime
+import uuid
 
 def get_db():
     if 'db' not in g:
@@ -20,11 +22,45 @@ def teardown_db(exception):
     if db is not None:
         db.close()
 
-def SignUpLogIn(): #tests that users can be added to db and logged in
-    newUser = models.User(Email='pearce05@ntlworld.com', Password=sha256_crypt.encrypt('password'), Privilage=2)
-    db.session.add(newUser)
-    login_user(newUser)
-    db.session.commit()
+def addRecords():
+    # Creates the customer account that is used for most of these tests if it doesn't already exist
+    if not models.User.query.filter_by(Email='test@gmail.com').first():
+        newUser = models.User(Email='test@gmail.com', Password=sha256_crypt.encrypt('password'), Privilage=2)
+        db.session.add(newUser)
+        db.session.commit()
+
+    # Creates the admin account that is used for most of these tests if it doesn't already exist
+    if not models.User.query.filter_by(Email='admin@admin.com').first():
+        newUser = models.User(Email='admnin@admin.com', Password=sha256_crypt.encrypt('password'), Privilage=0)
+        db.session.add(newUser)
+        db.session.commit()
+
+    # Adding the screenings that are used for these unit tests
+    if not (len(models.Screening.query.order_by(models.Screening.ScreeningID.desc()).all()) >= 2):
+        for i in range(0,2):
+            movies = models.Movie.query.order_by(models.Movie.MovieID.desc()).all()
+            screens = models.Movie.query.order_by(models.Screen.ScreenID.desc()).all()
+            newScreening = models.Screening(MovieID=movies[i].MovieID, ScreenID=screens[i].ScreenID, StartTimestamp=datetime.datetime.now() + timedelta(days=i), EndTimestamp=datetime.datetime.now() + timedelta(days=i) + timedelta(hours=i))
+
+    # Adding the bookings that are used for these unit tests
+    user1 = models.User.query.filter_by(Email='test@gmail.com').first()
+    screening1 = models.Screening.query.order_by(models.Screening.ScreeningID.desc()).first()
+    for i in range(0,2):
+        newBooking = models.Booking(UserID=user1.UserID, ScreeningID=screening1.ScreeningID, Timestamp=datetime.datetime.now(), TotalPrice=i*5)
+
+    user2 = models.User.query.filter_by(Email='admin@admin.com').first()
+    screening2 = models.Screening.query.order_by(models.Screening.ScreeningID.asc()).first()
+    for i in range(0,2):
+        newBooking = models.Booking(UserID=user2.UserID, ScreeningID=screening2.ScreeningID, Timestamp=datetime.datetime.now(), TotalPrice=i*4)
+
+    # Adding the tickets that are used for these unit tests
+    c = 1
+    for user in [user1, user2]:
+        bookings = models.Booking.query.filter_by(UserID=user.UserID).all()
+        for booking in bookings:
+            for i in range(0,6):
+                newTicket = models.Ticket(BookingID=booking.BookingID, SeatID=c, Category=(i+1)%3, QR=str(uuid.uuid4()))
+                c += 1
 
 class BasicTests(unittest.TestCase):
     # executed prior to each test
@@ -37,12 +73,7 @@ class BasicTests(unittest.TestCase):
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'app/test.db')
         self.app = app.test_client()
         db = LocalProxy(get_db)
-
-        # Creates the user account that is used for most of these tests if it doesn't already exist
-        if not models.User.query.filter_by(Email='test@gmail.com').first():
-            newUser = models.User(Email='test@gmail.com', Password=sha256_crypt.encrypt('password'), Privilage=2)
-            db.session.add(newUser)
-            db.session.commit()
+        addRecords()
  
     # executed after each test
     def tearDown(self):
