@@ -851,7 +851,8 @@ def manageStaff():
             staff = staff,
             PrivilageForm=PrivilageForm)
         else:
-            return redirect('/signIn')
+            flash('Your account does not have access to this functionality')
+            return redirect(url_for('index'))
     else:
-        logging.warning('Anonymous user attempted to access settings page')
-        return redirect('/signIn')
+        flash('You must be signed in to book tickets')
+        return redirect(url_for('login'))
