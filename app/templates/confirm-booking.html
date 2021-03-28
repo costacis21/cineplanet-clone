@@ -83,6 +83,10 @@
     var pc = {{ PremiumConcessionPrice }};
 
     updateTotal();
+
+    document.getElementById("back").onclick = function () {
+        location.href = "/seats/" + window.location.pathname.split("/")[2];
+    };
     
     document.getElementById("confirm").onclick = function () {
         var allSeats = window.location.pathname.split("/")[3];
@@ -104,10 +108,6 @@
         location.href = "/cashPayment/" + window.location.pathname.split("/")[2] + "/" + window.location.pathname.split("/")[3] + "/" + types.join("$");
     };
 
-    document.getElementById("back").onclick = function () {
-        location.href = "/seats/" + window.location.pathname.split("/")[2];
-
-    }
 
     function updatePrice(id) {  //changes prices depending on select box option
         var x = document.getElementById(id).value;  
@@ -136,8 +136,7 @@
             sumVal = sumVal + parseFloat((table.rows[i].cells[3].innerHTML).split(">")[1].split("<")[0]);
         }
 
-        document.getElementById("total").innerHTML = "Total: £" + sumVal;
-        console.log(sumVal);
+        document.getElementById("total").innerHTML = "Total: £" + Math.round((sumVal + Number.EPSILON) * 100) / 100;
     }
 
 </script>

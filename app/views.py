@@ -436,7 +436,7 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
             else:
                 flash("Something went wrong, please try again")
                 return redirect(url_for('index'))
-
+        total = round(total, 2)
         if "details" in request.form and PaymentDetailsForm.validate_on_submit():
             try:
                 datetime.datetime.strptime(PaymentDetailsForm.Expiry.data, '%m-%y') #check card can be converted to date
@@ -668,7 +668,7 @@ def CashPayment(screeningID, seats, types): # succeed booking confirmation page
             else:
                 flash("Something went wrong, please try again")
                 return redirect(url_for('index'))
-
+        total = round(total, 2)
         if Paid.validate_on_submit():
 
             newBooking = models.Booking(UserID=current_user.UserID, ScreeningID=screeningID, Timestamp=datetime.datetime.now(), TotalPrice=total)
