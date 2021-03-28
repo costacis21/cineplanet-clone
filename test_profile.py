@@ -76,9 +76,10 @@ class BasicTests(unittest.TestCase):
             self.assertEqual(r3.status_code, 200)
             self.assertEqual(request.path, '/profile')
 
-            user1 = models.User.query.filter_by(Email='test@gmail.com').first()
-            cards = models.Card.query.filter_by(UserID=user1.UserID).all()
+            cards = models.Card.query.filter_by(UserID=models.User.query.filter_by(Email='test@gmail.com').first().UserID).all()
+            self.assertGreater(len(cards), 0)
             for card in cards:
+
                 # Asserts that the card number is printed
                 self.assertTrue('xxxx-xxxx-xxxx-'+ str(card.CardNo)[12:] in str(r3.data))
 
@@ -92,7 +93,7 @@ class BasicTests(unittest.TestCase):
                 self.assertFalse('xxxx-xxxx-xxxx-'+ str(card.CardNo)[12:] in str(r4.data))
 
                 cards2 = models.Card.query.filter_by(UserID=models.User.query.filter_by(Email='test@gmail.com').first().UserID).all()
-                self.assertNotIn(card, cards2)
+                self.assertNotIn(card,cards2)
 
 if __name__ == "__main__":
     unittest.main()
