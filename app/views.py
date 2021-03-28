@@ -854,5 +854,5 @@ def manageStaff():
             flash('Your account does not have access to this functionality')
             return redirect(url_for('index'))
     else:
-        flash('You must be signed in to book tickets')
+        flash('You must be signed in to access to this functionality')
         return redirect(url_for('login'))
