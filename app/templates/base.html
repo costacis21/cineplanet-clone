@@ -21,7 +21,7 @@
     crossorigin="anonymous"></script>
 
   {% if title %}
-  <title>{{ title }}</title>
+  <title>{{ title }} | CinemaPlanet</title>
   {% else %}
   <title> No title specified</title>
   {% endif %}
@@ -53,7 +53,6 @@
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
               <a class="dropdown-item" href="/addMovieScreening">Add Movie Screening</a>
               <a class="dropdown-item" href="/addNewMovie">Add New Movie</a>
-              <a class="dropdown-item" href="/#">Deactivate Movies</a>
             </div>
           </div>
         </div>
@@ -119,13 +118,13 @@
           <div class="row">
             <div class="col-sm">
               <h3>Useful Links</h3>
-              <p><a href="/basket">Returns Policy</a><br />
-                <a href="/about">Our ethical Statement</a><br />
-                <a href="/about">About us</a>
+              <p><a href="/profile">Change Password</a><br />
+                <a href="/view-bookings">View Bookings</a><br />
+                <a href="/">Current Movies</a>
               </p>
             </div>
             <div class="col-sm">
-              <h3>Find our store</h3>
+              <h3>Find Us</h3>
               <p>66 King Sreet<br />
                 Leeds<br />
                 LS69 2YT</p>
@@ -137,11 +136,13 @@
                 Android: <a href="https://play.google.com/store">Get it here</a></p>
             </div>
           </div>
+          <div class="row">
+            {% block below %}{% endblock %}
+          </div>
         </div>
         <br />
       </div>
     </div>
-      {% block below %}{% endblock %}
 
 </body>
 

@@ -122,4 +122,3 @@ class Card(db.Model):
     Name = db.Column(db.String(50))
     CVV = db.Column(db.String(5))
     Expiry = db.Column(db.DateTime)
-

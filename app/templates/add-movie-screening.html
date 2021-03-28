@@ -1,53 +1,48 @@
-{% extends "base.html" %}
-{% block content %}
-<br /><br />
+{% extends "base.html" %} {% block content %} <br /><br />
 <h1 class="row justify-content-md-center">Add movie screening</h1>
 
 <form action="" method="post" name="addScreeningForm">
-  {% if addScreeningForm.csrf_token() %}
-  {{addScreeningForm.csrf_token()}}
-  {% endif %}
-  {{ addScreeningForm.hidden_tag() }}
+  {% if addScreeningForm.csrf_token() %} {{addScreeningForm.csrf_token()}} {%
+  endif %} {{ addScreeningForm.hidden_tag() }}
 
   <div class="row justify-content-md-center">
     <div>
       <div class="form-group">
-
         <label style="padding-right: 10%;">Movie: </label><br />
-        {{addScreeningForm.movie}}
-        {% for error in addScreeningForm.movie.errors %}
-        [{{ error }}]
-        {% endfor %}
+        {{addScreeningForm.movie}} {% for error in addScreeningForm.movie.errors
+        %} [{{ error }}] {% endfor %}
         <a href="/addNewMovie">
           <p style="font-size: 13px;">Add a new movie</p>
         </a>
       </div>
       <div class="form-group">
-
         <label style="padding-right: 10%;">Screen: </label><br />
-        {{addScreeningForm.screen}}
-        {% for error in addScreeningForm.screen.errors %}
-        [{{ error }}]
-        {% endfor %}
+        {{addScreeningForm.screen}} {% for error in
+        addScreeningForm.screen.errors %} [{{ error }}] {% endfor %}
       </div>
       <div class="form-group">
-
-        <label style="padding-right: 10%;">Start Time (format: %d-%m-%Y %H:%M): </label><br />
-        {{addScreeningForm.start}}
-        {% for error in addScreeningForm.start.errors %}
-        [{{ error }}]
-        {% endfor %}
+        <label style="padding-right: 10%;"
+          >Start Time (format: %d-%m-%Y %H:%M): </label
+        ><br />
+        {{addScreeningForm.start}} {% for error in addScreeningForm.start.errors
+        %} [{{ error }}] {% endfor %}
       </div>
       <div class="form-group">
-
-        <label style="padding-right: 10%;">End Time (format: %d-%m-%Y %H:%M): </label><br />
-        {{addScreeningForm.end}}
-        {% for error in addScreeningForm.end.errors %}
-        [{{ error }}]
-        {% endfor %}
+        <label style="padding-right: 10%;"
+          >End Time (format: %d-%m-%Y %H:%M): </label
+        ><br />
+        {{addScreeningForm.end}} {% for error in addScreeningForm.end.errors %}
+        [{{ error }}] {% endfor %}
       </div>
       <div class="form-group">
-        <button type="submit" class="btn btn-primary" value="Add Screening" name="Add Screening">Add Screening</button>
+        <button
+          type="submit"
+          class="btn btn-primary"
+          value="Add Screening"
+          name="Add Screening"
+        >
+          Add Screening
+        </button>
       </div>
     </div>
   </div>
