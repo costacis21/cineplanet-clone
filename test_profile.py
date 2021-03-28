@@ -30,10 +30,6 @@ def addRecords():
 
     # Adding the saved payment methods that are used for these unit tests
     user1 = models.User.query.filter_by(Email='test@gmail.com').first()
-    newCard = models.Card(UserID=user1.UserID, CardNo="1234123412341234", Name = "Test", CVV="123", Expiry=datetime.datetime.now())
-    db.session.add(newCard)
-    db.session.commit()
-
     for i in range(3):
         newCard = models.Card(UserID=user1.UserID, CardNo=str(''.join(random.choices(string.digits, k = 16))), Name = str(''.join(random.choices(string.ascii_letters, k = 5))), CVV=str(''.join(random.choices(string.digits, k = 3))), Expiry=datetime.datetime.now())
         db.session.add(newCard)
@@ -49,7 +45,7 @@ class BasicTests(unittest.TestCase):
         app.config['WTF_CSRF_ENABLED'] = True
         app.config['DEBUG'] = False
         basedir = os.path.abspath(os.path.dirname(__file__))
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'app/test.db')
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'app/app.db')
         self.app = app.test_client()
         db = LocalProxy(get_db)
         addRecords()
@@ -80,22 +76,23 @@ class BasicTests(unittest.TestCase):
             self.assertEqual(r3.status_code, 200)
             self.assertEqual(request.path, '/profile')
 
-            cards = models.Card.query.filter_by(UserID=models.User.query.filter_by(Email='test@gmail.com').first().UserID).all()
+            user1 = models.User.query.filter_by(Email='test@gmail.com').first()
+            cards = models.Card.query.filter_by(UserID=user1.UserID).all()
             for card in cards:
-
                 # Asserts that the card number is printed
-                self.assertTrue('xxxx-xxxx-xxxx-'+str(card.CardNo[12:])+'"' in str(r3.data))
+                self.assertTrue('xxxx-xxxx-xxxx-'+ str(card.CardNo)[12:] in str(r3.data))
 
                 # Asserts that there is a link on the page to remove each card
-                self.assertTrue('a href="/remove-card/'+str(card.CardID)+'"' in str(r3.data))
+                self.assertTrue('a href="/remove-card/'+ str(card.CardID)+'"' in str(r3.data))
 
-                # Asserts that the link works correctly
+                # Asserts that the link works correctly and card is removed
                 r4 = c.get('/remove-card/'+str(card.CardID), follow_redirects=True)
                 self.assertEqual(r4.status_code, 200)
-                self.assertEqual(request.path, '/remove-card/'+str(card.CardID))
+                self.assertEqual(request.path, '/profile')
+                self.assertFalse('xxxx-xxxx-xxxx-'+ str(card.CardNo)[12:] in str(r4.data))
 
                 cards2 = models.Card.query.filter_by(UserID=models.User.query.filter_by(Email='test@gmail.com').first().UserID).all()
-                self.assertNotIn(card,)
+                self.assertNotIn(card, cards2)
 
 if __name__ == "__main__":
     unittest.main()
