@@ -62,7 +62,8 @@ def index():
     return render_template('index.html',
                             title='Home',
                             allMovies = allMovies,
-                            movie = movie)
+                            movie = movie,
+                            hide=True)
 
 @app.route('/screenings', methods=['GET','POST'])
 def screeningsRedirect():
