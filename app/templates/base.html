@@ -26,11 +26,24 @@
   <title> No title specified</title>
   {% endif %}
   <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css" />
 </head>
 
 
 <body onload='init()'>
-
+  <script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js" data-cfasync="false"></script>
+  <script>
+  window.cookieconsent.initialise({
+    "palette": {
+      "popup": {
+        "background": "#23272B"
+      },
+      "button": {
+        "background": "#d11717"
+      }
+    }
+  });
+  </script>
   <nav class="navbar navbar-expand-sm navbar-dark bg-black">
     <a class="navbar-brand" href="/"><img src="{{request.url_root}}/static/icons/logo.png" width="175px" class="logo" /></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
