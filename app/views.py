@@ -682,7 +682,7 @@ def viewBookings():
             bookings.append([booking, movie.Name, time, date, movie.PosterURL])
 
         return render_template('view-bookings.html', bookings=bookings, title="View Bookings")
-    
+
     else:
         flash("You must be logged in to view bookings")
         return redirect(url_for('login'))
