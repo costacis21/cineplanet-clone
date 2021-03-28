@@ -71,11 +71,12 @@ class changePasswordForm(Form):
     newPasswordCheck = PasswordField('Confirm New Password', [validators.EqualTo('newPassword', message='Passwords must match')])
 
 class PaymentDetailsForm(Form):
-    CardNo = StringField('Card Number', [validators.DataRequired(), validators.length(min=15, max=16, message='Card number should be 15 or 16 digits')], render_kw={"placeholder": "---- ---- ---- ----"})
+    CardNo = StringField('Card Number', [validators.DataRequired(), validators.Regexp('^[0-9]{15,16}$', message="Card number should comprise of 15 or 16 digits")], render_kw={"placeholder": "----------------"})
     Name = StringField('Name on card', [validators.DataRequired(), validators.length(min=1, max=50, message='Please enter your name as it appears on your card')])
-    Expiry = StringField('Expiry', render_kw={"placeholder": "MM-YY"}, validators=[DataRequired()])
-    CVV = StringField('CVV', [validators.DataRequired(), validators.length(min=3, max=3, message='Security code should be 3 digits')], render_kw={"placeholder": "---"})
+    Expiry = StringField('Expiry', render_kw={"placeholder": "MM-YY"}, validators=[DataRequired(), validators.Regexp('^[0-9][0-9]-[0-9][0-9]$', message="Please enter exipry in example format: 09-23")])
+    CVV = StringField('CVV', [validators.DataRequired(), validators.Regexp('^[0-9]{3,3}$', message='Security code should be 3 digits')], render_kw={"placeholder": "---"})
     Save = BooleanField('Save this card for next time', widget=CheckboxInput())
+    
 
 class SetUserPrivilage(Form):
     Username = StringField('Username', [validators.DataRequired()])
