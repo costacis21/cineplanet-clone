@@ -10,7 +10,10 @@ from PIL import Image
 import datetime
 import uuid
 import pyqrcode
+import logging as log
 
+pil_logger = log.getLogger('PIL')
+pil_logger.setLevel(log.INFO)
 
 def get_db():
     with app.app_context():
