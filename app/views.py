@@ -106,10 +106,6 @@ def datedScreenings(date):
                 return redirect('/screenings/' + str(date))
         elif request.form.get("viewInfo"):
             foundMovieInfo = request.form.get("viewInfo")
-        elif request.form.get("Refine runtime"):
-            runtime = request.form['exampleRadios']
-        elif request.form.get("Refine age"):
-            age = request.form['exampleRadios']
         else: # Clicked to buy tickets
             foundScreeningID = request.form.get("buy")
             # Needs here to be replaced with a redirect to the specific ticket booking of that screening
@@ -246,10 +242,11 @@ def addMovieScreening():
                         flash("Not completed, please ensure both the start and end time are in the correct format")
                     else:
                         findMovie = models.Movie.query.filter_by(Name=addScreeningForm.movie.data).first()
-                        newScreening = models.Screening(MovieID=findMovie.MovieID, ScreenID = int(addScreeningForm.screen.data[7]),
-                                                        StartTimestamp = addScreeningForm.start.data, EndTimestamp = addScreeningForm.end.data)
-                        db.session.add(newScreening)
-                        db.session.commit()
+                        for i in range(0,5):
+                            newScreening = models.Screening(MovieID=(findMovie.MovieID+i), ScreenID = int(addScreeningForm.screen.data[7]),
+                                                            StartTimestamp = addScreeningForm.start.data, EndTimestamp = addScreeningForm.end.data)
+                            db.session.add(newScreening)
+                            db.session.commit()
                         flash("Screening successfully added")
                         return redirect(url_for('index'))
             return render_template('add-movie-screening.html',
@@ -580,9 +577,9 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
 
             # Send all the PDFs in an email to the user
             # First argument gives the destination email, currently set to email ourselves to prevent one of us receiving lots of emails during testing
-            SendEmail.SendMail("leeds.cineplanet.com", filenames)
+            #SendEmail.SendMail("leeds.cineplanet.com", filenames)
             # Un-comment the line below to send emails to their actual destination
-            #SendEmail.SendMail(current_user.Email, filenames)
+            SendEmail.SendMail(current_user.Email, [filename])
 
             if current_user.Privilage < 2:
                 session['booking_complete'] = True
@@ -729,9 +726,9 @@ def CashPayment(screeningID, seats, types): # succeed booking confirmation page
 
             # Send all the PDFs in an email to the user
             # First argument gives the destination email, currently set to email ourselves to prevent one of us receiving lots of emails during testing
-            SendEmail.SendMail("leeds.cineplanet.com", [filename])
+            #SendEmail.SendMail("leeds.cineplanet.com", [filename])
             # Un-comment the line below to send emails to their actual destination
-            #SendEmail.SendMail(current_user.Email, filenames)
+            SendEmail.SendMail(current_user.Email, [filename])
 
             session['booking_complete'] = True
             flash("Displaying your tickets now")
