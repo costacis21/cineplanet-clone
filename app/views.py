@@ -460,7 +460,7 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
                 db.session.commit()
 
                 screening = models.Screening.query.filter_by(ScreeningID=newBooking.ScreeningID).first()
-                screen = screening.ScreeningID
+                screen = screening.ScreenID
                 i=0
                 filenames=[]
                 QRs = []
@@ -531,7 +531,7 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
             db.session.commit()
 
             screening = models.Screening.query.filter_by(ScreeningID=newBooking.ScreeningID).first()
-            screen = screening.ScreeningID
+            screen = screening.ScreenID
             i=0
             filenames=[]
             QRs = []
