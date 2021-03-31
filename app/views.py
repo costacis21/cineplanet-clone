@@ -35,19 +35,8 @@ StandardConcessionPrice = 3.49  #Standard senior price
 PremiumGeneralPrice = 6.99  #Premium general ticket price
 PremiumConcessionPrice = 5.49   #Premium price
 
-def resetBookingSessionData():
-    #Used to reset the session data stored about a booking
-    #Prevents previous complete or incomplete bookings from interfering with any new ones
-    #Called when the homepage is loaded
-    session['bookingProgress'] = 0
-    session['movie'] = ''
-    session['screening'] = 0
-    session['seats'] = []
-    session['total'] = 0
-
 @app.route('/', methods=['GET','POST'])
 def index():
-    resetBookingSessionData()
     session['testing'] = False
     allMovies = models.Movie.query.all()
     quickBookForm = forms.addMovieScreening.new()
@@ -67,14 +56,12 @@ def index():
 
 @app.route('/screenings', methods=['GET','POST'])
 def screeningsRedirect():
-    resetBookingSessionData()
     session['booking_complete'] = False
     date = datetime.date.today()
     return redirect('/screenings/' + str(date))
 
 @app.route('/screenings/<date>', methods=['GET','POST'])
 def datedScreenings(date):
-    resetBookingSessionData()
     if date < str(datetime.date.today()):
         return redirect("/screenings")
     #Fetch all the movies
@@ -145,7 +132,6 @@ def datedScreenings(date):
 
 @app.route('/movie/<MovieID>', methods=['GET','POST'])
 def movieInformation(MovieID):
-    resetBookingSessionData()
     lastMovie = models.Movie.query.order_by(models.Movie.MovieID.desc()).first()
     if int(lastMovie.MovieID) < int(MovieID): #If try and get to URL where no movie exists for it
         return redirect('/') # Redirect back to home
@@ -301,7 +287,7 @@ def addNewMovie():
 
 # Used in testing to log the user in to a customer account
 @app.route('/test-login', methods=['GET', 'POST'])
-def t2():
+def testLogin():
     if app.config['TESTING'] == True:
         user = models.User.query.filter_by(Email='test@gmail.com').first() #retrieves user profile
         login_user(user)    #logs user in
@@ -314,7 +300,7 @@ def t2():
 
 # Used in testing to log the user in to an admin account
 @app.route('/test-admin-login', methods=['GET', 'POST'])
-def t3():
+def testAdminLogin():
     if app.config['TESTING'] == True:
         user = models.User.query.filter_by(Email='admin@admin.com').first() #retrieves user profile
         login_user(user)    #logs user in
