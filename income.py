@@ -173,7 +173,7 @@ def compareMovies(start: datetime.date, end: datetime.date):
 
 
     # naming the y-axis
-    plt.xlabel('Income (£)')
+    plt.xlabel('Tickets sold')
     # naming the x-axis
     plt.ylabel('Movie Title')
     # plot title
