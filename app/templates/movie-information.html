@@ -15,19 +15,10 @@
       <p><b>Description: </b></p>
       <p>{{movie.Description}}</p>
       <!-- Button to Open the Modal -->
-      <button
-        type="button"
-        class="btn btn-primary"
-        data-toggle="modal"
-        data-target="#myModal"
-      >
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
         Watch Now
       </button>
-      <button
-        type="button"
-        class="btn btn-secondary"
-        onclick="window.open('{{movie.TrailerURL}}');"
-      >
+      <button type="button" class="btn btn-secondary" onclick="window.open('{{movie.TrailerURL}}');">
         Watch Trailer on YouTube
       </button>
     </div>
@@ -57,16 +48,8 @@
             </td>
             <td>
               <form action="" method="post" value="{{screening.ScreeningID}}">
-                <input
-                  type="submit"
-                  class="btn btn-success"
-                  value="{{(screening.StartTimestamp|string)[11:16]}}"
-                />
-                <input
-                  type="hidden"
-                  value="{{screening.ScreeningID}}"
-                  name="buy"
-                />
+                <input type="submit" class="btn btn-success" value="{{(screening.StartTimestamp|string)[11:16]}}" />
+                <input type="hidden" value="{{screening.ScreeningID}}" name="buy" />
               </form>
             </td>
           </tr>
@@ -97,14 +80,9 @@
 
       <!-- Modal body -->
       <div class="modal-body">
-        <iframe
-          width="765"
-          height="440"
-          src="https://www.youtube.com/embed/{{video}}"
-          frameborder="0"
+        <iframe width="765" height="440" src="https://www.youtube.com/embed/{{video}}" frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-        ></iframe>
+          allowfullscreen></iframe>
       </div>
 
       <!-- Modal footer -->

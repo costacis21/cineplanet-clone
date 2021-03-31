@@ -52,7 +52,7 @@
                     <div id="total" style="text-align: center;">Total: £</div>
                 </td>
             </tr>
-            <tr >
+            <tr>
                 <td>
                     <div style="text-align: left;">
                         <button id="back" type="button-sm" class="btn btn-dark btn-sm">Back</button>
@@ -62,12 +62,14 @@
                 <td></td>
                 <td>
                     <div style="text-align: right;">
-                        {% if current_user.Privilage < 2 %}
-                        <button id="cashConfirm" type="button-sm" class="btn btn-warning btn-sm">Process Cash Payment</button>
-                        <button id="confirm" type="button-sm" class="btn btn-info btn-sm">Process Card Payment</button>
-                        {% else %}
-                        <button id="confirm" type="button-sm" class="btn btn-primary btn-sm">Proceed to Payment</button>
-                        {% endif %}
+                        {% if current_user.Privilage < 2 %} <button id="cashConfirm" type="button-sm"
+                            class="btn btn-warning btn-sm">Process Cash Payment</button>
+                            <button id="confirm" type="button-sm" class="btn btn-info btn-sm">Process Card
+                                Payment</button>
+                            {% else %}
+                            <button id="confirm" type="button-sm" class="btn btn-primary btn-sm">Proceed to
+                                Payment</button>
+                            {% endif %}
                     </div>
                 </td>
             </tr>
@@ -87,7 +89,7 @@
     document.getElementById("back").onclick = function () {
         location.href = "/seats/" + window.location.pathname.split("/")[2];
     };
-    
+
     document.getElementById("confirm").onclick = function () {
         var allSeats = window.location.pathname.split("/")[3];
         var seats = allSeats.split("$");
@@ -110,7 +112,7 @@
 
 
     function updatePrice(id) {  //changes prices depending on select box option
-        var x = document.getElementById(id).value;  
+        var x = document.getElementById(id).value;
         if (document.getElementById(id + "t").innerText == "Premium") {
             if (x == 1 | x == 2) {
                 document.getElementById(id + "p").innerText = ps;

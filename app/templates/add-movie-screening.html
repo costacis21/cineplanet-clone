@@ -21,26 +21,17 @@
         addScreeningForm.screen.errors %} [{{ error }}] {% endfor %}
       </div>
       <div class="form-group">
-        <label style="padding-right: 10%;"
-          >Start Time (format: %d-%m-%Y %H:%M): </label
-        ><br />
+        <label style="padding-right: 10%;">Start Time (format: %d-%m-%Y %H:%M): </label><br />
         {{addScreeningForm.start}} {% for error in addScreeningForm.start.errors
         %} [{{ error }}] {% endfor %}
       </div>
       <div class="form-group">
-        <label style="padding-right: 10%;"
-          >End Time (format: %d-%m-%Y %H:%M): </label
-        ><br />
+        <label style="padding-right: 10%;">End Time (format: %d-%m-%Y %H:%M): </label><br />
         {{addScreeningForm.end}} {% for error in addScreeningForm.end.errors %}
         [{{ error }}] {% endfor %}
       </div>
       <div class="form-group">
-        <button
-          type="submit"
-          class="btn btn-primary"
-          value="Add Screening"
-          name="Add Screening"
-        >
+        <button type="submit" class="btn btn-primary" value="Add Screening" name="Add Screening">
           Add Screening
         </button>
       </div>

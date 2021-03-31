@@ -8,14 +8,16 @@
   </ol>
   <div class="carousel-inner">
     <div class="carousel-item active">
-      <img style="object-fit: cover;" class="d-block w-100" src="../static/carousel/full-cinema.jpg" height="400px" alt="First slide">
+      <img style="object-fit: cover;" class="d-block w-100" src="../static/carousel/full-cinema.jpg" height="400px"
+        alt="First slide">
       <div class="carousel-caption d-none d-md-block">
         <h5>State of the art screens</h5>
         <p>Visit our retro, state of the art, wide screen cinema screens</p>
       </div>
     </div>
     <div class="carousel-item">
-      <img style="object-fit: cover;" class="d-block w-100" src="../static/carousel/refreshments.jpg" height="400px" alt="Third slide">
+      <img style="object-fit: cover;" class="d-block w-100" src="../static/carousel/refreshments.jpg" height="400px"
+        alt="Third slide">
       <div class="carousel-caption d-none d-md-block">
         <h5>Eat while you watch</h5>
         <p style="text-align: center;">Endulge in a wide range of classic cinema treats at our refreshment stations</p>
@@ -36,7 +38,7 @@
 <h1 class="row justify-content-md-center">Current Movies</h1>
 <div class="row justify-content-md-center">
   {% for movie in allMovies %}
-    <a href="/movie/{{movie.MovieID}}"><img width = "190px" src="{{movie.PosterURL}}" class="homePosters"/></a>
+  <a href="/movie/{{movie.MovieID}}"><img width="190px" src="{{movie.PosterURL}}" class="homePosters" /></a>
   {% endfor %}
 </div>
 <br /><br /><br /><br />
@@ -51,10 +53,10 @@
     </form>
     <div class="col-sm">
       <form action="" method="post">
-      <input type="date" id="birthday" name="screeningDateFilter">
+        <input type="date" id="birthday" name="screeningDateFilter">
     </div>
     <div class="col-sm">
-        <button type="submit" class="btn btn-dark" id="footer-search" name="Search" value="Search">Search</button>
+      <button type="submit" class="btn btn-dark" id="footer-search" name="Search" value="Search">Search</button>
       </form>
     </div>
   </div>

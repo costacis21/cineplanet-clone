@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <style>
-            /* .lds-roller {
+
+<head>
+    <style>
+        /* .lds-roller {
             display: inline-block;
             position: relative;
             width: 80px;
@@ -108,40 +109,49 @@
 
             }
 */
-            .loader {
-                border: 16px solid #f3f3f3; /* Light grey */
-                border-top: 16px solid #3498db; /* Blue */
-                border-radius: 50%;
-                width: 120px;
-                height: 120px;
-                animation: spin 2s linear infinite;
+        .loader {
+            border: 16px solid #f3f3f3;
+            /* Light grey */
+            border-top: 16px solid #3498db;
+            /* Blue */
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
             }
 
-            @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            100% {
+                transform: rotate(360deg);
             }
-        </style>
+        }
+    </style>
 
-        <script>    
-            window.setTimeout(function(){
+    <script>
+        window.setTimeout(function () {
 
             // Move to a new location or you can do something else
             window.location.href = "/login";
 
-            }, 2000); 
-            
-            
+        }, 2000);
 
-        </script>
-    </head>
-    <body>
 
-        <div style=" position: fixed; top: 40%; left: 40%;">
-            <h1>Loging you out...</h1>
-            <!-- <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>     -->
-            <div class="loader"></div>
-        </div>
-    
-    </body>
+
+    </script>
+</head>
+
+<body>
+
+    <div style=" position: fixed; top: 40%; left: 40%;">
+        <h1>Loging you out...</h1>
+        <!-- <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>     -->
+        <div class="loader"></div>
+    </div>
+
+</body>
+
 </html>
