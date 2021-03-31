@@ -150,7 +150,7 @@ def movieInformation(MovieID):
     if int(lastMovie.MovieID) < int(MovieID): #If try and get to URL where no movie exists for it
         return redirect('/') # Redirect back to home
     movie = models.Movie.query.filter_by(MovieID=MovieID).first()
-    screenings = models.Screening.query.filter_by(MovieID = MovieID).all()
+    screenings = models.Screening.query.filter_by(MovieID = MovieID).order_by(models.Screening.StartTimestamp).all()
     # Code below removes any screenings that have already happended so you can't direct to buy tickets
     futureScreenings = []
     for screening in screenings:
@@ -308,7 +308,7 @@ def t2():
         db.session.commit() #commits database changes
 
         return redirect(url_for('profile'))
-    
+
     else:
         return redirect(url_for('index'))
 
@@ -321,7 +321,7 @@ def t3():
         db.session.commit() #commits database changes
 
         return redirect(url_for('profile'))
-    
+
     else:
         return redirect(url_for('index'))
 
@@ -439,7 +439,7 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
                 datetime.datetime.strptime(PaymentDetailsForm.Expiry.data, '%m-%y') #check card can be converted to date
             except:
                 PaymentDetailsForm.Expiry.errors.append('Please input dates in the example format: 05-22')
-            
+
             if datetime.datetime.strptime(PaymentDetailsForm.Expiry.data, '%m-%y') < datetime.datetime.now(): #check card has not expired
                 PaymentDetailsForm.Expiry.errors.append('This card is out of date')
 
