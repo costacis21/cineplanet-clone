@@ -84,5 +84,5 @@ class SetUserPrivilage(Form):
 
 
 class CompareTicketSalesForm(Form):
-    start = DateTimeField('start', validators=[DataRequired()], format='%d-%m-%Y')
-    end = DateTimeField('end', validators=[DataRequired()], format='%d-%m-%Y')
+    start = DateTimeField('start', validators=[DataRequired()], format='%d-%m-%Y', render_kw={"placeholder": "dd-mm-yyyy"})
+    end = DateTimeField('end', validators=[DataRequired()], format='%d-%m-%Y', render_kw={"placeholder": "dd-mm-yyyy"})
