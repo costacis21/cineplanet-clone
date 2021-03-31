@@ -1,5 +1,4 @@
-{% extends "base.html" %}
-{% block content %}
+{% extends "base.html" %} {% block content %}
 
 <div class="row justify-content-md-center">
   <h1>{{movie.Name}}</h1>
@@ -8,7 +7,7 @@
 <div class="container">
   <div class="row">
     <div class="col-sm">
-      <img width = "300px" src="{{movie.PosterURL}}"/>
+      <img width="300px" src="{{movie.PosterURL}}" />
     </div>
     <div class="col-sm">
       <p><b>Age Rating: </b>{{movie.Age}}</p>
@@ -16,10 +15,14 @@
       <p><b>Description: </b></p>
       <p>{{movie.Description}}</p>
       <!-- Button to Open the Modal -->
-      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Watch Now</button>
-      <button type="button" class="btn btn-secondary" onclick="window.open('{{movie.TrailerURL}}');"> Watch Trailer on YouTube </button>
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+        Watch Now
+      </button>
+      <button type="button" class="btn btn-secondary" onclick="window.open('{{movie.TrailerURL}}');">
+        Watch Trailer on YouTube
+      </button>
     </div>
-    <div class="col-sm">
+    <div class="col-sm screenings">
       <h3>Avaliable screenings</h3>
       <table class="table">
         <thead class="thead-dark">
@@ -27,32 +30,32 @@
           <tr>
             <th scope="col">Date</th>
             <th scope="col">Times</th>
-            <th> </th>
+            <th></th>
           </tr>
         </thead>
-      {% if numScreenings == 0 %}
+        {% if numScreenings == 0 %}
         <tbody>
           <tr>
-              <td>No Avaliable screenings</td>
+            <td>No Avaliable screenings</td>
           </tr>
         </tbody>
-      {% else %}
-      <tbody>
-        {% for screening in screenings %}
-        <tr>
-          <td>
-            <p>{{(screening.StartTimestamp|string)[0:10]}}</p>
-          </td>
-          <td>
-            <form action="" method="post" value="{{screening.ScreeningID}}">
-              <input type="submit" class="btn btn-success" value="{{(screening.StartTimestamp|string)[11:16]}}">
-              <input type="hidden" value={{screening.ScreeningID}} name="buy">
-            </form>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-      {% endif %}
+        {% else %}
+        <tbody>
+          {% for screening in screenings %}
+          <tr>
+            <td>
+              <p>{{(screening.StartTimestamp|string)[0:10]}}</p>
+            </td>
+            <td>
+              <form action="" method="post" value="{{screening.ScreeningID}}">
+                <input type="submit" class="btn btn-success" value="{{(screening.StartTimestamp|string)[11:16]}}" />
+                <input type="hidden" value="{{screening.ScreeningID}}" name="buy" />
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        {% endif %}
       </table>
     </div>
   </div>
@@ -60,33 +63,36 @@
 
 <br />
 
-<div class="row justify-content-md-center">
-</div>
+<div class="row justify-content-md-center"></div>
 <br />
 
-  <!-- The Modal -->
-  <div class="modal fade" id="myModal">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
+<!-- The Modal -->
+<div class="modal fade" id="myModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">{{movie.Name}} Trailer</h4>
+        <button type="button" class="close" data-dismiss="modal">
+          &times;
+        </button>
+      </div>
 
-        <!-- Modal Header -->
-        <div class="modal-header">
-          <h4 class="modal-title">{{movie.Name}} Trailer</h4>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-        </div>
+      <!-- Modal body -->
+      <div class="modal-body">
+        <iframe width="765" height="440" src="https://www.youtube.com/embed/{{video}}" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+      </div>
 
-        <!-- Modal body -->
-        <div class="modal-body">
-          <iframe width="765" height="440" src="https://www.youtube.com/embed/{{video}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </div>
-
-        <!-- Modal footer -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Close
+        </button>
       </div>
     </div>
   </div>
+</div>
 
 {% endblock %}

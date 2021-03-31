@@ -4,6 +4,7 @@ from wtforms.validators import DataRequired, Email, email_validator
 from wtforms.fields.html5 import EmailField
 from wtforms.widgets import CheckboxInput
 from app import app,models
+from wtforms.fields.html5 import DateField
 
 def fetchAllMovieTitles():
     allMovies = models.Movie.query.all()
@@ -56,9 +57,6 @@ class Paid(Form):
 class searchForScreening(Form):
     searchMovie = StringField('Movie', validators=[DataRequired()])
 
-class quickBook(Form):
-    movie = SelectField('movie', choices=fetchAllMovieTitles(), validators=[DataRequired()])
-
     @classmethod
     def new(cls):
         # Instantiate the form
@@ -73,8 +71,18 @@ class changePasswordForm(Form):
     newPasswordCheck = PasswordField('Confirm New Password', [validators.EqualTo('newPassword', message='Passwords must match')])
 
 class PaymentDetailsForm(Form):
-    CardNo = StringField('Card Number', [validators.DataRequired(), validators.length(min=15, max=16, message='Card number should be 15 or 16 digits')], render_kw={"placeholder": "---- ---- ---- ----"})
+    CardNo = StringField('Card Number', [validators.DataRequired(), validators.Regexp('^[0-9]{15,16}$', message="Card number should comprise of 15 or 16 digits")], render_kw={"placeholder": "----------------"})
     Name = StringField('Name on card', [validators.DataRequired(), validators.length(min=1, max=50, message='Please enter your name as it appears on your card')])
-    Expiry = StringField('Expiry', render_kw={"placeholder": "MM-YY"}, validators=[DataRequired()])
-    CVV = StringField('CVV', [validators.DataRequired(), validators.length(min=3, max=3, message='Security code should be 3 digits')], render_kw={"placeholder": "---"})
+    Expiry = StringField('Expiry', render_kw={"placeholder": "MM-YY"}, validators=[DataRequired(), validators.Regexp('^[0-9][0-9]-[0-9][0-9]$', message="Please enter exipry in example format: 09-23")])
+    CVV = StringField('CVV', [validators.DataRequired(), validators.Regexp('^[0-9]{3,3}$', message='Security code should be 3 digits')], render_kw={"placeholder": "---"})
     Save = BooleanField('Save this card for next time', widget=CheckboxInput())
+    
+
+class SetUserPrivilage(Form):
+    Username = StringField('Username', [validators.DataRequired()])
+    Privilage = SelectField('Privilage', choices=['Admin', 'Staff', 'Basic'])
+
+
+class CompareTicketSalesForm(Form):
+    start = DateTimeField('start', validators=[DataRequired()], format='%d-%m-%Y', render_kw={"placeholder": "dd-mm-yyyy"})
+    end = DateTimeField('end', validators=[DataRequired()], format='%d-%m-%Y', render_kw={"placeholder": "dd-mm-yyyy"})

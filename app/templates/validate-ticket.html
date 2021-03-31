@@ -1,19 +1,24 @@
 {% extends "base.html" %}
- {% block content %}
-  <div class="container-fluid">
-    <br>
-    <div class="row justify-content-center">
-        {% if valid %}
-            <div class="form-group">
-            <div><h1>Ticket validated successfully</h1></div>
-            <div class="row justify-content-center"><img src="../static/icons/tick.jpg" alt=""></div>
-            </div>
-        {% else %}
-            <div class="form-group">
-            <div><h1>Invalid ticket</h1></div>
-            <div class="row justify-content-center"><img src="../static/icons/cross.jpg" alt=""></div>
-            <div>
-        {% endif %}
+{% block content %}
+<div class="container-fluid">
+  <br>
+  <div class="row justify-content-center">
+    {% if valid %}
+    <div class="form-group">
+      <div>
+        <h1>Ticket validated successfully</h1>
+      </div>
+      <div class="row justify-content-center"><img src="../static/icons/tick.jpg" alt=""></div>
     </div>
+    {% else %}
+    <div class="form-group">
+      <div>
+        <h1>Invalid ticket</h1>
+      </div>
+      <div class="row justify-content-center"><img src="../static/icons/cross.jpg" alt=""></div>
+    </div>
+    {% endif %}
   </div>
+  <br><br><br><br><br><br><br><br>
+</div>
 {% endblock %}

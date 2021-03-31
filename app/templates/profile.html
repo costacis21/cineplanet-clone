@@ -15,8 +15,40 @@
             <a href="\logout" type="button" class="btn btn-dark">Sign Out</a>
           </div>
         </div>
+        <div class="card-body text-dark">
+
+          <table class="table">
+            <h5 class="card-title justify-content-center" style="text-align: center;">Payment methods:</h5>
+            <tbody>
+              {% if cards %}
+              {% for card in cards %}
+              <tr>
+                <td>
+                  <div class="row">
+                    <div class="col text-center">{{card.Name}}</div>
+                    <div class="col text-center">
+                      <div>xxxx-xxxx-xxxx-{{card.CardNo[12:]}}</div>
+                    </div>
+                    <div class="col text-center">
+                      <a href="/remove-card/{{card.CardID}}" class="btn btn-outline-danger btn-sm">Remove</a>
+                    </div>
+                </td>
+              </tr>
+              {% endfor %}
+              {% else %}
+              <tr>
+                <td>
+                  <h6 class="card-title justify-content-center" style="text-align: center;">No payment methods saved
+                  </h6>
+                </td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
+
 
     <div class="col-sm-5">
       <div class="card" id="light">

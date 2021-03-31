@@ -1,36 +1,38 @@
 {% extends "base.html" %}
- {% block content %}
-  <div class="container-fluid">
-    <br>
+{% block content %}
+<div class="container-fluid justify-content-center">
     <div class="row justify-content-center">
+        <br>
         <div>
             <h1>Your Bookings</h1>
-        <div>
             <br>
-        <table>
-        {% for booking in bookings %}
-        <tr>
-        <td>
-            <div class="col-sm" style="padding-bottom: 30px;""></div>
-                <img width = "130px" alt="Image Unavailable" src="{{booking[4]}}"/>
-            </div>
-        </td>
-        <td>
-            <div class="col-sm" style="padding-left: 50px; padding-right: 50px;"">
-                <p><b>Name: </b>{{booking[1]}}</p>
-                <p><b>Time: </b>{{booking[2]}}</p>
-                <p><b>Date: </b>{{booking[3]}}</p>
-            </div>
-        </td>
-        <td>
-            <div>
-            <a href="{{request.url_root}}/view-tickets/{{booking[0].BookingID}}" class="btn btn-outline-primary btn-sm" role="button" aria-pressed="true">View Tickets</a>
-            <line x1="0" y1="0" x2="200" y2="200" style="stroke:rgb(200,200,200);stroke-width:2" />
-            </div>
-        </td>
-        </tr>
-        {% endfor %}
-        <table>    
+            <table>
+                {% for booking in bookings %}
+                <tr>
+                    <td>
+                        <div class="col-sm" style="padding-bottom: 30px;""></div>
+                        <img width = " 130px" alt="Image Unavailable" src="{{booking[4]}}" />
+                    </td>
+                    <td>
+                        <div class="col-sm" style="padding-left: 50px; padding-right: 50px;"">
+                            <p><b>Name: </b>{{booking[1]}}</p>
+                            <p><b>Time: </b>{{booking[2]}}</p>
+                            <p><b>Date: </b>{{booking[3]}}</p>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <a href=" {{request.url_root}}/view-tickets/{{booking[0].BookingID}}"
+                            class="btn btn-outline-primary btn-sm" role="button" aria-pressed="true">
+                            View Tickets
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
     </div>
-    </div>
-{% endblock %}>
+</div>
+
+{% endblock %}

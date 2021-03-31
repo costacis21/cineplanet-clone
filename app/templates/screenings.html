@@ -39,7 +39,7 @@
   <br />
   <br />
   <div class="row">
-    <div class="col-9">
+    <div class="col-sm">
       {% if dailyScreenings == 0 %}
       <table class="table table-borderless movie-screening-entry">
         <tbody>
@@ -87,34 +87,6 @@
         {% endif %}
         </tbody>
       </table>
-    </div>
-    <div class="col-3">
-      <div class="screenings-filters">
-        <h4>Filter by age</h4>
-        <form>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1"
-              checked>
-            <label class="form-check-label" for="exampleRadios1">
-              PG
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
-            <label class="form-check-label" for="exampleRadios2">
-              PG-13
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
-            <label class="form-check-label" for="exampleRadios2">
-              R (18+)
-            </label>
-          </div>
-          <br />
-          <button type="submit" class="btn btn-primary" name="Filter" value="Apply">Apply</button>
-        </form>
-      </div>
     </div>
   </div>
 

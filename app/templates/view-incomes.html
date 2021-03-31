@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+
+<p>Week of incomes: {{week}}</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Movie Title</th>
+            <th scope="col">Tickets Sold</th>
+            <th scope="col">Total income of movie</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for income in incomes %}
+        <tr>
+            <th scope="row">{{ income.name }}</th>
+            <td>{{ income.ticketsSold }}</td>
+            <td>{{ income.total }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p>Total income this week: {{ totalIncome }}</p>
+
+{% endblock %}

@@ -7,7 +7,6 @@ import logging
 import pyqrcode
 from PIL import Image
 import uuid
-from datetime import timedelta
 import os
 try:
     import urlparse
@@ -25,6 +24,7 @@ admin.add_view(ModelView(models.Seat, db.session))
 admin.add_view(ModelView(models.Movie, db.session))
 
 from imdbSearch import *
+from income import *
 
 premium = ['D6', 'D7', 'D8', 'D9', 'D10', 'D11', 'D12', 'D13', 'D14', 'D15', 'D16',
 'E6', 'E7', 'E8', 'E9', 'E10', 'E11', 'E12', 'E13', 'E14', 'E15', 'E16',
@@ -48,24 +48,22 @@ def resetBookingSessionData():
 @app.route('/', methods=['GET','POST'])
 def index():
     resetBookingSessionData()
+    session['testing'] = False
     allMovies = models.Movie.query.all()
     quickBookForm = forms.addMovieScreening.new()
     movie = None
     if request.method == 'POST':
         if request.form.get("Search"):
-            movie = quickBookForm.movie.data
             date = request.form['screeningDateFilter']
-            if date == "": #if no data is entered for the date
-                flash('Please enter a date')
+            if date == '':
+                return redirect('/screenings')
             else:
-                flash("Searching for " + movie + " on " + date)
-        if request.form.get("showModal"):
-            print("hello")
+                return redirect('/screenings/' + str(date))
     return render_template('index.html',
                             title='Home',
                             allMovies = allMovies,
-                            quickBookForm = quickBookForm,
-                            movie = movie)
+                            movie = movie,
+                            hide=True)
 
 @app.route('/screenings', methods=['GET','POST'])
 def screeningsRedirect():
@@ -78,7 +76,7 @@ def screeningsRedirect():
 def datedScreenings(date):
     resetBookingSessionData()
     if date < str(datetime.date.today()):
-        return redirect("/")
+        return redirect("/screenings")
     #Fetch all the movies
     everyMovie = models.Movie.query.all()
     # Variables for the pop up to work
@@ -103,7 +101,7 @@ def datedScreenings(date):
         elif request.form.get("Filter"):
             date = request.form['screeningDateFilter']
             if date == "": #if no data is entered for the date
-                return redirect('/')
+                return redirect(request.url)
             else:
                 return redirect('/screenings/' + str(date))
         elif request.form.get("viewInfo"):
@@ -133,15 +131,16 @@ def datedScreenings(date):
                             movieTrailerIDs = movieTrailerIDs
                             )
     else:
-        return render_template('index.html',
-                        title='Homepage',
-                        allMovies = moviesWithScreenings,
-                        moviesLength = len(moviesWithScreenings),
-                        date = date,
-                        dailyScreenings = dailyScreenings,
-                        searchForScreening = searchForScreening,
-                        everyMovie = everyMovie,
-                        foundMovieInfo = foundMovieInfo
+        return render_template('screenings.html',
+                            title='Screenings',
+                            allMovies = moviesWithScreenings,
+                            moviesLength = len(moviesWithScreenings),
+                            date = date,
+                            dailyScreenings = dailyScreenings,
+                            searchForScreening = searchForScreening,
+                            everyMovie = everyMovie,
+                            foundMovieInfo = int(foundMovieInfo),
+                            movieTrailerIDs = movieTrailerIDs
                         )
 
 @app.route('/movie/<MovieID>', methods=['GET','POST'])
@@ -151,7 +150,7 @@ def movieInformation(MovieID):
     if int(lastMovie.MovieID) < int(MovieID): #If try and get to URL where no movie exists for it
         return redirect('/') # Redirect back to home
     movie = models.Movie.query.filter_by(MovieID=MovieID).first()
-    screenings = models.Screening.query.filter_by(MovieID = MovieID).all()
+    screenings = models.Screening.query.filter_by(MovieID = MovieID).order_by(models.Screening.StartTimestamp).all()
     # Code below removes any screenings that have already happended so you can't direct to buy tickets
     futureScreenings = []
     for screening in screenings:
@@ -243,10 +242,11 @@ def addMovieScreening():
                         flash("Not completed, please ensure both the start and end time are in the correct format")
                     else:
                         findMovie = models.Movie.query.filter_by(Name=addScreeningForm.movie.data).first()
-                        newScreening = models.Screening(MovieID=findMovie.MovieID, ScreenID = int(addScreeningForm.screen.data[7]),
-                                                        StartTimestamp = addScreeningForm.start.data, EndTimestamp = addScreeningForm.end.data)
-                        db.session.add(newScreening)
-                        db.session.commit()
+                        for i in range(0,5):
+                            newScreening = models.Screening(MovieID=(findMovie.MovieID+i), ScreenID = int(addScreeningForm.screen.data[7]),
+                                                            StartTimestamp = addScreeningForm.start.data, EndTimestamp = addScreeningForm.end.data)
+                            db.session.add(newScreening)
+                            db.session.commit()
                         flash("Screening successfully added")
                         return redirect(url_for('index'))
             return render_template('add-movie-screening.html',
@@ -299,19 +299,31 @@ def addNewMovie():
     else:
         return redirect(url_for('login'))
 
+# Used in testing to log the user in to a customer account
+@app.route('/test-login', methods=['GET', 'POST'])
+def t2():
+    if app.config['TESTING'] == True:
+        user = models.User.query.filter_by(Email='test@gmail.com').first() #retrieves user profile
+        login_user(user)    #logs user in
+        db.session.commit() #commits database changes
 
-@app.route('/test', methods=['GET','POST'])
-def t():
-    enterMovieForm = forms.enterMovie()
-    if enterMovieForm.validate_on_submit():
-                session['movie'] = enterMovieForm.movietitle.data
-                return redirect(url_for('index'))
+        return redirect(url_for('profile'))
 
-    return render_template('book-tickets.html',
-                            title='Book Tickets',
-                            enterMovieForm = enterMovieForm,
-                            page=1, user=current_user.Email
-                            )
+    else:
+        return redirect(url_for('index'))
+
+# Used in testing to log the user in to an admin account
+@app.route('/test-admin-login', methods=['GET', 'POST'])
+def t3():
+    if app.config['TESTING'] == True:
+        user = models.User.query.filter_by(Email='admin@admin.com').first() #retrieves user profile
+        login_user(user)    #logs user in
+        db.session.commit() #commits database changes
+
+        return redirect(url_for('profile'))
+
+    else:
+        return redirect(url_for('index'))
 
 @app.route('/seats/<screening>')
 def seats(screening):   #seat selection page
@@ -322,7 +334,8 @@ def seats(screening):   #seat selection page
         rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'],
         vip=['D', 'E', 'F'],
         reserved = screening.reserved(),
-        screening=screening)
+        screening=screening,
+        title = 'Reserve Seats')
     else:
         flash('You must be signed in to book tickets')
         return redirect(url_for('login'))
@@ -347,7 +360,8 @@ def confirmBooking(screening, seats):   # succeed seat selection page
         StandardConcessionPrice=StandardConcessionPrice,
         PremiumGeneralPrice=PremiumGeneralPrice,
         PremiumConcessionPrice=PremiumConcessionPrice,
-        child = child)
+        child = child,
+        title = 'Confirm booking')
 
     else:
         flash('You must be signed in to book tickets')
@@ -361,7 +375,7 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
         concessions = types.split("$") #choosen ticket types
         selected =[] #choosen and validated seats
         screening = models.Screening.query.get(screeningID) #get screening
-        
+
         if not screening:   #validate screening does exist
             flash("Something went wrong, please try again")
             return redirect(url_for('index'))
@@ -419,13 +433,92 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
             else:
                 flash("Something went wrong, please try again")
                 return redirect(url_for('index'))
+        total = round(total, 2)
+        if "details" in request.form and PaymentDetailsForm.validate_on_submit():
+            try:
+                datetime.datetime.strptime(PaymentDetailsForm.Expiry.data, '%m-%y') #check card can be converted to date
+            except:
+                PaymentDetailsForm.Expiry.errors.append('Please input dates in the example format: 05-22')
 
-        if PaymentDetailsForm.validate_on_submit() or UseCard.validate_on_submit():
+            if datetime.datetime.strptime(PaymentDetailsForm.Expiry.data, '%m-%y') < datetime.datetime.now(): #check card has not expired
+                PaymentDetailsForm.Expiry.errors.append('This card is out of date')
 
-            if PaymentDetailsForm.Save.data:    #add card to db if use chooses
-                card = models.Card(UserID=current_user.UserID, CardNo=PaymentDetailsForm.CardNo.data ,Name=PaymentDetailsForm.Name.data, Expiry=datetime.datetime.strptime(PaymentDetailsForm.Expiry.data, '%m-%y'), CVV=PaymentDetailsForm.CVV.data)
-                db.session.add(card)
+            else:
+                if PaymentDetailsForm.Save.data:    #add card to db if user chooses
+                    card = models.Card(UserID=current_user.UserID, CardNo=PaymentDetailsForm.CardNo.data ,Name=PaymentDetailsForm.Name.data, Expiry=datetime.datetime.strptime(PaymentDetailsForm.Expiry.data, '%m-%y'), CVV=PaymentDetailsForm.CVV.data)
+                    db.session.add(card)
+                    db.session.commit()
+
+                newBooking = models.Booking(UserID=current_user.UserID, ScreeningID=screeningID, Timestamp=datetime.datetime.now(), TotalPrice=total)
+                db.session.add(newBooking)  #create and add new booking
                 db.session.commit()
+
+                for item in order:  #create and add new tickets to booking
+                    seatID = models.Seat.query.filter(models.Seat.ScreenID==screening.ScreenID).filter(models.Seat.code==item[0]).first().SeatID
+                    newTicket = models.Ticket(BookingID=newBooking.BookingID, SeatID=seatID, Category=item[1], QR=str(uuid.uuid4()))
+                    db.session.add(newTicket)
+                db.session.commit()
+
+                screening = models.Screening.query.filter_by(ScreeningID=newBooking.ScreeningID).first()
+                screen = screening.ScreeningID
+                i=0
+                filenames=[]
+                QRs = []
+                Seats = []
+                Categories = []
+                Types = []
+                for ticket in models.Ticket.query.filter_by(BookingID=newBooking.BookingID): # For all of the tickets just purchased
+                    # Make QR code for ticket
+                    qr_filename = os.getcwd() + '/app/static/ticket/qr/qr'+str(ticket.TicketID)+'.png'
+                    qr = pyqrcode.create(request.url_root+ticket.QR) # Needs to be changed to not have the port hardcoded into it
+                    #qr = pyqrcode.create(ticket.QR)
+                    qr.png(qr_filename, scale=6)
+
+                    if ticket.Category == 1:
+                        Category = "Adult"
+                    elif ticket.Category == 2:
+                        Category = "Child"
+                    elif ticket.Category == 3:
+                        Category = "Senior"
+                    else:
+                        Category = "Unknown"
+
+                    # Converting the numerical value for the seat's type that is stored in the database to the string value that will appear on the ticket
+                    #t = models.Seat.query.filter(models.Seat.ScreenID==screening.ScreenID).filter(models.Seat.code==item[0]).first().Type
+                    t = models.Seat.query.filter_by(SeatID=ticket.SeatID).first().Type
+                    if t == 0:
+                        Type = "Standard"
+                    else:
+                        Type = "Premium"
+
+                    # Appending the values of the properties of the ticket to the relevant arrays
+                    QRs.append(qr_filename)
+                    Seats.append(order[i][0])
+                    Categories.append(Category)
+                    Types.append(Type)
+                    i += 1
+
+                #Make a PDF for the ticket
+                movie = models.Movie.query.filter_by(MovieID=screening.MovieID).first().Name
+                filename = os.getcwd() + '/app/static/ticket/tickets/booking'+str(newBooking.BookingID)+'.pdf'
+                CreatePDF.MakePDF(filename, QRs, movie, Seats, Categories, str(screen), str(screening.StartTimestamp.date().strftime('%d/%m/%y')), str(screening.StartTimestamp.time().strftime('%H:%M')), Types)
+                filenames.append(filename)
+
+                # Send all the PDFs in an email to the user
+                # First argument gives the destination email, currently set to email ourselves to prevent one of us receiving lots of emails during testing
+                #SendEmail.SendMail("leeds.cineplanet.com", filenames)
+                # Un-comment the line below to send emails to their actual destination
+                SendEmail.SendMail(current_user.Email, filenames)
+
+                if current_user.Privilage < 2:
+                    session['booking_complete'] = True
+                    flash("Displaying your tickets now")
+                    return redirect('/view-tickets/'+str(newBooking.BookingID))
+                else:
+                    flash("Your tickets have been sent to "+current_user.Email)
+                    return redirect(url_for('index'))
+
+        if "savedCard" in request.form and UseCard.validate_on_submit():
 
             newBooking = models.Booking(UserID=current_user.UserID, ScreeningID=screeningID, Timestamp=datetime.datetime.now(), TotalPrice=total)
             db.session.add(newBooking)  #create and add new booking
@@ -448,7 +541,8 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
             for ticket in models.Ticket.query.filter_by(BookingID=newBooking.BookingID): # For all of the tickets just purchased
                 # Make QR code for ticket
                 qr_filename = os.getcwd() + '/app/static/ticket/qr/qr'+str(ticket.TicketID)+'.png'
-                qr = pyqrcode.create(ticket.QR)
+                qr = pyqrcode.create(request.url_root+ticket.QR) # Needs to be changed to not have the port hardcoded into it
+                #qr = pyqrcode.create(ticket.QR)
                 qr.png(qr_filename, scale=6)
 
                 if ticket.Category == 1:
@@ -459,7 +553,7 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
                     Category = "Senior"
                 else:
                     Category = "Unknown"
-                
+
                 # Converting the numerical value for the seat's type that is stored in the database to the string value that will appear on the ticket
                 #t = models.Seat.query.filter(models.Seat.ScreenID==screening.ScreenID).filter(models.Seat.code==item[0]).first().Type
                 t = models.Seat.query.filter_by(SeatID=ticket.SeatID).first().Type
@@ -468,7 +562,7 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
                 else:
                     Type = "Premium"
 
-                # Appending the values of the properties of the ticket to the relevant arrays 
+                # Appending the values of the properties of the ticket to the relevant arrays
                 QRs.append(qr_filename)
                 Seats.append(order[i][0])
                 Categories.append(Category)
@@ -479,17 +573,21 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
             movie = models.Movie.query.filter_by(MovieID=screening.MovieID).first().Name
             filename = os.getcwd() + '/app/static/ticket/tickets/booking'+str(newBooking.BookingID)+'.pdf'
             CreatePDF.MakePDF(filename, QRs, movie, Seats, Categories, str(screen), str(screening.StartTimestamp.date().strftime('%d/%m/%y')), str(screening.StartTimestamp.time().strftime('%H:%M')), Types)
+            filenames.append(filename)
 
             # Send all the PDFs in an email to the user
             # First argument gives the destination email, currently set to email ourselves to prevent one of us receiving lots of emails during testing
-            SendEmail.SendMail("leeds.cineplanet.com", filenames)
+            #SendEmail.SendMail("leeds.cineplanet.com", filenames)
             # Un-comment the line below to send emails to their actual destination
-            #SendEmail.SendMail(current_user.email, filenames)
+            SendEmail.SendMail(current_user.Email, [filename])
 
-            session['booking_complete'] = True
-            flash("Displaying your tickets now")
-            print('/view-tickets/'+str(newBooking.BookingID))
-            return redirect('/view-tickets/'+str(newBooking.BookingID))
+            if current_user.Privilage < 2:
+                session['booking_complete'] = True
+                flash("Displaying your tickets now")
+                return redirect('/view-tickets/'+str(newBooking.BookingID))
+            else:
+                flash("Your tickets have been sent to "+current_user.Email)
+                return redirect(url_for('index'))
 
         return render_template('payment.html', title='Checkout',
                             total = total,
@@ -510,7 +608,7 @@ def CashPayment(screeningID, seats, types): # succeed booking confirmation page
         concessions = types.split("$") #choosen ticket types
         selected =[] #choosen and validated seats
         screening = models.Screening.query.get(screeningID) #get screening
-        
+
         if not screening:   #validate screening does exist
             flash("Something went wrong, please try again")
             return redirect(url_for('index'))
@@ -567,7 +665,7 @@ def CashPayment(screeningID, seats, types): # succeed booking confirmation page
             else:
                 flash("Something went wrong, please try again")
                 return redirect(url_for('index'))
-
+        total = round(total, 2)
         if Paid.validate_on_submit():
 
             newBooking = models.Booking(UserID=current_user.UserID, ScreeningID=screeningID, Timestamp=datetime.datetime.now(), TotalPrice=total)
@@ -591,8 +689,8 @@ def CashPayment(screeningID, seats, types): # succeed booking confirmation page
             for ticket in models.Ticket.query.filter_by(BookingID=newBooking.BookingID): # For all of the tickets just purchased
                 # Make QR code for ticket
                 qr_filename = os.getcwd() + '/app/static/ticket/qr/qr'+str(ticket.TicketID)+'.png'
-                #qr = pyqrcode.create('http://127.0.0.1:5000/validate-ticket/'+ticket.QR) # Needs to be changed to not have the port hardcoded into it
-                qr = pyqrcode.create(url_for('index')+ticket.QR)
+                qr = pyqrcode.create(request.url_root+ticket.QR) # Needs to be changed to not have the port hardcoded into it
+                #qr = pyqrcode.create(url_for('index')+ticket.QR)
                 qr.png(qr_filename, scale=6)
 
                 # Converting the numerical value for the ticket's category that is stored in the database to the string value that will appear on the ticket
@@ -613,7 +711,7 @@ def CashPayment(screeningID, seats, types): # succeed booking confirmation page
                 else:
                     Type = "Premium"
 
-                # Appending the values of the properties of the ticket to the relevant arrays 
+                # Appending the values of the properties of the ticket to the relevant arrays
                 QRs.append(qr_filename)
                 Seats.append(order[i][0])
                 Categories.append(Category)
@@ -624,12 +722,13 @@ def CashPayment(screeningID, seats, types): # succeed booking confirmation page
             movie = models.Movie.query.filter_by(MovieID=screening.MovieID).first().Name
             filename = os.getcwd() + '/app/static/ticket/tickets/booking'+str(newBooking.BookingID)+'.pdf'
             CreatePDF.MakePDF(filename, QRs, movie, Seats, Categories, str(screen), str(screening.StartTimestamp.date().strftime('%d/%m/%y')), str(screening.StartTimestamp.time().strftime('%H:%M')), Types)
+            filenames.append(filename)
 
             # Send all the PDFs in an email to the user
             # First argument gives the destination email, currently set to email ourselves to prevent one of us receiving lots of emails during testing
-            SendEmail.SendMail("leeds.cineplanet.com", [filename])
+            #SendEmail.SendMail("leeds.cineplanet.com", [filename])
             # Un-comment the line below to send emails to their actual destination
-            #SendEmail.SendMail(current_user.email, filenames)
+            SendEmail.SendMail(current_user.Email, [filename])
 
             session['booking_complete'] = True
             flash("Displaying your tickets now")
@@ -650,17 +749,20 @@ def viewBookings():
     if current_user.is_authenticated:
         UserID=current_user.UserID
         booking_records = models.Booking.query.filter_by(UserID=UserID).all() # Returns all bookings made by the current user
-        
+
         bookings = []
         for booking in booking_records:
             screening = models.Screening.query.filter_by(ScreeningID=booking.ScreeningID).first()
             time = screening.StartTimestamp.time().strftime('%H:%M')
             date = screening.StartTimestamp.date().strftime('%d/%m/%y')
             movie = models.Movie.query.filter_by(MovieID=screening.MovieID).first()
-            print(movie.PosterURL)
             bookings.append([booking, movie.Name, time, date, movie.PosterURL])
 
-        return render_template('view-bookings.html', bookings=bookings)
+        return render_template('view-bookings.html', bookings=bookings, title="View Bookings")
+
+    else:
+        flash("You must be logged in to view bookings")
+        return redirect(url_for('login'))
 
 @app.route('/validate-ticket/<uuid>', methods = ['GET', 'POST'])
 def validateTicket(uuid):
@@ -668,51 +770,53 @@ def validateTicket(uuid):
         valid = False
         if current_user.Privilage <= 1: # Checks that the user has the required permissions to validate tickets (customers can't validate tickets)
             if models.Ticket.query.filter_by(QR=uuid).first(): # If the uuid is valid
-                flash('Ticket is valid')
                 valid = True
-            else:
-                flash('Ticket is not valid')
         else:
             flash("You do not have the required permissions to validate tickets")
             return redirect(url_for('index'))
-        
-        return render_template('validate-ticket.html', valid=valid)
+
+        return render_template('validate-ticket.html', valid=valid, title="Validate Ticket")
 
     else:
-        flash('You must be signed in to book tickets')
+        flash('You must be signed in to validate tickets')
         return redirect(url_for('login'))
 
 @app.route('/view-tickets/<BookingID>', methods = ['GET', 'POST'])
 def viewTickets(BookingID):
     if current_user.is_authenticated:
-        # Gets all bookings made by a user
-        bookings = models.Booking.query.filter_by(UserID=current_user.UserID).all()
-        # Checks that the user has made bookings
-        if len(bookings) > 0:
-            # Checks that this booking is one made by the current user
-            valid = False
-            for booking in bookings:
-                if booking.BookingID == int(BookingID):
-                    valid = True
+        # Check that the booking exists
+        if models.Booking.query.filter_by(BookingID=BookingID).first():
+            # Gets all bookings made by a user
+            bookings = models.Booking.query.filter_by(UserID=current_user.UserID).all()
+            # Checks that the user has made bookings
+            if len(bookings) > 0:
+                # Checks that this booking is one made by the current user
+                valid = False
+                for booking in bookings:
+                    if booking.BookingID == int(BookingID):
+                        valid = True
 
-            # If the booking was made by the current user
-            if valid == True:
-                return render_template('view-tickets.html', BookingID=BookingID)
+                # If the booking was made by the current user
+                if valid == True:
+                    return render_template('view-tickets.html', BookingID=BookingID, title="View Tickets")
+                else:
+                    flash("You cannot view another user's bookings")
             else:
-                flash("You cannot view another user's bookings")
-        else:    
+                flash("You do not have any tickets linked to your account")
+        else:
             flash("Tickets not found")
 
         return redirect(url_for('index'))
-    
+
     else:
-        flash('You must be signed in to book tickets')
+        flash('You must be signed in to view tickets')
         return redirect(url_for('login'))
 
 @app.route('/profile', methods=['GET','POST'])
-def settings():
+def profile():
     if current_user.is_authenticated:
         form = forms.changePasswordForm()
+        UseCard = forms.UseCard()
         if form.validate_on_submit():
             if sha256_crypt.verify(form.currentPassword.data, current_user.Password):
                 current_user.Password = sha256_crypt.encrypt(form.newPassword.data)
@@ -724,8 +828,108 @@ def settings():
                 form.currentPassword.errors.append('Password does not match')
         logging.info('User: %s visited settings page', current_user.Email)
         return render_template('profile.html',
+                            title = 'My Profile',
+                            cards = current_user.Cards.all(),
+                            UseCard = UseCard,
                             form=form)
     else:
-        logging.warning('Anonymous user attempted to access settings page')
-        return redirect('/signIn')
+        flash('You must be signed in to view profiles')
+        return redirect(url_for('login'))
 
+
+@app.route('/view-incomes', methods=['GET','POST'])
+def viewIncomes():
+     if current_user.is_authenticated:   #checks user is signed in
+        if (current_user.Privilage < 2):
+            incomes=getWeeklyIncomes()
+            return render_template('view-incomes.html',
+                                    incomes = incomes[0],
+                                    totalIncome = incomes[1],
+                                    week = incomes[2],
+                                    title = "Incomes per Movie"
+                                    )
+
+     return redirect(url_for('index'))
+
+
+@app.route('/show-graphs', methods = ['GET','POST'])
+def showGraphs():
+     if current_user.is_authenticated:   #checks user is signed in
+        if (current_user.Privilage < 2):
+
+            createWeeklyGraph()
+            return render_template('show-graphs.html', title = "Weekly Income Graph")
+
+     return redirect(url_for('index'))
+
+@app.route('/compare-ticket-sales', methods = ['GET','POST'])
+def compareTicketSales():
+     week = ""
+     tickets=[]
+     filename=""
+     if current_user.is_authenticated:   #checks user is signed in
+        form = forms.CompareTicketSalesForm()
+
+        if (current_user.Privilage < 2):
+            if request.method == 'POST':
+                if form.validate_on_submit():
+                    start = form.start.data
+                    end = form.end.data
+                    tickets = compareMovies(start.date(), end.date())
+                    week= str(start.date()) +' - ' + str(end.date())
+                    filename=str(start.date()) +'-' + str(end.date())+'.png'
+                    print(tickets)
+            return render_template('compare-ticket-sales.html', title = "Compare Ticket Sales", form = form, tickets = tickets, week =week,filename=filename )
+
+     return redirect(url_for('index'))
+
+
+
+
+@app.route('/remove-card/<CardID>', methods = ['GET', 'POST'])
+def removeCard(CardID):
+    if current_user.is_authenticated:
+        # Gets all bookings made by a user
+
+        if (models.Card.query.get(CardID).UserID == current_user.UserID): #if the card is the current users
+            card = models.Card.query.get(CardID) #get card
+            db.session.delete(card) #remove card
+            db.session.commit() #commits database changes
+
+        return redirect(url_for('profile'))
+
+    else:
+        flash('You must be signed in to book tickets')
+        return redirect(url_for('login'))
+
+@app.route('/manage-staff', methods=['GET','POST'])
+def manageStaff():
+    if current_user.is_authenticated:
+        if current_user.Privilage == 0:
+            staff = models.User.query.filter(models.User.Privilage <= 1).order_by(models.User.Privilage.asc()).all() #get all staff members
+            PrivilageForm = forms.SetUserPrivilage()
+            if PrivilageForm.validate_on_submit():
+                user = models.User.query.filter_by(Email=PrivilageForm.Username.data).first() #get selected user
+                if user:    #if user exists, update to selected privilage
+                    if PrivilageForm.Privilage.data == "Admin":
+                        user.Privilage = 0
+                    elif PrivilageForm.Privilage.data == "Staff":
+                        user.Privilage = 1
+                    elif PrivilageForm.Privilage.data == "Basic":
+                        user.Privilage = 2
+                    else:
+                        return redirect(PrivilageForm.Privilage.data)
+                    db.session.commit()
+                    return redirect('/manage-staff')
+                else:
+                    PrivilageForm.Username.errors.append('No users with matching Username')
+
+            return render_template('staff-roster.html',
+            staff = staff,
+            PrivilageForm=PrivilageForm)
+        else:
+            flash('Your account does not have access to this functionality')
+            return redirect(url_for('index'))
+    else:
+        flash('You must be signed in to access to this functionality')
+        return redirect(url_for('login'))

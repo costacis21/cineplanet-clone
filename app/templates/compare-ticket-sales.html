@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 class="text-center">Type dates to generate graph</h1>
+
+<form class="form" action="" method="POST" name="CompareTicketSalesForm">
+  {{ form.hidden_tag() }}
+
+
+  <div class="row justify-content-md-center">
+    <div class="col col-lg-2">
+      <div class="form-group">
+        <label for="StartDate">Start</label>
+        {{ form.start }}
+        {% for error in form.start.errors %}
+        [{{ error }}]
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-md-center">
+    <div class="col col-lg-2">
+      <div class="form-group">
+        <label for="exampleFormControlTextarea1">End</label>
+        {{ form.end }}
+        {% for error in form.end.errors %}
+        [{{ error }}]
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-md-center">
+    <div class="col col-lg-2">
+      <input type="submit" class="btn btn-primary" value="Submit">
+    </div>
+  </div>
+</form>
+
+
+{% if not (filename == "") %}
+<p>Week selected: {{week}}</p>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Movie Title</th>
+      <th scope="col">Tickets Sold</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for ticket in tickets %}
+    <tr>
+      <th scope="row">{{ ticket.name }}</th>
+      <td>{{ ticket.ticketsSold }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+<img class="rounded mx-auto d-block" src="static/graphs/{{filename}}">
+{% endif %}
+
+
+
+{% endblock %}
