@@ -832,6 +832,8 @@ def viewIncomes():
                                     incomes = incomes[0],
                                     totalIncome = incomes[1],
                                     week = incomes[2],
+                                    weekTotal = incomes[3],
+                                    weekTickets = incomes[4],
                                     title = "Incomes per Movie"
                                     )
 

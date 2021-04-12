@@ -1,29 +1,42 @@
 {% extends "base.html" %}
 {% block content %}
 
-
-
-<p>Week of incomes: {{week}}</p>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">Movie Title</th>
-            <th scope="col">Tickets Sold</th>
-            <th scope="col">Total income of movie</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for income in incomes %}
-        <tr>
-            <th scope="row">{{ income.name }}</th>
-            <td>{{ income.ticketsSold }}</td>
-            <td>{{ income.total }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-<p>Total income this week: {{ totalIncome }}</p>
-
-{% endblock %}
+<br>
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col">
+            <div class="card">
+                <div class="card-body text-dark">
+                    <h6 class="card-title justify-content-center" style="text-align: center;">Week Dated: {{week}}</h6><br>
+                    <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Movie Title</th>
+                                <th scope="col">Tickets Sold</th>
+                                <th scope="col">Movie income this week</th>
+                                <th scope="col">Total income of movie</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for income in incomes %}
+                            <tr>
+                                <th scope="row">{{ income.name }}</th>
+                                <td>{{ income.ticketsSold }}</td>
+                                <td>{{ income.weekly }}</td>
+                                <td>{{ income.total }}</td>
+                            </tr>
+                            {% endfor %}
+                            <tr class="table-active font-weight-bold">
+                                <th scope="row">TOTAL</th>
+                                <td>{{ weekTickets }}</td>
+                                <td>{{ weekTotal }}</td>
+                                <td>{{ totalIncome }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    {% endblock %}

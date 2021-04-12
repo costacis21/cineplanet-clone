@@ -87,6 +87,9 @@ def getWeeklyIncomes():
 
             [2] contains week in the format of "{start}-{end}"
         
+            [3] contains total income of all movies combined for specific week
+
+            [4] contains total tickets of all movies combined
 
     """
 
@@ -97,27 +100,37 @@ def getWeeklyIncomes():
     incomes = [{}]
     movies = models.Movie.query.all()
     totalTotal =0
+    weekTotalTotal =0
+    totalTickets =0
     week = "{start}-{end}".format(start = start, end = end)
     for movie in movies:
         totalPrice=0
+        totalWeekly=0
         ticketCount=0
         screenings = models.Screening.query.filter_by(MovieID = movie.MovieID).all()
 
         for screening in screenings:
-            if (screening.StartTimestamp.date() >= start) and (screening.StartTimestamp.date() <=end):
+            if (screening.StartTimestamp.date() >= start) and (screening.StartTimestamp.date() <=end): #screenings in last week
                 bookings = models.Booking.query.filter_by(ScreeningID=screening.ScreeningID).all()
                 for booking in bookings:
                     tickets = models.Ticket.query.filter_by(BookingID=booking.BookingID).all()
                     ticketCount +=len(tickets)
                     totalPrice+=booking.TotalPrice
-            else:
-                continue
+                    totalWeekly+=booking.TotalPrice
+            else: #older screeings
+                bookings = models.Booking.query.filter_by(ScreeningID=screening.ScreeningID).all()
+                for booking in bookings:
+                    tickets = models.Ticket.query.filter_by(BookingID=booking.BookingID).all()
+                    ticketCount +=len(tickets)
+                    totalPrice+=booking.TotalPrice
         if totalPrice==0:
             continue
-        incomes.append({'name': movie.Name, 'ticketsSold':ticketCount, 'total':round(totalPrice, 2)})
+        incomes.append({'name': movie.Name, 'ticketsSold':ticketCount, 'weekly':round(totalWeekly, 2), 'total':round(totalPrice, 2)})
         totalTotal+=totalPrice
+        weekTotalTotal+=totalWeekly
+        totalTickets+=ticketCount
     totalTotal=round(totalTotal, 2)
-    return incomes,totalTotal,week
+    return incomes,totalTotal,week, weekTotalTotal, totalTickets
 
 
 def compareMovies(start: datetime.date, end: datetime.date):
