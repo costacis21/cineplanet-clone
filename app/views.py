@@ -867,8 +867,9 @@ def compareTicketSales():
                     week= str(start.date()) +' - ' + str(end.date())
                     filename=str(start.date()) +'-' + str(end.date())+'.png'
                     print(tickets)
-            return render_template('compare-ticket-sales.html', title = "Compare Ticket Sales", form = form, tickets = tickets, week =week,filename=filename )
-
+                    tickets[0].reverse()
+                    return render_template('compare-ticket-sales.html', title = "Compare Ticket Sales", form = form, tickets = tickets[0], week =week,filename=filename, totalTickets=tickets[1] )
+            return render_template('compare-ticket-sales.html', title = "Compare Ticket Sales", form = form, tickets = tickets, week =week,filename=filename, totalTickets=0 )
      return redirect(url_for('index'))
 
 

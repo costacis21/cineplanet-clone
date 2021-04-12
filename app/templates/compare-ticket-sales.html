@@ -1,67 +1,81 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1 class="text-center">Type dates to generate graph</h1>
+  <h1 class="text-center">Type dates to generate graph</h1>
 
-<form class="form" action="" method="POST" name="CompareTicketSalesForm">
-  {{ form.hidden_tag() }}
+  <form class="form" action="" method="POST" name="CompareTicketSalesForm">
+    {{ form.hidden_tag() }}
 
 
-  <div class="row justify-content-md-center">
-    <div class="col col-lg-2">
-      <div class="form-group">
-        <label for="StartDate">Start</label>
-        {{ form.start }}
-        {% for error in form.start.errors %}
-        [{{ error }}]
-        {% endfor %}
+    <div class="row justify-content-md-center">
+      <div class="col col-lg-2">
+        <div class="form-group">
+          <label for="StartDate">Start</label>
+          {{ form.start }}
+          {% for error in form.start.errors %}
+          [{{ error }}]
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-md-center">
+      <div class="col col-lg-2">
+        <div class="form-group">
+          <label for="exampleFormControlTextarea1">End</label>
+          {{ form.end }}
+          {% for error in form.end.errors %}
+          [{{ error }}]
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-md-center">
+      <div class="col col-lg-2">
+        <input type="submit" class="btn btn-primary" value="Submit">
+      </div>
+    </div>
+  </form>
+  <br>
+  {% if not (filename == "") %}
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-sm-6 py-2">
+        <div class="card bg-white text-dark">
+          <div class="card-body">
+            <p>Week selected: {{week}}</p>
+            <table class="table">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">Movie Title</th>
+                  <th scope="col">Tickets Sold</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for ticket in tickets %}
+                <tr>
+                  <th scope="row">{{ ticket.name }}</th>
+                  <td>{{ ticket.ticketsSold }}</td>
+                </tr>
+                {% endfor %}
+                <tr class="table-active font-weight-bold">
+                  <th scope="row">TOTAL</th>
+                  <td>{{totalTickets}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-5 py-2">
+        <div class="card bg-white text-dark">
+          <div class="card-body">
+            <img class="rounded mx-auto d-block" src="static/graphs/{{filename}}">
+          </div>
+        </div>
       </div>
     </div>
   </div>
-
-  <div class="row justify-content-md-center">
-    <div class="col col-lg-2">
-      <div class="form-group">
-        <label for="exampleFormControlTextarea1">End</label>
-        {{ form.end }}
-        {% for error in form.end.errors %}
-        [{{ error }}]
-        {% endfor %}
-      </div>
-    </div>
-  </div>
-
-  <div class="row justify-content-md-center">
-    <div class="col col-lg-2">
-      <input type="submit" class="btn btn-primary" value="Submit">
-    </div>
-  </div>
-</form>
-
-
-{% if not (filename == "") %}
-<p>Week selected: {{week}}</p>
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">Movie Title</th>
-      <th scope="col">Tickets Sold</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for ticket in tickets %}
-    <tr>
-      <th scope="row">{{ ticket.name }}</th>
-      <td>{{ ticket.ticketsSold }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-
-
-<img class="rounded mx-auto d-block" src="static/graphs/{{filename}}">
-{% endif %}
-
-
-
+  {% endif %}
 {% endblock %}

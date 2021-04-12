@@ -156,7 +156,7 @@ def compareMovies(start: datetime.date, end: datetime.date):
 
     ticketsSoldPerMovie=[]
     movieNames=[]
-
+    totalTickets=0
     week = str(start)+'-'+str(end)
     for movie in movies:
         ticketCount=0
@@ -177,7 +177,7 @@ def compareMovies(start: datetime.date, end: datetime.date):
         ticketsSoldPerMovie.append(ticketCount)
         movieNames.append(movie.Name)
         ticketsSold.append({'name': movie.Name, 'ticketsSold':ticketCount})
-
+        totalTickets+=ticketCount
 
 
     movieNamesPos = [i for i, _ in enumerate(movieNames)]
@@ -197,6 +197,6 @@ def compareMovies(start: datetime.date, end: datetime.date):
     plt.tight_layout()
     plt.savefig(filename)
     plt.close()
-    return ticketsSold
+    return ticketsSold, totalTickets
 
     
