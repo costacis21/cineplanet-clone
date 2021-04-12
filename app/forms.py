@@ -76,7 +76,7 @@ class PaymentDetailsForm(Form):
     Expiry = StringField('Expiry', render_kw={"placeholder": "MM-YY"}, validators=[DataRequired(), validators.Regexp('^[0-9][0-9]-[0-9][0-9]$', message="Please enter exipry in example format: 09-23")])
     CVV = StringField('CVV', [validators.DataRequired(), validators.Regexp('^[0-9]{3,3}$', message='Security code should be 3 digits')], render_kw={"placeholder": "---"})
     Save = BooleanField('Save this card for next time', widget=CheckboxInput())
-    
+    Postcode = StringField('Billing Postcode', [validators.DataRequired(), validators.Regexp('^([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([AZa-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9]?[A-Za-z]))))[0-9][A-Za-z]{2})$', message='Invalid Postcode')])
 
 class SetUserPrivilage(Form):
     Username = StringField('Username', [validators.DataRequired()])

@@ -379,7 +379,7 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
             if seat in screening.seats() and seat not in selected:
                 selected.append(seat)
             if seat in screening.reserved():
-                return redirect(url_for('seats')+screeningID)
+                return redirect(url_for('seats', screening=screeningID))
 
         order = list(zip(selected, concessions))    #create order merging seats with tickets
 
@@ -431,7 +431,7 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
 
             else:
                 if PaymentDetailsForm.Save.data:    #add card to db if user chooses
-                    card = models.Card(UserID=current_user.UserID, CardNo=PaymentDetailsForm.CardNo.data ,Name=PaymentDetailsForm.Name.data, Expiry=datetime.datetime.strptime(PaymentDetailsForm.Expiry.data, '%m-%y'), CVV=PaymentDetailsForm.CVV.data)
+                    card = models.Card(UserID=current_user.UserID, CardNo=PaymentDetailsForm.CardNo.data ,Name=PaymentDetailsForm.Name.data, Expiry=datetime.datetime.strptime(PaymentDetailsForm.Expiry.data, '%m-%y'), CVV=PaymentDetailsForm.CVV.data, Postcode=PaymentDetailsForm.Postcode.data)
                     db.session.add(card)
                     db.session.commit()
 
@@ -612,7 +612,7 @@ def CashPayment(screeningID, seats, types): # succeed booking confirmation page
             if seat in screening.seats() and seat not in selected:
                 selected.append(seat)
             if seat in screening.reserved():
-                return redirect(url_for('seats')+screeningID)
+                return redirect(url_for('seats', screening=screeningID))
 
         order = list(zip(selected, concessions))    #create order merging seats with tickets
 
