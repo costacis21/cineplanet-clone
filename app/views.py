@@ -825,8 +825,8 @@ def profile():
 
 @app.route('/view-incomes', methods=['GET','POST'])
 def viewIncomes():
-     if current_user.is_authenticated:   #checks user is signed in
-        if (current_user.Privilage < 2):
+    if current_user.is_authenticated:   #checks user is signed in
+        if (current_user.Privilage == 0):
             incomes=getWeeklyIncomes()
             return render_template('view-incomes.html',
                                     incomes = incomes[0],
@@ -836,29 +836,33 @@ def viewIncomes():
                                     weekTickets = incomes[4],
                                     title = "Incomes per Movie"
                                     )
-
-     return redirect(url_for('index'))
+        else:
+            flash('Your account does not have access to this functionality')
+            return redirect(url_for('index')) 
+    return redirect(url_for('index'))
 
 
 @app.route('/show-graphs', methods = ['GET','POST'])
 def showGraphs():
      if current_user.is_authenticated:   #checks user is signed in
-        if (current_user.Privilage < 2):
+        if (current_user.Privilage == 0):
 
             createWeeklyGraph()
             return render_template('show-graphs.html', title = "Weekly Income Graph")
-
+        else:
+            flash('Your account does not have access to this functionality')
+            return redirect(url_for('index')) 
      return redirect(url_for('index'))
 
 @app.route('/compare-ticket-sales', methods = ['GET','POST'])
 def compareTicketSales():
-     week = ""
-     tickets=[]
-     filename=""
-     if current_user.is_authenticated:   #checks user is signed in
+    week = ""
+    tickets=[]
+    filename=""
+    if current_user.is_authenticated:   #checks user is signed in
         form = forms.CompareTicketSalesForm()
 
-        if (current_user.Privilage < 2):
+        if current_user.Privilage == 0:
             if request.method == 'POST':
                 if form.validate_on_submit():
                     start = form.start.data
@@ -870,7 +874,10 @@ def compareTicketSales():
                     tickets[0].reverse()
                     return render_template('compare-ticket-sales.html', title = "Compare Ticket Sales", form = form, tickets = tickets[0], week =week,filename=filename, totalTickets=tickets[1] )
             return render_template('compare-ticket-sales.html', title = "Compare Ticket Sales", form = form, tickets = tickets, week =week,filename=filename, totalTickets=0 )
-     return redirect(url_for('index'))
+        else:
+            flash('Your account does not have access to this functionality')
+            return redirect(url_for('index')) 
+    return redirect(url_for('index'))
 
 
 

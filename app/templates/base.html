@@ -73,7 +73,9 @@
                   <a class="dropdown-item" href="/addNewMovie">Add New Movie</a>
                 </div>
               </div>
+              {% endif %}
         </div>
+        {% if current_user.Privilage == 0 %}
         <div class="navbar-brand ml-auto">
           <div class="dropdown">
             <button class="btn btn-dark dropdown-toggle admin-dropdown" type="button" id="dropdownMenuButton"
