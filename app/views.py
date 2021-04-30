@@ -459,7 +459,7 @@ def Payment(screeningID, seats, types): # succeed booking confirmation page
                 for ticket in models.Ticket.query.filter_by(BookingID=newBooking.BookingID): # For all of the tickets just purchased
                     # Make QR code for ticket
                     qr_filename = os.getcwd() + '/app/static/ticket/qr/qr'+str(ticket.TicketID)+'.png'
-                    qr = pyqrcode.create(request.url_root+ticket.QR) # Needs to be changed to not have the port hardcoded into it
+                    qr = pyqrcode.create(request.url_root + 'validate-ticket/'+ticket.QR) # Needs to be changed to not have the port hardcoded into it
                     #qr = pyqrcode.create(ticket.QR)
                     qr.png(qr_filename, scale=6)
 
@@ -678,7 +678,7 @@ def CashPayment(screeningID, seats, types): # succeed booking confirmation page
             for ticket in models.Ticket.query.filter_by(BookingID=newBooking.BookingID): # For all of the tickets just purchased
                 # Make QR code for ticket
                 qr_filename = os.getcwd() + '/app/static/ticket/qr/qr'+str(ticket.TicketID)+'.png'
-                qr = pyqrcode.create(request.url_root+ticket.QR) # Needs to be changed to not have the port hardcoded into it
+                qr = pyqrcode.create(request.url_root + 'validate-ticket/' + ticket.QR) # Needs to be changed to not have the port hardcoded into it
                 #qr = pyqrcode.create(url_for('index')+ticket.QR)
                 qr.png(qr_filename, scale=6)
 
