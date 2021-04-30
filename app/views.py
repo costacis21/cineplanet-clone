@@ -142,7 +142,7 @@ def movieInformation(MovieID):
     # Code below removes any screenings that have already happended so you can't direct to buy tickets
     futureScreenings = []
     for screening in screenings:
-        if screening.StartTimestamp > datetime.datetime.now() - timedelta(days=1):
+        if screening.StartTimestamp > datetime.datetime.now():
             futureScreenings.append(screening)
     screenings = futureScreenings
     numScreenings = len(screenings)
@@ -349,7 +349,8 @@ def confirmBooking(screening, seats):   # succeed seat selection page
         PremiumGeneralPrice=PremiumGeneralPrice,
         PremiumConcessionPrice=PremiumConcessionPrice,
         child = child,
-        title = 'Confirm booking')
+        title = 'Confirm booking', 
+        hide=True)
 
     else:
         flash('You must be signed in to book tickets')
