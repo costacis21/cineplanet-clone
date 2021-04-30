@@ -45,7 +45,7 @@ def getMovieInfo(movieTitle: str):
                 movieRating = movie['vote_average']
                 moviePosterURL = "https://image.tmdb.org/t/p/w500{posterUrl}".format(posterUrl = movie['poster_path'])
                 tmdbID=movie['id']
-                movieDescription = movie['overview'] + "\n" + getMovieCrew(tmdbID)
+                movieDescription = movie['overview'] + "\n" + str(getMovieCrew(tmdbID))
                 movieTMDB_URL = "https://www.themoviedb.org/movie/{movie_id}".format(movie_id=tmdbID)
 
 
@@ -118,7 +118,7 @@ def getUpcomingMovies():
                 movieRating = movie['vote_average']
                 moviePosterURL = "https://image.tmdb.org/t/p/w500{posterUrl}".format(posterUrl = movie['poster_path'])
                 tmdbID=movie['id']
-                movieDescription = movie['overview'] + "\n" + getMovieCrew(tmdbID)
+                movieDescription = movie['overview'] + "\n" + str(getMovieCrew(tmdbID))
 
                 movieTMDB_URL = "https://www.themoviedb.org/movie/{movie_id}".format(movie_id=tmdbID)
 
@@ -182,7 +182,7 @@ def getMovieInfoFromID(tmdbID:str):
         movieRating = movie['vote_average']
         moviePosterURL = "https://image.tmdb.org/t/p/w500{posterUrl}".format(posterUrl = movie['poster_path'])
         tmdbID=movie['id']
-        movieDescription = movie['overview'] + "\n" + getMovieCrew(tmdbID)
+        movieDescription = movie['overview'] + "\n" + str(getMovieCrew(tmdbID))
         movieTMDB_URL = "https://www.themoviedb.org/movie/{movie_id}".format(movie_id=tmdbID)
 
 
@@ -277,7 +277,7 @@ def getMovieCrew(tmdbID:str):
 
     if TMDBresponse.status_code == 200:
 
-        for i in range(5):
+        for i in range(min(5, len(TMDBjson_response["cast"]))):
             returnStr+= TMDBjson_response["cast"][i]["name"]
             if i < 4:
                 returnStr+= ", "
