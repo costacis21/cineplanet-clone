@@ -115,7 +115,8 @@ def datedScreenings(date):
                             searchForScreening = searchForScreening,
                             everyMovie = everyMovie,
                             foundMovieInfo = int(foundMovieInfo),
-                            movieTrailerIDs = movieTrailerIDs
+                            movieTrailerIDs = movieTrailerIDs,
+                            hide = True
                             )
     else:
         return render_template('screenings.html',
@@ -127,7 +128,8 @@ def datedScreenings(date):
                             searchForScreening = searchForScreening,
                             everyMovie = everyMovie,
                             foundMovieInfo = int(foundMovieInfo),
-                            movieTrailerIDs = movieTrailerIDs
+                            movieTrailerIDs = movieTrailerIDs,
+                            hide = True
                         )
 
 @app.route('/movie/<MovieID>', methods=['GET','POST'])
