@@ -25,7 +25,6 @@ def teardown_db(exception):
         db.close()
 
 def makeTickets(users):
-    print("You called?")
     # Adding the tickets that are used for these unit tests
     c = 1
     tickets=[]
@@ -75,7 +74,6 @@ def makeTickets(users):
             CreatePDF.MakePDF(filename, QRs, movie, Seats, Categories, str(screening.ScreenID), str(screening.StartTimestamp.date().strftime('%d/%m/%y')), str(screening.StartTimestamp.time().strftime('%H:%M')), Types)
 
 def delete_all():
-    print(app.config['SQLALCHEMY_DATABASE_URI'])
     bookings = models.Booking.query.order_by(models.Booking.BookingID.desc()).all()
     for booking in bookings:
         db.session.delete(booking)
@@ -98,7 +96,6 @@ def delete_all():
 def addRecords():
     # Adding the screenings that are used for these unit tests
     if not (len(models.Screening.query.order_by(models.Screening.ScreeningID.desc()).all()) >= 2):
-        print("made screening")
         for i in range(0,2):
             movies = models.Movie.query.order_by(models.Movie.MovieID.desc()).all()
             screens = models.Movie.query.order_by(models.Screen.ScreenID.desc()).all()
@@ -108,7 +105,6 @@ def addRecords():
 
     # Creates the customer account that is used for most of these tests if it doesn't already exist
     if not models.User.query.filter_by(Email='test@gmail.com').first():
-        print("made test user")
         newUser = models.User(Email='test@gmail.com', Password=sha256_crypt.encrypt('password'), Privilage=2)
         db.session.add(newUser)
         db.session.commit()
@@ -125,7 +121,6 @@ def addRecords():
 
     # Creates the admin account that is used for most of these tests if it doesn't already exist
     if not models.User.query.filter_by(Email='admin@admin.com').first():
-        print("made admin user")
         newUser = models.User(Email='admin@admin.com', Password=sha256_crypt.encrypt('password'), Privilage=0)
         db.session.add(newUser)
         db.session.commit()
