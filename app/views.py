@@ -786,7 +786,7 @@ def viewTickets(BookingID):
 
                 # If the booking was made by the current user
                 if valid == True:
-                    return render_template('view-tickets.html', BookingID=BookingID, title="View Tickets")
+                    return render_template('view-tickets.html', BookingID=BookingID, title="View Tickets", hide=True)
                 else:
                     flash("You cannot view another user's bookings")
             else:
