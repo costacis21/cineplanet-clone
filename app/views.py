@@ -814,7 +814,7 @@ def profile():
                 logging.info('User: %s updated password', current_user.Email)
             else:
                 logging.error('User: %s inputted incorect password on settings page', current_user.Email)
-                form.currentPassword.errors.append('Password does not match')
+                form.currentPassword.errors.append('Incorrect Password')
         logging.info('User: %s visited settings page', current_user.Email)
         return render_template('profile.html',
                             title = 'My Profile',
