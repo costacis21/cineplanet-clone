@@ -1,4 +1,3 @@
-(venv) C:\Users\pearc\Documents\Leeds\Work\Year 2\Semester 2\Software Engineering Project\proj\cinema-system>pip freeze --local
 alembic==1.4.3
 atomicwrites==1.4.0
 attrs==20.3.0
