@@ -51,8 +51,7 @@ def makeTickets(users):
             movie = models.Movie.query.filter_by(MovieID=screening.MovieID).first().Name
             for ticket in tickets:
                 qr_filename = os.getcwd() + '/app/static/ticket/qr/qr'+str(ticket.TicketID)+'.png'
-                qr = pyqrcode.create('http://127.0.0.1:5000/'+ticket.QR) # Needs to be changed to not have the port hardcoded into it
-                #qr = pyqrcode.create(ticket.QR)
+                qr = pyqrcode.create('http://127.0.0.1:5000/'+ticket.QR)
                 qr.png(qr_filename, scale=6)
 
                 seat = models.Seat.query.filter_by(SeatID=ticket.SeatID).first()
@@ -77,7 +76,7 @@ def makeTickets(users):
             filename = os.getcwd() + '/app/static/ticket/tickets/booking'+str(ticket.BookingID)+'.pdf'
             CreatePDF.MakePDF(filename, QRs, movie, Seats, Categories, str(screening.ScreenID), str(screening.StartTimestamp.date().strftime('%d/%m/%y')), str(screening.StartTimestamp.time().strftime('%H:%M')), Types)
 
-def delete_all():
+def delete_test_records():
     users = [models.User.query.filter_by(Email='test@gmail.com').first(), models.User.query.filter_by(Email='test2@admin.com').order_by(models.User.UserID.desc()).first()]
     for user in users:
         if user is not None:
@@ -155,8 +154,7 @@ class BasicTests(unittest.TestCase):
         basedir = os.path.abspath(os.path.dirname(__file__))
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'app\\app.db')
         self.app = app.test_client()
-        #db = LocalProxy(get_db())
-        delete_all()
+        delete_test_records()
         addRecords()
  
     # executed after each test

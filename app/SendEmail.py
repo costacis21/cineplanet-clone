@@ -44,7 +44,7 @@ def SendMail(receiver_email, filenames):
     message["Bcc"] = receiver_email
 
     # Create the plain text portion of message
-    # Will probably be the same for all messages sent (which is why this is hardcoded for now)
+    # Will probably be the same for all messages sent
     text = """\ """
 
     # Create's the html portion of the message 

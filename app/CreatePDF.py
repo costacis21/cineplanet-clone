@@ -19,14 +19,13 @@ def MakePDF(Filename, QRs, MovieName, Seats, Categories, Screen, Date, Time, Typ
     Ouputs: PDF ticket containing the information from the inputs, saved in the same folder as the python file
     """
     
-    #Creating the Cavnas object to allow the PDF to be written on
+    # Creating the Cavnas object to allow the PDF to be written on
     canvas = Canvas(Filename, pagesize="A4")
     
-    #A4 = (8.26772 inches, 11.6929 inches)
-    #units given in 72ths of an inch
+    # A4 = (8.26772 inches, 11.6929 inches)
+    # units given in 72ths of an inch
     content_height = 400
     page_height = 842
-    #y = ((i*content_height)%page_height)
 
     for i in range(0,len(QRs)):
         qr=QRs[i]
@@ -34,14 +33,13 @@ def MakePDF(Filename, QRs, MovieName, Seats, Categories, Screen, Date, Time, Typ
         Category=Categories[i]
         Type = Types[i]
 
-        #y = page_height//((i+1)*content_height)
         y = (i % 3)
 
-        #Adding images to the ticket
+        # Adding images to the ticket
         canvas.drawImage(os.getcwd()+'/app/static/ticket/accessories/test_logo.jpg', 0, (3-y)*(842/3)- 250, width=200, height=200, preserveAspectRatio=True)
         canvas.drawImage(qr, 420, (3-y)*(842/3)- 220, width=170, height=170, preserveAspectRatio=True)
 
-        #Adding the text to the PDF
+        # Adding the text to the PDF
         a=(3-y)*(842/3) - 220
         canvas.drawString(10, a, "Movie Name: "+ MovieName)
         canvas.line(10, a-5, 700,a-5)
@@ -56,9 +54,8 @@ def MakePDF(Filename, QRs, MovieName, Seats, Categories, Screen, Date, Time, Typ
             canvas.showPage()
             y=1
     
-    #Saving the PDF
+    # Saving the PDF
     canvas.save()
 
 if __name__ == "__main__":
     pass
-    #main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7])
