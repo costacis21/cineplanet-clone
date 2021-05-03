@@ -187,15 +187,16 @@ class BasicTests(unittest.TestCase):
 
             # Gets a booking made by a different user account
             admin = models.User.query.filter_by(Email='admin@admin.com').first()
-            invalid_booking = models.Booking.query.filter_by(UserID=admin.UserID).first()
 
-            # Asserts that if you try and access /view-tickets while logged in but you attempt to view tickets that exist but are attached to a different user account then you are redirected to the home page
-            # Asserts that when this happens, the correct error message is flashed to the user
-            r4 = c.get('/view-tickets/'+str(invalid_booking.BookingID), follow_redirects=True)
-            self.assertEqual(r4.status_code, 200, "The page could not be reached")
-            self.assertEqual(request.path, '/', "The user should be redirected to the home page, they weren't")
-            self.assertTrue("You cannot view another user&#39;s bookings" in str(r4.data), "The correct error message was not displayed to the user")
-            # Have to replace ' with &#39; here due to the way HTML encodes things
+            invalid_booking = models.Booking.query.filter_by(UserID=admin.UserID).first()
+            if invalid_booking != None:
+                # Asserts that if you try and access /view-tickets while logged in but you attempt to view tickets that exist but are attached to a different user account then you are redirected to the home page
+                # Asserts that when this happens, the correct error message is flashed to the user
+                r4 = c.get('/view-tickets/'+str(invalid_booking.BookingID), follow_redirects=True)
+                self.assertEqual(r4.status_code, 200, "The page could not be reached")
+                self.assertEqual(request.path, '/', "The user should be redirected to the home page, they weren't")
+                self.assertTrue("You cannot view another user&#39;s bookings" in str(r4.data), "The correct error message was not displayed to the user")
+                # Have to replace ' with &#39; here due to the way HTML encodes things
 
             # Gets a booking made by the current user account
             valid_booking = models.Booking.query.filter_by(UserID=user.UserID).first()
