@@ -912,7 +912,8 @@ def manageStaff():
 
             return render_template('staff-roster.html',
             staff = staff,
-            PrivilageForm=PrivilageForm)
+            PrivilageForm=PrivilageForm,
+            title='Manage Staff')
         else:
             flash('Your account does not have access to this functionality')
             return redirect(url_for('index'))
